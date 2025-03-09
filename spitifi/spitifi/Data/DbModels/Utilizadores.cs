@@ -8,6 +8,10 @@ public class Utilizadores
     
     public string Email { get; set; }
     
-    public ICollection<Musica> ListaMusicas { get; set; }
+    public ICollection<Musica> ListaColab { get; set; }
+    
+    public ICollection<Musica> ListaGostos { get; set; }
+    
+    public ICollection<Playlist> SeguePlaylist { get; set; }
     
 }
