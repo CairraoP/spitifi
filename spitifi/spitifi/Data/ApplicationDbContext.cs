@@ -9,4 +9,11 @@ public class ApplicationDbContext : IdentityDbContext
         : base(options)
     {
     }
+    
+    public DbSet<Gostos> Gostos { get; set; }
+    public DbSet<Musica> Musica { get; set; }
+    public DbSet<Playlist> Playlist { get; set; }
+    public DbSet<Utilizadores> Utilizadores { get; set; }
+    public DbSet<UtilizadorPlaylist> UtilizadorPlaylist { get; set; }
+    public DbSet<Colabs> Colabs { get; set; }
 }
