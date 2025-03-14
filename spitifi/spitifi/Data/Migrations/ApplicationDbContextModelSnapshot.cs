@@ -225,7 +225,7 @@ namespace spitifi.Data.Migrations
 
                     b.HasIndex("ListaPlaylistId");
 
-                    b.ToTable("MusicaPlaylist");
+                    b.ToTable("MusicaPlaylist", (string)null);
                 });
 
             modelBuilder.Entity("spitifi.Data.Colabs", b =>
@@ -240,7 +240,7 @@ namespace spitifi.Data.Migrations
 
                     b.HasIndex("MusicaFK");
 
-                    b.ToTable("Colabs");
+                    b.ToTable("Colabs", (string)null);
                 });
 
             modelBuilder.Entity("spitifi.Data.Gostos", b =>
@@ -255,7 +255,7 @@ namespace spitifi.Data.Migrations
 
                     b.HasIndex("MusicaFK");
 
-                    b.ToTable("Gostos");
+                    b.ToTable("Gostos", (string)null);
                 });
 
             modelBuilder.Entity("spitifi.Data.Musica", b =>
@@ -283,7 +283,7 @@ namespace spitifi.Data.Migrations
 
                     b.HasIndex("DonoFK");
 
-                    b.ToTable("Musica");
+                    b.ToTable("Musica", (string)null);
                 });
 
             modelBuilder.Entity("spitifi.Data.Playlist", b =>
@@ -303,7 +303,7 @@ namespace spitifi.Data.Migrations
 
                     b.HasIndex("DonoFK");
 
-                    b.ToTable("Playlist");
+                    b.ToTable("Playlist", (string)null);
                 });
 
             modelBuilder.Entity("spitifi.Data.UtilizadorPlaylist", b =>
@@ -318,7 +318,7 @@ namespace spitifi.Data.Migrations
 
                     b.HasIndex("PlaylistFK");
 
-                    b.ToTable("UtilizadorPlaylist");
+                    b.ToTable("UtilizadorPlaylist", (string)null);
                 });
 
             modelBuilder.Entity("spitifi.Data.Utilizadores", b =>
@@ -333,7 +333,7 @@ namespace spitifi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Utilizadores");
+                    b.ToTable("Utilizadores", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

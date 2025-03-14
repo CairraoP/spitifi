@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace spitifi.Data;
@@ -18,11 +19,13 @@ public class Musica
     ///
     /// NOTA: por conselho dos professores, derivado que já teriamos um número considerável de tabelas com que trabalhar, não foi feita uma entidade para os Albúns
     /// </summary>
+    [Display(Name = "Álbum")]
     public string Album { get; set; }
     
     /// <summary>
     /// Coluna/campo onde ficará guardado o caminho para o ficheiro da música
     /// </summary>
+    [Display(Name = "Música")]
     public string FilePath { get; set; }
     
     /// <summary>
@@ -30,6 +33,7 @@ public class Musica
     /// </summary>
     [ForeignKey(nameof(Dono))]
     
+    [Display(Name = "Artista")]
     public int DonoFK { get; set; }
     /*
      * Relação 1 - N com participação obrigatória do lado N
@@ -39,14 +43,14 @@ public class Musica
     /// <summary>
     /// Lista de utilizadores que colaboraram numa música
     /// </summary>
-    public ICollection<Colabs> ListaColab { get; set; }
+    public ICollection<Colabs> ListaColab { get; set; } = [];
     
     /// <summary>
     /// Lista de playlists onde aparece esta música
     ///
     /// NOTA: Este campo é/foi usado para a construção da tabela/relação Playlists-Musica
     /// </summary>
-    public ICollection<Playlist> ListaMusica { get; set; }
+    public ICollection<Playlist> ListaMusica { get; set; } = [];
 
     /// <summary>
     /// Relação N-M sem participação obrigatória de nenhum dos lados
@@ -55,5 +59,5 @@ public class Musica
     ///
     /// NOTA: Este ICollection é/foi usado para a construção da tabela/relação N-M Utilizadores-Música
     /// </summary>
-    public ICollection<Gostos> ListaGostos { get; set; }
+    public ICollection<Gostos> ListaGostos { get; set; } = [];
 }

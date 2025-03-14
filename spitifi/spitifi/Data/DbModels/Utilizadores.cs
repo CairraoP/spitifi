@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace spitifi.Data;
@@ -15,30 +16,34 @@ public class Utilizadores
     /// <summary>
     /// Nome do utilizador que irá ser atribuido, o seu "nickname"
     /// </summary>
+    [Display(Name = "Nome de Utilizador")]
     public string Username { get; set; }
     
     /// <summary>
     /// Lista das músicas em que o utilizador/artista colaborou
     /// </summary>
-    public ICollection<Colabs> ListaColab { get; set; }
+    [Display(Name = "Lista de Colaborações")]
+    public ICollection<Colabs> ListaColab { get; set; } = [];
     
-    public ICollection<Musica> ListaDono { get; set; }
+    
+    [Display(Name = "Lista de Músicas da sua Auditoria")]
+    public ICollection<Musica> ListaDono { get; set; } = [];
     
     /// <summary>
     /// Lista e músicas que o utilizador deu "like"
     /// </summary>
-    public ICollection<Gostos> ListaGostos { get; set; }
+    public ICollection<Gostos> ListaGostos { get; set; } = [];
     
     /// <summary>
     /// quais as playlists que o utilizador segue
     /// </summary>
-    public ICollection<UtilizadorPlaylist> SeguePlaylist { get; set; }
-    
+    public ICollection<UtilizadorPlaylist> SeguePlaylist { get; set; } = [];
+
     /// <summary>
     /// Lista para facilitar a visibilidade sober quais as playlists que o utilizador tem/é dono
     /// </summary>
     [NotMapped]
-    public ICollection<Playlist> DonoPlaylists { get; set; }
-    
+    public ICollection<Playlist> DonoPlaylists { get; set; } = [];
+
     //public ICollection<Musica> ListaMusica { get; set;}
 }
