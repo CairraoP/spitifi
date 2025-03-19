@@ -1,7 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using spitifi.Data.DbModels;
 
-namespace spitifi.Data;
+namespace spitifi.Data.DbModels;
 
 /// <summary>
 /// classe para o utilizador
