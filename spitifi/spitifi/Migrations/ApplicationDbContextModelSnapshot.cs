@@ -234,7 +234,7 @@ namespace spitifi.Migrations
 
                     b.HasIndex("ListaPlaylistId");
 
-                    b.ToTable("MusicaPlaylist");
+                    b.ToTable("MusicaPlaylist", (string)null);
                 });
 
             modelBuilder.Entity("spitifi.Data.DbModels.Colabs", b =>
@@ -249,7 +249,7 @@ namespace spitifi.Migrations
 
                     b.HasIndex("MusicaFK");
 
-                    b.ToTable("Colabs");
+                    b.ToTable("Colabs", (string)null);
                 });
 
             modelBuilder.Entity("spitifi.Data.DbModels.Gostos", b =>
@@ -264,7 +264,7 @@ namespace spitifi.Migrations
 
                     b.HasIndex("MusicaFK");
 
-                    b.ToTable("Gostos");
+                    b.ToTable("Gostos", (string)null);
                 });
 
             modelBuilder.Entity("spitifi.Data.DbModels.Musica", b =>
@@ -294,7 +294,7 @@ namespace spitifi.Migrations
 
                     b.HasIndex("DonoFK");
 
-                    b.ToTable("Musica");
+                    b.ToTable("Musica", (string)null);
                 });
 
             modelBuilder.Entity("spitifi.Data.DbModels.Playlist", b =>
@@ -316,7 +316,7 @@ namespace spitifi.Migrations
 
                     b.HasIndex("DonoFK");
 
-                    b.ToTable("Playlist");
+                    b.ToTable("Playlist", (string)null);
                 });
 
             modelBuilder.Entity("spitifi.Data.DbModels.UtilizadorPlaylist", b =>
@@ -331,7 +331,7 @@ namespace spitifi.Migrations
 
                     b.HasIndex("PlaylistFK");
 
-                    b.ToTable("UtilizadorPlaylist");
+                    b.ToTable("UtilizadorPlaylist", (string)null);
                 });
 
             modelBuilder.Entity("spitifi.Data.DbModels.Utilizadores", b =>
@@ -348,7 +348,7 @@ namespace spitifi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Utilizadores");
+                    b.ToTable("Utilizadores", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
