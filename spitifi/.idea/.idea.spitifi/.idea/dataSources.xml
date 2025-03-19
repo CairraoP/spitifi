@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="app.db" uuid="fde87232-183c-4f19-abd9-a8ac7df28e7a">
-      <driver-ref>sqlite.xerial</driver-ref>
+    <data-source source="LOCAL" name="lei23771@193.137.5.175" uuid="e019ecaa-f418-4685-8194-a2cb37bb6ddf">
+      <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
-      <configured-by-url>true</configured-by-url>
-      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:E:\Rider\spitifi\spitifi\spitifi\app.db</jdbc-url>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://193.137.5.175:4000/lei23771</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

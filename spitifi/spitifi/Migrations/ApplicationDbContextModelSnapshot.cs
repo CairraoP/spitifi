@@ -2,12 +2,13 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using spitifi.Data;
 
 #nullable disable
 
-namespace spitifi.Data.Migrations
+namespace spitifi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -15,24 +16,28 @@ namespace spitifi.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "8.0.13")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(256)");
 
                     b.HasKey("Id");
 
@@ -47,17 +52,19 @@ namespace spitifi.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -69,54 +76,54 @@ namespace spitifi.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(256)");
 
                     b.HasKey("Id");
 
@@ -134,17 +141,19 @@ namespace spitifi.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -157,18 +166,18 @@ namespace spitifi.Data.Migrations
                 {
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("ProviderKey")
                         .HasMaxLength(128)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -180,10 +189,10 @@ namespace spitifi.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("RoleId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -195,18 +204,18 @@ namespace spitifi.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("Name")
                         .HasMaxLength(128)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("Value")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -216,10 +225,10 @@ namespace spitifi.Data.Migrations
             modelBuilder.Entity("MusicaPlaylist", b =>
                 {
                     b.Property<int>("ListaMusicaId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("ListaPlaylistId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("ListaMusicaId", "ListaPlaylistId");
 
@@ -228,13 +237,13 @@ namespace spitifi.Data.Migrations
                     b.ToTable("MusicaPlaylist");
                 });
 
-            modelBuilder.Entity("spitifi.Data.Colabs", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.Colabs", b =>
                 {
                     b.Property<int>("UtilizadorFK")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("MusicaFK")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("UtilizadorFK", "MusicaFK");
 
@@ -243,13 +252,13 @@ namespace spitifi.Data.Migrations
                     b.ToTable("Colabs");
                 });
 
-            modelBuilder.Entity("spitifi.Data.Gostos", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.Gostos", b =>
                 {
                     b.Property<int>("UtilizadorFK")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("MusicaFK")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("UtilizadorFK", "MusicaFK");
 
@@ -258,26 +267,28 @@ namespace spitifi.Data.Migrations
                     b.ToTable("Gostos");
                 });
 
-            modelBuilder.Entity("spitifi.Data.Musica", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.Musica", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Album")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("DonoFK")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("FilePath")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -286,18 +297,20 @@ namespace spitifi.Data.Migrations
                     b.ToTable("Musica");
                 });
 
-            modelBuilder.Entity("spitifi.Data.Playlist", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.Playlist", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("DonoFK")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -306,13 +319,13 @@ namespace spitifi.Data.Migrations
                     b.ToTable("Playlist");
                 });
 
-            modelBuilder.Entity("spitifi.Data.UtilizadorPlaylist", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.UtilizadorPlaylist", b =>
                 {
                     b.Property<int>("UtilizadorFK")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("PlaylistFK")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("UtilizadorFK", "PlaylistFK");
 
@@ -321,15 +334,17 @@ namespace spitifi.Data.Migrations
                     b.ToTable("UtilizadorPlaylist");
                 });
 
-            modelBuilder.Entity("spitifi.Data.Utilizadores", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.Utilizadores", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -389,28 +404,28 @@ namespace spitifi.Data.Migrations
 
             modelBuilder.Entity("MusicaPlaylist", b =>
                 {
-                    b.HasOne("spitifi.Data.Playlist", null)
+                    b.HasOne("spitifi.Data.DbModels.Playlist", null)
                         .WithMany()
                         .HasForeignKey("ListaMusicaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("spitifi.Data.Musica", null)
+                    b.HasOne("spitifi.Data.DbModels.Musica", null)
                         .WithMany()
                         .HasForeignKey("ListaPlaylistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("spitifi.Data.Colabs", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.Colabs", b =>
                 {
-                    b.HasOne("spitifi.Data.Musica", "Musica")
+                    b.HasOne("spitifi.Data.DbModels.Musica", "Musica")
                         .WithMany("ListaColab")
                         .HasForeignKey("MusicaFK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("spitifi.Data.Utilizadores", "Utilizador")
+                    b.HasOne("spitifi.Data.DbModels.Utilizadores", "Utilizador")
                         .WithMany("ListaColab")
                         .HasForeignKey("UtilizadorFK")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -421,15 +436,15 @@ namespace spitifi.Data.Migrations
                     b.Navigation("Utilizador");
                 });
 
-            modelBuilder.Entity("spitifi.Data.Gostos", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.Gostos", b =>
                 {
-                    b.HasOne("spitifi.Data.Musica", "Musica")
+                    b.HasOne("spitifi.Data.DbModels.Musica", "Musica")
                         .WithMany("ListaGostos")
                         .HasForeignKey("MusicaFK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("spitifi.Data.Utilizadores", "Utilizador")
+                    b.HasOne("spitifi.Data.DbModels.Utilizadores", "Utilizador")
                         .WithMany("ListaGostos")
                         .HasForeignKey("UtilizadorFK")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -440,9 +455,9 @@ namespace spitifi.Data.Migrations
                     b.Navigation("Utilizador");
                 });
 
-            modelBuilder.Entity("spitifi.Data.Musica", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.Musica", b =>
                 {
-                    b.HasOne("spitifi.Data.Utilizadores", "Dono")
+                    b.HasOne("spitifi.Data.DbModels.Utilizadores", "Dono")
                         .WithMany("ListaDono")
                         .HasForeignKey("DonoFK")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -451,9 +466,9 @@ namespace spitifi.Data.Migrations
                     b.Navigation("Dono");
                 });
 
-            modelBuilder.Entity("spitifi.Data.Playlist", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.Playlist", b =>
                 {
-                    b.HasOne("spitifi.Data.Utilizadores", "Dono")
+                    b.HasOne("spitifi.Data.DbModels.Utilizadores", "Dono")
                         .WithMany()
                         .HasForeignKey("DonoFK")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -462,15 +477,15 @@ namespace spitifi.Data.Migrations
                     b.Navigation("Dono");
                 });
 
-            modelBuilder.Entity("spitifi.Data.UtilizadorPlaylist", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.UtilizadorPlaylist", b =>
                 {
-                    b.HasOne("spitifi.Data.Playlist", "Playlist")
+                    b.HasOne("spitifi.Data.DbModels.Playlist", "Playlist")
                         .WithMany("SeguePlaylist")
                         .HasForeignKey("PlaylistFK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("spitifi.Data.Utilizadores", "Utilizador")
+                    b.HasOne("spitifi.Data.DbModels.Utilizadores", "Utilizador")
                         .WithMany("SeguePlaylist")
                         .HasForeignKey("UtilizadorFK")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -481,19 +496,19 @@ namespace spitifi.Data.Migrations
                     b.Navigation("Utilizador");
                 });
 
-            modelBuilder.Entity("spitifi.Data.Musica", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.Musica", b =>
                 {
                     b.Navigation("ListaColab");
 
                     b.Navigation("ListaGostos");
                 });
 
-            modelBuilder.Entity("spitifi.Data.Playlist", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.Playlist", b =>
                 {
                     b.Navigation("SeguePlaylist");
                 });
 
-            modelBuilder.Entity("spitifi.Data.Utilizadores", b =>
+            modelBuilder.Entity("spitifi.Data.DbModels.Utilizadores", b =>
                 {
                     b.Navigation("ListaColab");
 

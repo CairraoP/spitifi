@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace spitifi.Data;
+namespace spitifi.Data.DbModels;
 
 public class Playlist
 {
