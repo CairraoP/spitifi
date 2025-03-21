@@ -15,7 +15,7 @@ public class HomeController : Controller
     }
 
     // to allow access to this endpoint, the request must come from the respective view
-    [ValidateAntiForgeryToken]
+   // [ValidateAntiForgeryToken]
     public IActionResult Index()
     {
         return View();
