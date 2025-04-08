@@ -37,13 +37,15 @@
                 @Html.DisplayFor(modelItem => item.Album)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FilePath)
+                <audio controls>
+                    <source src="@item.FilePath" type="audio/wav">
+                    <source src="@item.FilePath" type="audio/mp3">
+                </audio>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Dono.Id)
+                @Html.DisplayFor(modelItem => item.Dono.Username)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
             </td>

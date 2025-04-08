@@ -25,8 +25,11 @@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FilePath)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FilePath)
+        <dd class="col-sm-10">
+            <audio controls>
+                <source src="/@Model.FilePath" type="audio/wav">
+                <source src="/@Model.FilePath" type="audio/mp3">
+            </audio>
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Dono)

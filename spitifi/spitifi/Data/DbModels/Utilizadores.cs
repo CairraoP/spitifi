@@ -20,6 +20,8 @@ public class Utilizadores
     [Display(Name = "Nome de Utilizador")]
     public string Username { get; set; }
     
+    public string Foto { get; set; }
+    
     /// <summary>
     /// Lista das músicas em que o utilizador/artista colaborou
     /// </summary>

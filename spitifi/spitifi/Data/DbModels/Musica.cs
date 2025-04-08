@@ -32,9 +32,8 @@ public class Musica
     /// <summary>
     /// FK para a classe "Utilizadores"
     /// </summary>
-    [ForeignKey(nameof(Dono))]
-    
     [Display(Name = "Artista")]
+    [ForeignKey(nameof(Dono))]
     public int DonoFK { get; set; }
     /*
      * Relação 1 - N com participação obrigatória do lado N
