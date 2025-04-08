@@ -16,12 +16,14 @@ public class Musica
     public string Nome { get; set; }
     
     /// <summary>
-    /// Nome do Albúm a que pertence a música
-    ///
-    /// NOTA: por conselho dos professores, derivado que já teriamos um número considerável de tabelas com que trabalhar, não foi feita uma entidade para os Albúns
+    /// Nome do Albúm a que pertence a música, ainda podendo ser usado a referência da FK para importar a foto associada ao albúm.
+    /// Relação de 1-N 
     /// </summary>
-    [Display(Name = "Álbum")]
-    public string Album { get; set; }
+    [Display(Name = "Albúm")]
+    [ForeignKey(nameof(Album))]
+    public int AlbumFK { get; set; }
+    
+    public Album Album { get; set; }
     
     /// <summary>
     /// Coluna/campo onde ficará guardado o caminho para o ficheiro da música
@@ -32,9 +34,8 @@ public class Musica
     /// <summary>
     /// FK para a classe "Utilizadores"
     /// </summary>
-    [ForeignKey(nameof(Dono))]
-    
     [Display(Name = "Artista")]
+    [ForeignKey(nameof(Dono))]
     public int DonoFK { get; set; }
     /*
      * Relação 1 - N com participação obrigatória do lado N

@@ -20,6 +20,8 @@ public class Utilizadores
     [Display(Name = "Nome de Utilizador")]
     public string Username { get; set; }
     
+    public string Foto { get; set; }
+    
     /// <summary>
     /// Lista das músicas em que o utilizador/artista colaborou
     /// </summary>
@@ -35,6 +37,10 @@ public class Utilizadores
     /// </summary>
     public ICollection<Gostos> ListaGostos { get; set; } = [];
     
+    
+    public List<Album> Albums { get; set; } = new List<Album>();
+    
+    
     /// <summary>
     /// quais as playlists que o utilizador segue
     /// </summary>
@@ -45,6 +51,4 @@ public class Utilizadores
     /// </summary>
     [NotMapped]
     public ICollection<Playlist> DonoPlaylists { get; set; } = [];
-
-    //public ICollection<Musica> ListaMusica { get; set;}
 }

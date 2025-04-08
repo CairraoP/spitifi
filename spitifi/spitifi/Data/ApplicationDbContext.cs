@@ -18,4 +18,5 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Utilizadores> Utilizadores { get; set; }
     public DbSet<UtilizadorPlaylist> UtilizadorPlaylist { get; set; }
     public DbSet<Colabs> Colabs { get; set; }
+    public DbSet<Album> Album { get; set; }
 }

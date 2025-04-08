@@ -25,7 +25,7 @@ public class Playlist
     public int DonoFK { get; set; }
     
     public Utilizadores Dono { get; set; }
-    
+
     /// <summary>
     /// Relação N-M com participação obrigatória da entidade "Música"
     /// 
@@ -33,12 +33,12 @@ public class Playlist
     ///
     /// NOTA: Este ICollection foi/é usado para construir a relação de N-M  PlayList-Música
     /// </summary>
-    public ICollection<Musica> ListaPlaylist { get; set; }
+    public ICollection<Musica> ListaPlaylist { get; set; } = [];
     
     /// <summary>
     /// Lista de utilizadores que seguem a playlist
     ///
     /// NOTA: Este ICollection é/foi usado para construir a tabela da relação N-M entre as entidades Utilizador - Playlist
     /// </summary>
-    public ICollection<UtilizadorPlaylist> SeguePlaylist { get; set; }
+    public ICollection<UtilizadorPlaylist> SeguePlaylist { get; set; }= [];
 }

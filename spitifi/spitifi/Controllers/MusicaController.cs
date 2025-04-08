@@ -39,7 +39,9 @@ namespace spitifi.Controllers
 
             var musica = await _context.Musica
                 .Include(m => m.Dono)
+                .Include(m => m.Album)
                 .FirstOrDefaultAsync(m => m.Id == id);
+            
             if (musica == null)
             {
                 return NotFound();
@@ -51,6 +53,7 @@ namespace spitifi.Controllers
         // GET: Musica/Create
         public IActionResult Create()
         {
+            ViewData["AlbumFK"] = new SelectList(_context.Album, "Id", "Nome");
             ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Username");
             return View();
         }
@@ -60,29 +63,59 @@ namespace spitifi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Album,DonoFK")] Musica musica, IFormFile musicaFile)
+        public async Task<IActionResult> Create([Bind("Nome,AlbumFK,DonoFK")] Musica musica,[Bind("Titulo")] Album album, List<IFormFile> musicaNova, IFormFile fotoAlbum)
         {
-            //ModelState.Remove("Dono");
             ModelState.Remove("FilePath");
             
-            if(musicaFile== null)
+            var utilizador = _context.Utilizadores.Where(u => u.Id == musica.DonoFK);
+            var albums = _context.Album.Where(a => a.Id == musica.AlbumFK);
+            
+            if (!utilizador.Any())
+            {
+                ModelState.AddModelError("DonoFK", "Alteração incorreta do Dono");
+            }
+            
+            if (!albums.Any())
+            {
+                ModelState.AddModelError("AlbumFK", "Alteração incorreta do Albúm");
+            }
+            
+            if(musicaNova== null)
                 ModelState.AddModelError("FilePath", "Não introduziste um ficheiro");
             
             if (ModelState.IsValid)
             {
-                var fileName = Path.GetFileName(Guid.NewGuid().ToString()+ "-"+ musicaFile.FileName);
+                /*
+                 * Criação da foto do album
+                 */
+                var fileNameAlbum = Path.GetFileName(Guid.NewGuid().ToString()+ "-"+ fotoAlbum.FileName);
+                var filePathAlbum = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/", fileNameAlbum);
+                
+                using (var fileStream = new FileStream(filePathAlbum, FileMode.Create))
+                {
+                    album.Foto = fileNameAlbum;
+                    await fotoAlbum.CopyToAsync(fileStream);
+                }
+                _context.Add(album);
+                
+                //Criação das músicas
+                foreach(var formFile in musicaNova){
+                var fileName = Path.GetFileName(Guid.NewGuid().ToString()+ "-"+ formFile.FileName);
                 var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/", fileName);
+
                 //usar o using para executar o bloco de código para executar aquela ação, é despejado assim que executado e não espera até ao final do controller
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    await musicaFile.CopyToAsync(fileStream);
+                    await formFile.CopyToAsync(fileStream);
                 }
                 musica.FilePath = fileName;
                 _context.Add(musica);
+                }
+                
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Id", musica.DonoFK);
+            ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Username", musica.DonoFK);
             return View(musica);
         }
 
@@ -96,13 +129,11 @@ namespace spitifi.Controllers
 
             var musica = await _context.Musica.FindAsync(id);
             
-            HttpContext.Session.SetInt32("musicaId", musica.Id);
-            
             if (musica == null)
             {
                 return NotFound();
             }
-            ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Id", musica.DonoFK);
+            ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Username", musica.DonoFK);
             return View(musica);
         }
 
@@ -111,43 +142,100 @@ namespace spitifi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Nome,Album,FilePath,DonoFK")] Musica musica)
+        public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Nome,Album,FilePath,DonoFK")] Musica musica, IFormFile musicaNova, IFormFile FotoAlbum)
         {
+            string nomeAudio = "";
+            
             if (id != musica.Id)
             {
                 return NotFound();
             }
+     
+            var musicaAux = _context.Musica.AsNoTracking().FirstOrDefault(m => m.Id == musica.Id);
+            musica.FilePath = musicaAux.FilePath;
             
-            var musicaDaSessao= HttpContext.Session.GetInt32("musicaId");
-            if (musicaDaSessao != musica.Id)
+            var fotoAux = _context.Musica.AsNoTracking().FirstOrDefault(m => m.Id == musica.Id);
+            // musica.FotoAlbum = fotoAux.FilePath;
+
+            if (id != musica.Id)
             {
-                ModelState.AddModelError("Id", "Não é permitido fazer tal operação");
-                return View();
+                return NotFound();
             }
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(musica);
                     await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!MusicaExists(musica.Id))
+                    // se a imagem for diferente da default, vamos apagá-la do disco ao apagar a entrada da BD
+
+                    if (musicaNova == null)
                     {
-                        return NotFound();
                     }
                     else
                     {
-                        ModelState.AddModelError("Id", "Esta música não existe");
+                        if (!musica.FilePath.Contains("smb_coin.wav"))
+                        {
+                            var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot",
+                                musica.FilePath);
+                            // se o ficheiro/imagem existir apagamos
+                            if (System.IO.File.Exists(oldFilePath))
+                                System.IO.File.Delete(oldFilePath);
+                        }
+
+                        if (!(musicaNova.ContentType == "audio/wav" || musicaNova.ContentType == "audio/mp3"))
+                        {
+                            ModelState.AddModelError("Ficheiro",
+                                "Ficheiro com extensão inválida, use wav ou mp3 por favor");
+                            //Futuramente adicionar a PLayList
+                            /*ViewData["CategoriaFk"] = new SelectList(_context.Musica, "Id", "Categoria",
+                                fotografia.CategoriaFk);*/
+                            ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "Nome", musica.DonoFK);
+                            return View(musica);
+                        }
+                        
+                        //criar novo código unico
+                        Guid g = Guid.NewGuid();
+                        //buscar o novo codigo
+                        nomeAudio = g.ToString();
+                        //buscar o nome da foto (que ficou associado ao objeto do IFormFile)
+                        string restoDoNome = Path.GetExtension(musicaNova.FileName).ToLowerInvariant();
+                        nomeAudio += restoDoNome;
+                        musica.FilePath = "imagens/" + nomeAudio;
+
+
+                        // vai construir o path para o diretório onde são guardadas as imagens
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/imagens");
+
+                        // antes de escrevermos o ficheiro, vemos se o diretório existe
+                        if (!Directory.Exists(filePath))
+                            Directory.CreateDirectory(filePath);
+
+                        // atualizamos o Path para incluir o nome da imagem
+                        filePath = Path.Combine(filePath, nomeAudio);
+
+                        // escreve a imagem
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await musicaNova.CopyToAsync(fileStream);
+                        }
                     }
+
+                    _context.Update(musica);
+                    await _context.SaveChangesAsync();
                 }
+                catch (Exception ex)
+                {
+                }
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Nome", musica.DonoFK);
+
+  
+            ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "Nome", musica.DonoFK);
             return View(musica);
         }
-
         // GET: Musica/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
