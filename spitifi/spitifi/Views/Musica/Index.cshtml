@@ -34,7 +34,7 @@
                 @Html.DisplayFor(modelItem => item.Nome)
             </td>
             <td>
-               <!-- <img src="item.Album.Foto" type="image/heic"/> -->
+                <img style ="max-height: 100px; max-width: 100px" src = "@item.Album?.Foto"/>
             </td>
             <td>
                 <audio controls>

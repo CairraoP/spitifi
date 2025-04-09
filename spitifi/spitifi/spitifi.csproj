@@ -20,6 +20,8 @@
 
     <ItemGroup>
       <Folder Include="Migrations\" />
+      <Folder Include="wwwroot\imagens\" />
+      <Folder Include="wwwroot\musicas\" />
     </ItemGroup>
 
 
