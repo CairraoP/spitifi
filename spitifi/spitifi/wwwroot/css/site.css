@@ -20,3 +20,27 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.audio-player {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 300px;
+  padding: 10px;
+  background: #333;
+  color: #fff;
+  border-radius: 5px;
+}
+
+button {
+  background: #555;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+input[type="range"] {
+  width: 100px;
+}

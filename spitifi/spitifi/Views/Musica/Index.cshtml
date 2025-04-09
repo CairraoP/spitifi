@@ -16,13 +16,13 @@
                 @Html.DisplayNameFor(model => model.Nome)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Album)
+                <a>Albúm</a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.FilePath)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Dono)
+                <a>Artista</a>
             </th>
             <th></th>
         </tr>
@@ -34,7 +34,8 @@
                 @Html.DisplayFor(modelItem => item.Nome)
             </td>
             <td>
-               <!-- <img src="item.Album.Foto" type="image/heic"/> -->
+                <a>@item.Album.Titulo</a>
+                <!--<img style="max-height: 100px; max-width: 100px" src="@item.Album.Foto"/>-->
             </td>
             <td>
                 <audio controls>
