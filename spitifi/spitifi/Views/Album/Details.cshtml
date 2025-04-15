@@ -1,3 +1,4 @@
+@using Microsoft.EntityFrameworkCore
 @model spitifi.Data.DbModels.Album
 
 @{
@@ -20,7 +21,20 @@
             @Html.DisplayNameFor(model => model.Foto)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Foto)
+            <img style ="max-height: 100px; max-width: 100px" src="/@Html.DisplayFor(model => model.Foto)"/>
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Musicas)
+        </dt>
+        <dd class="col-sm-10">
+            @foreach(var musica in Model.Musicas)
+            {
+                <li class="flex-column">@musica.Nome</li>
+                <audio controls class="flex-column">
+                    <source src="@musica.FilePath" type="audio/wav">
+                    <source src="@musica.FilePath" type="audio/mp3">
+                </audio>
+            }
         </dd>
     </dl>
 </div>

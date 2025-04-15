@@ -8,6 +8,7 @@ public class Album
 {
     public int Id { get; set; }
     
+    [Display(Name = "Albúm")]
     public string Titulo { get; set; }
     public string Foto { get; set; }
     

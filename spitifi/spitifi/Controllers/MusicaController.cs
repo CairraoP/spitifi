@@ -25,7 +25,7 @@ namespace spitifi.Controllers
         // GET: Musica
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Musica.Include(m => m.Dono);
+            var applicationDbContext = _context.Musica.Include(m => m.Dono).Include(m=>m.Album);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -67,51 +67,9 @@ namespace spitifi.Controllers
         {
             ModelState.Remove("FilePath");
             
-            var utilizador = _context.Utilizadores.Where(u => u.Id == musica.DonoFK);
-            var albums = _context.Album.Where(a => a.Id == musica.AlbumFK);
-            
-            if (!utilizador.Any())
-            {
-                ModelState.AddModelError("DonoFK", "Alteração incorreta do Dono");
-            }
-            
-            if (!albums.Any())
-            {
-                ModelState.AddModelError("AlbumFK", "Alteração incorreta do Albúm");
-            }
-            
-            if(musicaNova== null)
-                ModelState.AddModelError("FilePath", "Não introduziste um ficheiro");
-            
             if (ModelState.IsValid)
             {
-                /*
-                 * Criação da foto do album
-                 */
-                var fileNameAlbum = Path.GetFileName(Guid.NewGuid().ToString()+ "-"+ fotoAlbum.FileName);
-                var filePathAlbum = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/", fileNameAlbum);
-                
-                using (var fileStream = new FileStream(filePathAlbum, FileMode.Create))
-                {
-                    album.Foto = fileNameAlbum;
-                    await fotoAlbum.CopyToAsync(fileStream);
-                }
-                _context.Add(album);
-                
-                //Criação das músicas
-                foreach(var formFile in musicaNova){
-                var fileName = Path.GetFileName(Guid.NewGuid().ToString()+ "-"+ formFile.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/", fileName);
-
-                //usar o using para executar o bloco de código para executar aquela ação, é despejado assim que executado e não espera até ao final do controller
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await formFile.CopyToAsync(fileStream);
-                }
-                musica.FilePath = fileName;
-                _context.Add(musica);
-                }
-                
+               
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
