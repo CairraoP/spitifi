@@ -19,10 +19,10 @@ public class Musica
     /// Nome do Albúm a que pertence a música, ainda podendo ser usado a referência da FK para importar a foto associada ao albúm.
     /// Relação de 1-N 
     /// </summary>
-    [Display(Name = "Albúm")]
     [ForeignKey(nameof(Album))]
     public int AlbumFK { get; set; }
     
+    [Display(Name = "Albúm")]
     public Album Album { get; set; }
     
     /// <summary>
