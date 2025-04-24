@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 using spitifi.Data.DbModels;
 
 namespace spitifi.Data.DbModels;
@@ -37,6 +38,8 @@ public class Utilizadores
     /// </summary>
     public ICollection<Gostos> ListaGostos { get; set; } = [];
     
+    [StringLength(50)]
+    public string? IdentityUser { get; set; }
     
     public List<Album> Albums { get; set; } = new List<Album>();
     
