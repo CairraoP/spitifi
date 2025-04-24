@@ -12,8 +12,8 @@ using spitifi.Data;
 namespace spitifi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250409110656_AlbumAlteracaoEosUtilizadores")]
-    partial class AlbumAlteracaoEosUtilizadores
+    [Migration("20250424161933_UpdateDBcomSeed2")]
+    partial class UpdateDBcomSeed2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,6 +49,20 @@ namespace spitifi.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "a",
+                            Name = "Administrador",
+                            NormalizedName = "ADMINISTRADOR"
+                        },
+                        new
+                        {
+                            Id = "ar",
+                            Name = "Artista",
+                            NormalizedName = "ARTISTA"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -138,6 +152,24 @@ namespace spitifi.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "admin",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "74ba1a90-2a32-4f7c-b2c2-4943e736b968",
+                            Email = "admin@mail.pt",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@MAIL.PT",
+                            NormalizedUserName = "ADMIN@MAIL.PT",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKnuuAaHO7eidpx98bpqE54fM+OMTbFRoU9Z07QzKjFNhwxrjWMJYSYFksdQoKf6mQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "fe7247a9-437b-4036-845a-547b8fc9e3d1",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@mail.pt"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -202,6 +234,13 @@ namespace spitifi.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "admin",
+                            RoleId = "a"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -369,6 +408,10 @@ namespace spitifi.Migrations
 
                     b.Property<string>("Foto")
                         .HasColumnType("longtext");
+
+                    b.Property<string>("IdentityUser")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("Username")
                         .HasColumnType("longtext");
