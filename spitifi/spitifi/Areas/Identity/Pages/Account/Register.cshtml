@@ -7,25 +7,40 @@
 <h1>@ViewData["Title"]</h1>
 
 <div class="row" style="background-color: #666666">
-    <div class="col-md-4">
+    <div class="col-md-4 flex-column">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <h2>Create a new account.</h2>
             <hr />
+            <h6>Nome de Utilizador</h6>
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Utilizador.Username" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <label asp-for="Input.Utilizador.Username">Nome de Utilizador</label>
+                <span asp-validation-for="Input.Utilizador.Username" class="text-danger"></span>
+            </div>
+            <h6>Email</h6>
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                 <label asp-for="Input.Email">Email</label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
+            <h6>Password</h6>
             <div class="form-floating mb-3">
                 <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
                 <label asp-for="Input.Password">Password</label>
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
+            <h6>Confirmar Password</h6>
             <div class="form-floating mb-3">
                 <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                <label asp-for="Input.ConfirmPassword">Confirme a Password</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="form-check">
+                <input asp-for="Input.Utilizador.IsArtista" type="checkbox" class="form-check-input"/>
+                <label class="form-check-label" asp-for="Input.Utilizador.IsArtista"> É um artista? </label>
+                <span asp-validation-for="Input.Utilizador.IsArtista" class="text-danger"></span>
             </div>
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>

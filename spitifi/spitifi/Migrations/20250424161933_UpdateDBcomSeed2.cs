@@ -12,13 +12,6 @@ namespace spitifi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { "ar", null, "Artista", "ARTISTA" }
-                });
         }
 
         /// <inheritdoc />

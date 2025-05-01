@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using spitifi.Data.DbModels;
 
 namespace spitifi.Data.DbModels;
@@ -22,6 +23,8 @@ public class Utilizadores
     public string Username { get; set; }
     
     public string Foto { get; set; }
+    
+    public bool IsArtista { get; set; }
     
     /// <summary>
     /// Lista das músicas em que o utilizador/artista colaborou
