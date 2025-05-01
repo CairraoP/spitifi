@@ -1,0 +1,7 @@
+* {
+    color: white;
+}
+
+::deep a {
+    color: white;
+}

@@ -82,18 +82,20 @@ namespace spitifi.Controllers
             //primeiro criaremos o album e a sua foto e depois as musicas
             if (ModelState.IsValid)
             {
+/*
                 foreach (var file in musicasNovas)
                 {
-                    if (!(file.ContentType == "audio/wav" || file.ContentType == "audio/mp3"))
+                    if (!file.ContentType.StartsWith("audio"))
                     {
+                        //If ContentType startswith "audio"
                         ModelState.AddModelError("",
                             "Uma ou mais músicas com extensão inválida, use .wav ou .mp3 por favor");
                         //Futuramente adicionar a PLayList
-                        ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "Nome", album.DonoFK);
+                        //ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Nome", album.DonoFK);
                         return View(album);
                     }
                 }
-
+*/
                 if (!(fotoAlbum.ContentType == "image/png" || fotoAlbum.ContentType == "image/jpeg"))
                 {
                     ModelState.AddModelError("", "Formato Inválido. Insira uma foto com formato JPEG ou PNG");

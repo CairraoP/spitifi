@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Details";
 }
-
+<body style="background-color: #666666">
 <h1>Details</h1>
 
 <div>
@@ -31,8 +31,8 @@
             {
                 <li class="flex-column">@musica.Nome</li>
                 <audio controls class="flex-column">
-                    <source src="@musica.FilePath" type="audio/wav">
-                    <source src="@musica.FilePath" type="audio/mp3">
+                    <source src="/@musica.FilePath" type="audio/wav">
+                    <source src="/@musica.FilePath" type="audio/mpeg">
                 </audio>
             }
         </dd>
@@ -42,3 +42,4 @@
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+</body>

@@ -4,53 +4,91 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Músicas</h1>
 
-<p>
-    <a asp-action="Create">Adicionar Música</a>
-</p>
-<table class="table">
+
+<table class="table" style="color:white">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th>
-                <a>Albúm</a>
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FilePath)
-            </th>
-            <th>
-                <a>Artista</a>
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+
+        <th>
+            <!-- Foto do album -->
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Nome)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Album.Titulo)
+        </th>
+        <th>Opções</th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
+    @foreach (var item in Model)
+    {
+        <tr data-song-name="@item.Nome"
+            data-album-art="@item.Album.Foto"
+            data-artist="@item.Dono.Username"
+            data-file-path="@item.FilePath">
             <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                <!--<a>@item.Album.Titulo</a>-->
+                <!--<a></a>-->
                 <img style="max-height: 100px; max-width: 100px" src="@item.Album.Foto"/>
             </td>
             <td>
-                <audio controls>
-                    <source src="@item.FilePath" type="audio/wav">
-                    <source src="@item.FilePath" type="audio/mp3">
-                </audio>
+                @Html.DisplayFor(modelItem => item.Nome)
+                <br/>
+                <span id="musicListArtistUsername">
+                @Html.DisplayFor(modelItem => item.Dono.Username)
+                </span>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Dono.Username)
+                @Html.DisplayFor(modelItem => @item.Album.Titulo)
             </td>
+
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('tbody tr');
+        const audioContainer = document.getElementById('audioContainer');
+
+        rows.forEach(row => {
+            row.addEventListener('click', function (event) {
+                // Ignore clicks on the audio player or its children
+                if (event.target.closest('audio')) return;
+
+                // Extract data attributes
+                const songName = row.dataset.songName;
+                const albumArt = row.dataset.albumArt;
+                const artist = row.dataset.artist;
+                const filePath = row.dataset.filePath;
+
+                // Update footer content
+                document.getElementById('footerSongName').textContent = songName;
+                document.getElementById('footerArtist').textContent = artist;
+                document.getElementById('footerAlbumArt').src = albumArt;
+
+                // Update audio player
+                const audioPlayer = document.getElementById('footerAudioPlayer');
+                audioPlayer.innerHTML = `
+                <source src="${filePath}" type="audio/wav">
+                <source src="${filePath}" type="audio/mp3">
+            `;
+                audioPlayer.load();
+
+                // Show the hidden footer container
+                audioContainer.style.display = 'flex'; // or 'flex' depending on your layout
+                audioContainer.classList.add('show');
+            });
+        });
+    });
+</script>
