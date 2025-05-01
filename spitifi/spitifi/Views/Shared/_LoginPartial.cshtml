@@ -10,17 +10,33 @@
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                <div>
+                    <!--<a href="https://www.flaticon.com/free-icons/logout" title="logout icons">Logout icons created by SumberRejeki - Flaticon</a>-->
+                    <img src="/assets/icons/logout.png" width="25" height="25">
+                    <button type="submit" class="nav-link btn btn-link" style="display: inline; color: white">Logout</button>
+                </div>
+                
             </form>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <div>
+                <!--<a href="https://www.flaticon.com/free-icons/add" title="add icons">Add icons created by Freepik - Flaticon</a>-->
+                <img src="/assets/icons/add-user.png" width="25" height="25">
+                <a class="nav-link" asp-area="Identity" asp-page="/Account/Register" style="display: inline; color: white">Register</a>
+            </div>
         </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        
+        <p></p>
+        
+            <li class="nav-item">
+            <div>
+                <!--<a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by Freepik - Flaticon</a>-->
+                <img src="/assets/icons/user.png" width="25" height="25">
+                <a class="nav-link" asp-area="Identity" asp-page="/Account/Login" style="display: inline; color: white">Login</a>
+            </div>
         </li>
     }
 </ul>

@@ -1,6 +1,14 @@
 ﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+* {
+  color: white;
+}
+
+#footerAlbumArt {
+  width: 100px;
+  height: 100px;
+}
 a.navbar-brand {
   white-space: normal;
   text-align: center;
@@ -8,22 +16,23 @@ a.navbar-brand {
 }
 
 a {
-  color: #0077cc;
+  color: #ffffff;
 }
 
 .btn-primary {
-  color: #fff;
+  color: white;
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
+  color: white;
+  background-color: #333333;
   border-color: #1861ac;
 }
 
 .border-top {
+  background-color: #666666 ;
   border-top: 1px solid #e5e5e5;
 }
 .border-bottom {
@@ -46,3 +55,16 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+#audioContainer {
+  transition: opacity 0.3s ease;
+  /* If you want a fade-in effect instead of instant show */
+  opacity: 0;
+  display: none !important;
+}
+
+#audioContainer.show {
+  opacity: 1;
+  display: flex !important;
+}
+

@@ -24,5 +24,14 @@
       <Folder Include="wwwroot\musicas\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Views\Musica\Index.cshtml.css">
+        <DependentUpon>Index.cshtml</DependentUpon>
+      </None>
+      <None Update="Views\Album\Index.cshtml.css">
+        <DependentUpon>Index.cshtml</DependentUpon>
+      </None>
+    </ItemGroup>
+
 
 </Project>

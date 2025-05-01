@@ -53,7 +53,7 @@ namespace spitifi.Controllers
         // GET: Musica/Create
         public IActionResult Create()
         {
-            ViewData["AlbumFK"] = new SelectList(_context.Album, "Id", "Nome");
+            ViewData["AlbumFK"] = new SelectList(_context.Album, "Id", "Titulo");
             ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Username");
             return View();
         }

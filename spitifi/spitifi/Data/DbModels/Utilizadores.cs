@@ -43,15 +43,5 @@ public class Utilizadores
     
     public List<Album> Albums { get; set; } = new List<Album>();
     
-    
-    /// <summary>
-    /// quais as playlists que o utilizador segue
-    /// </summary>
-    public ICollection<UtilizadorPlaylist> SeguePlaylist { get; set; } = [];
 
-    /// <summary>
-    /// Lista para facilitar a visibilidade sober quais as playlists que o utilizador tem/é dono
-    /// </summary>
-    [NotMapped]
-    public ICollection<Playlist> DonoPlaylists { get; set; } = [];
 }

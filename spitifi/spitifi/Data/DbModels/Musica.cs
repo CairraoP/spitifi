@@ -13,6 +13,7 @@ public class Musica
     /// <summary>
     /// Nome da Música
     /// </summary>
+    [Display(Name = "Título")]
     public string Nome { get; set; }
     
     /// <summary>
@@ -47,13 +48,6 @@ public class Musica
     /// </summary>
     public ICollection<Colabs> ListaColab { get; set; } = [];
     
-    /// <summary>
-    /// Lista de playlists onde aparece esta música
-    ///
-    /// NOTA: Este campo é/foi usado para a construção da tabela/relação Playlists-Musica
-    /// </summary>
-    public ICollection<Playlist> ListaMusica { get; set; } = [];
-
     /// <summary>
     /// Relação N-M sem participação obrigatória de nenhum dos lados
     /// 
