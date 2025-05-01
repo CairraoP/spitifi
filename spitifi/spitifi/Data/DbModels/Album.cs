@@ -10,7 +10,9 @@ public class Album
     
     [Display(Name = "Albúm")]
     public string Titulo { get; set; }
+    
     public string Foto { get; set; }
+    
     
     [Display(Name = "Artista")]
     [ForeignKey(nameof(Dono))]

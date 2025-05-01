@@ -1,0 +1,8 @@
+* {
+    color: white;
+}
+
+::deep a {
+    color: white;
+    text-decoration: none;
+}

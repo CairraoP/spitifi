@@ -82,6 +82,7 @@ namespace spitifi.Controllers
             //primeiro criaremos o album e a sua foto e depois as musicas
             if (ModelState.IsValid)
             {
+/*
                 foreach (var file in musicasNovas)
                 {
                     if (!(file.ContentType == "audio/wav" || file.ContentType == "audio/mp3"))
@@ -93,7 +94,7 @@ namespace spitifi.Controllers
                         return View(album);
                     }
                 }
-
+*/
                 if (!(fotoAlbum.ContentType == "image/png" || fotoAlbum.ContentType == "image/jpeg"))
                 {
                     ModelState.AddModelError("", "Formato Inválido. Insira uma foto com formato JPEG ou PNG");

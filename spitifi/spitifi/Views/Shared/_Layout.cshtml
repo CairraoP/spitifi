@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -8,18 +10,79 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/spitifi.styles.css" asp-append-version="true"/>
 </head>
-<body>
-<div class="sidenav">
+<body style="background-color: #666666; color: #ffffff">
+<div class="sidenav" style="background-color: #333333">
     <div class="container-fluid">
-        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">spitifi</a>
+        <div>
+            <!--<a href="https://www.flaticon.com/free-icons/spotify-sketch" title="spotify sketch icons">Spotify sketch icons created by Pixel perfect - Flaticon</a>-->
+            <img src="/assets/icons/spotify.png" width="25" height="25">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="display: inline; color: #ffffff">Spitifi</a>
+        </div>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
         </button>
         <div class="flex-column">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-            <a class="nav-link text-dark" asp-area="" asp-controller="Musica" asp-action="Index">Musica</a>
-            <a class="nav-link text-dark" asp-area="" asp-controller="Utilizadores" asp-action="Index">Utilizadores</a>
-            <a class="nav-link text-dark" asp-area="" asp-controller="Album" asp-action="Index">Album</a>
+            <p></p>
+            <div>
+                <!--<a href="https://www.flaticon.com/free-icons/explore" title="explore icons">Explore icons created by Graphics Plazza - Flaticon</a>-->
+                <img src="/assets/icons/music.png" width="25" height="25">
+                <a class="nav-link" asp-area="" asp-controller="Musica" asp-action="Index" style="display: inline; color: #ffffff">Mostrar Musicas</a>
+            </div>
+
+            <p></p>
+
+            <div>
+                <!--<a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by Elite Art - Flaticon</a>-->
+                <img src="/assets/icons/playlist.png" width="25" height="25">
+                <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Index" style="display: inline; color: white">Mostrar Albums</a>
+            </div>
+
+            <p></p>
+            
+            <hr />
+            
+            <p></p>
+            
+            <div>
+                <!--<a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by Graphics Plazza - Flaticon</a>-->
+                <img src="/assets/icons/addMusic.png" width="25" height="25">
+                <a class="nav-link" asp-area="" asp-controller="Musica" asp-action="Create" style="display: inline;color: white">Publicar Musica</a>
+            </div>
+            
+            <p></p>
+            
+            <div>
+                <!--<a href="https://www.flaticon.com/free-icons/add-to-playlist" title="add to playlist icons">Add to playlist icons created by Elite Art - Flaticon</a>-->
+                <img src="/assets/icons/add-to-playlist.png" width="25" height="25">
+                <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Create" style="display: inline;color: white">Criar Album</a>
+            </div>
+            
+            
+            <p></p>
+
+            <hr />
+
+            <p></p>
+            
+            @{
+                var currentUser = await UserManager.GetUserAsync(User);
+                var isLoggedIn = currentUser != null;
+                var isAdmin = isLoggedIn && await UserManager.IsInRoleAsync(currentUser, "Administrador");
+            }
+            
+            @if (isAdmin)
+            {
+                <p></p><p></p><p></p>
+                <div>
+                    <img src="/assets/icons/search.png" width="25" height="25">
+                    <a class="nav-link " asp-area="" asp-controller="Utilizadores" asp-action="Index" style="display: inline;color: white">Utilizadores</a>
+                </div>
+            }
+
+            <p></p>
+
+
+
             <partial name="_LoginPartial"/>
         </div>
     </div>
