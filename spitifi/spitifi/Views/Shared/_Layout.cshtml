@@ -16,9 +16,11 @@
         <div>
             <!--<a href="https://www.flaticon.com/free-icons/spotify-sketch" title="spotify sketch icons">Spotify sketch icons created by Pixel perfect - Flaticon</a>-->
             <img src="/assets/icons/spotify.png" width="25" height="25">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="display: inline; color: #ffffff">Spitifi</a>
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"
+               style="display: inline; color: #ffffff; ">Spitifi</a>
         </div>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
         </button>
         <div class="flex-column">
@@ -26,7 +28,8 @@
             <div>
                 <!--<a href="https://www.flaticon.com/free-icons/explore" title="explore icons">Explore icons created by Graphics Plazza - Flaticon</a>-->
                 <img src="/assets/icons/music.png" width="25" height="25">
-                <a class="nav-link" asp-area="" asp-controller="Musica" asp-action="Index" style="display: inline; color: #ffffff">Mostrar Musicas</a>
+                <a class="nav-link" asp-area="" asp-controller="Musica" asp-action="Index"
+                   style="display: inline; color: #ffffff">Mostrar Musicas</a>
             </div>
 
             <p></p>
@@ -34,48 +37,54 @@
             <div>
                 <!--<a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by Elite Art - Flaticon</a>-->
                 <img src="/assets/icons/playlist.png" width="25" height="25">
-                <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Index" style="display: inline; color: white">Mostrar Albums</a>
+                <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Index"
+                   style="display: inline; color: white">Mostrar Albums</a>
             </div>
 
             <p></p>
-            
-            <hr />
-            
+
+            <hr/>
+
             <p></p>
-            
+
             <div>
                 <!--<a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by Graphics Plazza - Flaticon</a>-->
                 <img src="/assets/icons/addMusic.png" width="25" height="25">
-                <a class="nav-link" asp-area="" asp-controller="Musica" asp-action="Create" style="display: inline;color: white">Publicar Musica</a>
+                <a class="nav-link" asp-area="" asp-controller="Musica" asp-action="Create"
+                   style="display: inline;color: white">Publicar Musica</a>
             </div>
-            
+
             <p></p>
-            
+
             <div>
                 <!--<a href="https://www.flaticon.com/free-icons/add-to-playlist" title="add to playlist icons">Add to playlist icons created by Elite Art - Flaticon</a>-->
                 <img src="/assets/icons/add-to-playlist.png" width="25" height="25">
-                <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Create" style="display: inline;color: white">Criar Album</a>
+                <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Create"
+                   style="display: inline;color: white">Criar Album</a>
             </div>
-            
-            
-            <p></p>
 
-            <hr />
 
             <p></p>
-            
+
+            <hr/>
+
+            <p></p>
+
             @{
                 var currentUser = await UserManager.GetUserAsync(User);
                 var isLoggedIn = currentUser != null;
                 var isAdmin = isLoggedIn && await UserManager.IsInRoleAsync(currentUser, "Administrador");
             }
-            
+
             @if (isAdmin)
             {
-                <p></p><p></p><p></p>
+                <p></p>
+                <p></p>
+                <p></p>
                 <div>
                     <img src="/assets/icons/search.png" width="25" height="25">
-                    <a class="nav-link " asp-area="" asp-controller="Utilizadores" asp-action="Index" style="display: inline;color: white">Utilizadores</a>
+                    <a class="nav-link " asp-area="" asp-controller="Utilizadores" asp-action="Index"
+                       style="display: inline;color: white">Utilizadores</a>
                 </div>
             }
 
@@ -94,9 +103,18 @@
     </main>
 </div>
 
+<!-- In _Layout.cshtml -->
 <footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2025 - spitifi - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <div id="audioContainer" class="container" style="background-color: #666666; display: none;">
+        <img id="footerAlbumArt" src="" alt="Album Art"/>
+        <div>
+            <div id="footerSongName"></div>
+            <div id="footerArtist"></div>
+        </div>
+        <audio id="footerAudioPlayer" controls>
+            <!-- Audio sources will be added dynamically -->
+        </audio>
+        
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>

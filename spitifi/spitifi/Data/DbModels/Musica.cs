@@ -13,6 +13,7 @@ public class Musica
     /// <summary>
     /// Nome da Música
     /// </summary>
+    [Display(Name = "Título")]
     public string Nome { get; set; }
     
     /// <summary>

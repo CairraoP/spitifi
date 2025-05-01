@@ -5,6 +5,10 @@ for details on configuring this project to bundle and minify static web assets. 
   color: white;
 }
 
+#footerAlbumArt {
+  width: 100px;
+  height: 100px;
+}
 a.navbar-brand {
   white-space: normal;
   text-align: center;
@@ -28,6 +32,7 @@ a {
 }
 
 .border-top {
+  background-color: #666666 ;
   border-top: 1px solid #e5e5e5;
 }
 .border-bottom {
@@ -50,3 +55,16 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+#audioContainer {
+  transition: opacity 0.3s ease;
+  /* If you want a fade-in effect instead of instant show */
+  opacity: 0;
+  display: none !important;
+}
+
+#audioContainer.show {
+  opacity: 1;
+  display: flex !important;
+}
+

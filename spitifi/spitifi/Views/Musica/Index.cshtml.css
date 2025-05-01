@@ -6,3 +6,20 @@
     color: white;
     text-decoration: none;
 }
+
+tbody tr {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+td {
+    border: none;
+}
+
+tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#musicListArtistUsername {
+    color: #7A7A7A;
+}
