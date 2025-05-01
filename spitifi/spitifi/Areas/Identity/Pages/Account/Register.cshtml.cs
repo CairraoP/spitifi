@@ -34,7 +34,7 @@ namespace spitifi.Areas.Identity.Pages.Account
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly ICustomMailer _mailer;
         private readonly ApplicationDbContext _context;
 
         public RegisterModel(
@@ -42,7 +42,7 @@ namespace spitifi.Areas.Identity.Pages.Account
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,
+            ICustomMailer mailer,
             ApplicationDbContext context)
         {
             _userManager = userManager;
@@ -50,7 +50,8 @@ namespace spitifi.Areas.Identity.Pages.Account
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
-            _emailSender = emailSender;
+            //Importar e usar a interface definida para o envio do Email de confirmação
+            _mailer = mailer;
             _context = context;
         }
 
@@ -106,11 +107,6 @@ namespace spitifi.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-            
-            [Required]
-            [BindProperty]
-            [Display(Name = "É artista?")]
-            public bool IsArtista { get; set; }
 
             public Utilizadores Utilizador { get; set; }
         }
@@ -154,8 +150,8 @@ namespace spitifi.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                     _mailer.SendEmail(Input.Email, "Email de Confirmação",
+                        $"Por favor clique <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>aqui</a>. para confirmar o seu email");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
