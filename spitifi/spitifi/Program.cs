@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using spitifi.Areas.Identity.Pages.Account;
 using spitifi.Data;
+using spitifi.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,11 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddTransient<ICustomMailer, EmailSender>();
+//
+//Definir variavel/variaveis de configuração
+builder.Services.Configure<EmailSenderConfigModel>(builder.Configuration.GetSection("EmailConf"));
+
+builder.Services.AddTransient<ICustomMailer, CustomMailer>();
 builder.Services.AddControllersWithViews();
 
 

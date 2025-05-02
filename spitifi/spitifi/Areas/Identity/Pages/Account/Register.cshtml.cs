@@ -23,6 +23,7 @@ using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Extensions.Logging;
 using spitifi.Data;
 using spitifi.Data.DbModels;
+using spitifi.Services.Email;
 using Document = Microsoft.CodeAnalysis.Document;
 
 namespace spitifi.Areas.Identity.Pages.Account
