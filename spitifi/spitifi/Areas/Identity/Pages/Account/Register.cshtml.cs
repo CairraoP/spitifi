@@ -87,6 +87,7 @@ namespace spitifi.Areas.Identity.Pages.Account
             /// </summary>
             [Required]
             [EmailAddress]
+            [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{1,4}$")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
@@ -95,9 +96,9 @@ namespace spitifi.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "A {0} tem de ter no mínimo {2} e no máximo {1} caracteres.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
+            [Display(Name = "Palavra-Passe")]
             public string Password { get; set; }
 
             /// <summary>
@@ -106,7 +107,7 @@ namespace spitifi.Areas.Identity.Pages.Account
             /// </summary>
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Compare("Password", ErrorMessage = "As Palavras-Passe não conrrespondem.")]
             public string ConfirmPassword { get; set; }
 
             public Utilizadores Utilizador { get; set; }
@@ -133,7 +134,7 @@ namespace spitifi.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    _logger.LogInformation("Utilizador criou uma conta.");
                     var utilizador = new Utilizadores
                     {
                         Username = Input.Utilizador.Username,

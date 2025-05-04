@@ -22,7 +22,7 @@
                 <h6>Palavra-Passe</h6>
                 <div class="form-floating mb-3">
                     <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label asp-for="Input.Password" class="form-label">Password</label>
+                    <label asp-for="Input.Password" class="form-label">Palavra-Passe</label>
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
                 <div class="checkbox mb-3">
@@ -35,7 +35,7 @@
                     <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
                 </div>
                 <div>
-                    <p>
+                    <p> 
                         <a id="forgot-password" asp-page="./ForgotPassword">Esqueceu-se da palavra-passe?</a>
                     </p>
                     <p>

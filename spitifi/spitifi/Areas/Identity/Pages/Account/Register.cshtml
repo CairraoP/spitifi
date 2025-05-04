@@ -1,7 +1,7 @@
 ﻿@page
 @model RegisterModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Registar";
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -9,7 +9,7 @@
 <div class="row" style="background-color: #666666">
     <div class="col-md-4 flex-column">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
+            <h2>Criar uma nova conta.</h2>
             <hr />
             <h6>Nome de Utilizador</h6>
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
@@ -25,16 +25,16 @@
                 <label asp-for="Input.Email">Email</label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
-            <h6>Password</h6>
+            <h6>Palavra-Passe</h6>
             <div class="form-floating mb-3">
                 <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Password</label>
+                <label asp-for="Input.Password">Palavra-Passe</label>
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
-            <h6>Confirmar Password</h6>
+            <h6>Confirmar Palavra-Passe</h6>
             <div class="form-floating mb-3">
                 <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirme a Password</label>
+                <label asp-for="Input.ConfirmPassword">Confirme a Palavra-Passe</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
             <div class="form-check">
@@ -42,7 +42,7 @@
                 <label class="form-check-label" asp-for="Input.Utilizador.IsArtista"> É um artista? </label>
                 <span asp-validation-for="Input.Utilizador.IsArtista" class="text-danger"></span>
             </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Registar</button>
         </form>
     </div>
 </div>
