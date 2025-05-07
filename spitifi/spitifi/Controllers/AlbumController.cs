@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -46,9 +46,11 @@ namespace spitifi.Controllers
         }
 
         // GET: Album/Create
+        // TO DO - Alterar/Criar novo metodo de Create para os Users, Este ou fica para os artistas ou altera-se
+        [Authorize]
         public IActionResult Create()
         {
-            ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Username");
+            ViewData["DonoFK"] = User.Identity.Name;
             return View();
         }
 
@@ -62,14 +64,13 @@ namespace spitifi.Controllers
             //ModelState.Remove("DonoFK");
             //variaveis para validações
             var utilizador = _context.Utilizadores.Where(u => u.Id == album.DonoFK);
-            //var albumValidacao = _context.Album.Where(a => a.Id == musica.AlbumFK);
-
+            
             bool haImagem = false;
             string nomeImagem = "";
             string nomeMusica = "";
 
-            //var fotoAux = _context.Album.FirstOrDefault(a=>a.Id == album.Id);
-            //album.Foto = fotoAux.Foto;
+            var fotoAux = _context.Album.FirstOrDefault(a=>a.Id == album.Id);
+            album.Foto = fotoAux.Foto;
 
             if (!utilizador.Any())
             {
@@ -82,20 +83,18 @@ namespace spitifi.Controllers
             //primeiro criaremos o album e a sua foto e depois as musicas
             if (ModelState.IsValid)
             {
-/*
                 foreach (var file in musicasNovas)
                 {
                     if (!file.ContentType.StartsWith("audio"))
                     {
-                        //If ContentType startswith "audio"
                         ModelState.AddModelError("",
                             "Uma ou mais músicas com extensão inválida, use .wav ou .mp3 por favor");
-                        //Futuramente adicionar a PLayList
-                        //ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Nome", album.DonoFK);
+                        //Fazer a associação do Username por meio do Email do campo Identity User, ignorar a linha 93, alterá-la depois
+                        ViewData["DonoFK"] = User.Identity.Name.Split("@").First();
                         return View(album);
                     }
                 }
-*/
+                
                 if (!(fotoAlbum.ContentType == "image/png" || fotoAlbum.ContentType == "image/jpeg"))
                 {
                     ModelState.AddModelError("", "Formato Inválido. Insira uma foto com formato JPEG ou PNG");
@@ -141,8 +140,6 @@ namespace spitifi.Controllers
                         nomeMusica = g.ToString();
                         string extensaoMusica = Path.GetExtension(formFile.FileName).ToLowerInvariant();
                         nomeMusica += extensaoMusica;
-                        // guardar o nome do ficheiro na BD
-                        //nomeMusica += "imagens/" + nomeMusica;
                         // vai construir o path para o diretório onde são guardadas as imagens
                         var filePathMusica = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/musicas");
 

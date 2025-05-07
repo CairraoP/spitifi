@@ -20,7 +20,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\imagens\" />
+      <Folder Include="Migrations\" />
+      <Folder Include="wwwroot\imagens\utilizadores\" />
       <Folder Include="wwwroot\musicas\" />
     </ItemGroup>
 
