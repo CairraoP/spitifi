@@ -38,8 +38,8 @@ public class ApplicationDbContext : IdentityDbContext
                 Email = "admin@mail.pt",
                 NormalizedEmail = "ADMIN@MAIL.PT",
                 EmailConfirmed = true,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                ConcurrencyStamp = Guid.NewGuid().ToString(),
+                SecurityStamp = "29c12eb3-07f7-4cd8-a5d2-ab4e40e6d064",
+                ConcurrencyStamp = "4f58a2a5-5148-48f6-bc1c-74cae86a2172",
                 PasswordHash = hasher.HashPassword(null, "Aa0_aa")
             },
             new IdentityUser
@@ -50,8 +50,8 @@ public class ApplicationDbContext : IdentityDbContext
                 Email = "jonas@mail.pt",
                 NormalizedEmail = "JONAS@MAIL.PT",
                 EmailConfirmed = true,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                ConcurrencyStamp = Guid.NewGuid().ToString(),
+                SecurityStamp = "99c12eb3-07f7-4cd8-a5d2-ab4e40e6d064",
+                ConcurrencyStamp = "9f58a2a5-5148-48f6-bc1c-74cae86a2172",
                 PasswordHash = hasher.HashPassword(null, "Bb0_bb")
             }
         );
@@ -65,6 +65,5 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Gostos> Gostos { get; set; }
     public DbSet<Musica> Musica { get; set; }
     public DbSet<Utilizadores> Utilizadores { get; set; }
-    public DbSet<Colabs> Colabs { get; set; }
     public DbSet<Album> Album { get; set; }
 }

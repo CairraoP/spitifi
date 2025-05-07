@@ -138,7 +138,7 @@ namespace spitifi.Areas.Identity.Pages.Account
                     var utilizador = new Utilizadores
                     {
                         Username = Input.Utilizador.Username,
-                        IsArtista = Input.Utilizador.IsArtista
+                        //IsArtista = Input.Utilizador.IsArtista
                     };
                     _context.Add(utilizador);
                     _context.SaveChanges();
