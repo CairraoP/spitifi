@@ -46,6 +46,26 @@ namespace spitifi.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "a",
+                            Name = "Administrador",
+                            NormalizedName = "ADMINISTRADOR"
+                        },
+                        new
+                        {
+                            Id = "ar",
+                            Name = "Artista",
+                            NormalizedName = "ARTISTA"
+                        },
+                        new
+                        {
+                            Id = "user",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -135,6 +155,40 @@ namespace spitifi.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "admin",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "be271d4d-244f-4467-aafa-c78872a66c19",
+                            Email = "admin@mail.pt",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@MAIL.PT",
+                            NormalizedUserName = "ADMIN@MAIL.PT",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMYxz+8BsfYncb9jyxbcFLEn4nm11JIq7SC+lIgNo/vH9MBCKL2AQn7jd+tCASBBiw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "d7d8d738-47f9-4e54-990a-77b6124bcdc1",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@mail.pt"
+                        },
+                        new
+                        {
+                            Id = "jonas",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "81a6a2a1-569b-4b3e-8436-d898a6079e0f",
+                            Email = "jonas@mail.pt",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "JONAS@MAIL.PT",
+                            NormalizedUserName = "JONAS@MAIL.PT",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPn6AwZvPEMV/lr1fUCQNbbC0MV7UfVpSttw7CJMHB0HO3+nUz9IeLOC2vtvNMotQw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "3236e72b-a054-437e-a993-d44b2d0b382d",
+                            TwoFactorEnabled = false,
+                            UserName = "jonas@mail.pt"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -199,6 +253,18 @@ namespace spitifi.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "admin",
+                            RoleId = "a"
+                        },
+                        new
+                        {
+                            UserId = "jonas",
+                            RoleId = "user"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

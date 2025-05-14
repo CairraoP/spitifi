@@ -13,7 +13,7 @@ namespace spitifi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+         /*   migrationBuilder.DropTable(
                 name: "MusicaPlaylist");
 
             migrationBuilder.DropTable(
@@ -21,13 +21,13 @@ namespace spitifi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Playlist");
-
             migrationBuilder.AddColumn<bool>(
                 name: "IsArtista",
                 table: "Utilizadores",
                 type: "tinyint(1)",
                 nullable: false,
                 defaultValue: false);
+        */
         }
 
         /// <inheritdoc />
