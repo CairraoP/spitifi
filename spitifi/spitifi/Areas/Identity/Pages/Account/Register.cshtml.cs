@@ -197,6 +197,7 @@ namespace spitifi.Areas.Identity.Pages.Account
                         var utilizador = new Utilizadores
                         {
                             Username = Input.Utilizador.Username,
+                            IdentityUser = user.Id,
                             IsArtista = Input.Utilizador.IsArtista,
                             Foto = fotoUser
                         };
