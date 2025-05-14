@@ -6,7 +6,7 @@ namespace spitifi.Data.DbModels;
 public class Musica
 {
     /// <summary>
-    /// chave prmária auto-increment
+    /// identificador da música
     /// </summary>
     public int Id { get; set; }
     
@@ -14,6 +14,8 @@ public class Musica
     /// Nome da Música
     /// </summary>
     [Display(Name = "Título")]
+    [Required(ErrorMessage = "A Música é de preenchimento obrigatório.")]
+    [StringLength(255)] 
     public string Nome { get; set; }
     
     /// <summary>
@@ -32,28 +34,32 @@ public class Musica
     [Display(Name = "Música")]
     public string FilePath { get; set; }
     
+    
+    /* *************************
+     * Definção dos relacionamentos
+     * **************************
+     */
+    
     /// <summary>
     /// FK para a classe "Utilizadores"
     /// </summary>
     [Display(Name = "Artista")]
     [ForeignKey(nameof(Dono))]
     public int DonoFK { get; set; }
-    /*
-     * Relação 1 - N com participação obrigatória do lado N
-     */
+    
+    
+    /// <summary>
+    /// Dono da fotografia
+    /// </summary>
     public Utilizadores Dono { get; set; }
     
     /// <summary>
-    /// Lista de utilizadores que colaboraram numa música
+    /// Lista de utilizadores que colaboraram na música
     /// </summary>
     public ICollection<Colabs> ListaColab { get; set; } = [];
     
     /// <summary>
-    /// Relação N-M sem participação obrigatória de nenhum dos lados
-    /// 
-    /// Lista de utilizadores que gostaram desta música
-    ///
-    /// NOTA: Este ICollection é/foi usado para a construção da tabela/relação N-M Utilizadores-Música
+    /// Lista de utilizadores que gostaram da música
     /// </summary>
     public ICollection<Gostos> ListaGostos { get; set; } = [];
 }

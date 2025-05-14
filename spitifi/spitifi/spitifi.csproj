@@ -21,7 +21,7 @@
 
     <ItemGroup>
       <Folder Include="Migrations\" />
-      <Folder Include="wwwroot\imagens\" />
+      <Folder Include="wwwroot\imagens\utilizadores\" />
       <Folder Include="wwwroot\musicas\" />
     </ItemGroup>
 

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using spitifi.Areas.Identity.Pages.Account;
 using spitifi.Data;
 using spitifi.Services.Email;
+using spitifi.Data.DbInitializerDev;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +35,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
-    //app.UseItToSeedSqlServer();
+    app.UseItToSeedSqlServer();
 }
 else
 {

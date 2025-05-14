@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model RegisterModel
 @{
     ViewData["Title"] = "Registar";
@@ -8,7 +8,7 @@
 
 <div class="row" style="background-color: #666666">
     <div class="col-md-4 flex-column">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
             <h2>Criar uma nova conta.</h2>
             <hr />
             <h6>Nome de Utilizador</h6>
@@ -34,12 +34,18 @@
             <h6>Confirmar Palavra-Passe</h6>
             <div class="form-floating mb-3">
                 <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirme a Palavra-Passe</label>
+                <label asp-for="Input.ConfirmPassword" class="text-black">Confirme a Palavra-Passe</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
+            <h6>Foto de Perfil</h6>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Logo" type ="file" class="form-control" />
+                <label class="text-black"></label>
+                <span asp-validation-for="Input.Logo" class="text-danger"></span>
+            </div>
             <div class="form-check">
-                <input asp-for="Input.Utilizador.IsArtista" type="checkbox" class="form-check-input"/>
-                <label class="form-check-label" asp-for="Input.Utilizador.IsArtista"> É um artista? </label>
+                <input type="checkbox" class="form-check-input"/>
+                <label class="form-check-label " asp-for="Input.Utilizador.IsArtista"> É um artista? </label>
                 <span asp-validation-for="Input.Utilizador.IsArtista" class="text-danger"></span>
             </div>
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Registar</button>
