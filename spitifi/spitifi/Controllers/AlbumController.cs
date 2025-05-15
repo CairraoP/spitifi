@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace spitifi.Controllers
     public class AlbumController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public AlbumController(ApplicationDbContext context)
+        public AlbumController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Album
@@ -50,7 +53,9 @@ namespace spitifi.Controllers
         [Authorize]
         public IActionResult Create()
         {
-            ViewData["DonoFK"] = User.Identity.Name;
+            var userId = _userManager.GetUserId(User);
+            ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId).Username;
+            //ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Username");
             return View();
         }
 
@@ -69,8 +74,8 @@ namespace spitifi.Controllers
             string nomeImagem = "";
             string nomeMusica = "";
 
-            var fotoAux = _context.Album.FirstOrDefault(a=>a.Id == album.Id);
-            album.Foto = fotoAux.Foto;
+            //var fotoAux = _context.Album.FirstOrDefault(a=>a.Id == album.Id);
+            //album.Foto = fotoAux.Foto;
 
             if (!utilizador.Any())
             {
