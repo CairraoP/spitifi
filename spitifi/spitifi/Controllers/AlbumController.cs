@@ -95,7 +95,7 @@ namespace spitifi.Controllers
                         ModelState.AddModelError("",
                             "Uma ou mais músicas com extensão inválida, use .wav ou .mp3 por favor");
                         //Fazer a associação do Username por meio do Email do campo Identity User, ignorar a linha 93, alterá-la depois
-                        ViewData["DonoFK"] = User.Identity.Name.Split("@").First();
+                        //ViewData["DonoFK"] = User.Identity.Name.Split("@").First();
                         return View(album);
                     }
                 }
