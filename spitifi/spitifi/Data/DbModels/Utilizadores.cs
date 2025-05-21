@@ -45,6 +45,4 @@ public class Utilizadores
     public string? IdentityUser { get; set; }
     
     public List<Album> Albums { get; set; } = new List<Album>();
-    
-
 }
