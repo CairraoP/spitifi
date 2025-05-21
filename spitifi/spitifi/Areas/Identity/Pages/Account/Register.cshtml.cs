@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto.Engines;
 using spitifi.Data;
@@ -202,7 +203,11 @@ namespace spitifi.Areas.Identity.Pages.Account
                         };
                         _context.Add(utilizador);
                         _context.SaveChanges();
-
+                        
+                        if(Input.Utilizador.IsArtista){
+                            _userManager.AddToRoleAsync(user, "Artista").Wait();
+                        }
+                        
                         var userId = await _userManager.GetUserIdAsync(user);
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
