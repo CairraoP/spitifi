@@ -36,6 +36,12 @@ public class Utilizadores
     [StringLength(50)]
     public string? IdentityUser { get; set; }
     
+    /// <summary>
+    /// utilizador á um artista
+    /// </summary>
+    [Display(Name = "Artista?")]
+    public bool IsArtista { get; set; }
+    
     /* *************************
      * Definção dos relacionamentos
      * **************************
