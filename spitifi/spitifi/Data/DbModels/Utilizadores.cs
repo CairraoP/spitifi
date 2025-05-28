@@ -60,6 +60,4 @@ public class Utilizadores
     /// Albúms criados pelo Utilizador
     /// </summary>
     public List<Album> Albums { get; set; } = new List<Album>();
-    
-
 }

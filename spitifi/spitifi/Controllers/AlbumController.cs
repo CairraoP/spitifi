@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace spitifi.Controllers
     public class AlbumController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public AlbumController(ApplicationDbContext context)
+        public AlbumController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Album
@@ -42,37 +45,43 @@ namespace spitifi.Controllers
             {
                 return NotFound();
             }
+
             return View(album);
         }
 
         // GET: Album/Create
+        // Confirmar qual o nome da role para um artista
         // TO DO - Alterar/Criar novo metodo de Create para os Users, Este ou fica para os artistas ou altera-se
         [Authorize]
         public IActionResult Create()
         {
-            ViewData["DonoFK"] = User.Identity.Name;
+            var userId = _userManager.GetUserId(User);
+            ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId).Username;
             return View();
         }
 
         // POST: Album/Create
         //
         [HttpPost]
+        [Authorize(Roles = "artista")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Titulo, DonoFK")] Album album, [Bind("Nome")] Musica musica,
+        public async Task<IActionResult> Create([Bind("Id,Titulo")] Album album, [Bind("Nome")] Musica musica,
             IFormFile fotoAlbum, List<IFormFile> musicasNovas)
         {
             //ModelState.Remove("DonoFK");
             //variaveis para validações
-            var utilizador = _context.Utilizadores.Where(u => u.Id == album.DonoFK);
-            
+
+            var utilizadorAux = _context.Users.First(au => au.UserName == User.Identity.Name);
+            var utlizador = _context.Utilizadores.Where(u => u.IdentityUser == utilizadorAux.Id);
+
             bool haImagem = false;
             string nomeImagem = "";
             string nomeMusica = "";
 
-            var fotoAux = _context.Album.FirstOrDefault(a=>a.Id == album.Id);
-            album.Foto = fotoAux.Foto;
+            //var fotoAux = _context.Album.FirstOrDefault(a=>a.Id == album.Id);
+            //album.Foto = fotoAux.Foto;
 
-            if (!utilizador.Any())
+            if (!utlizador.Any())
             {
                 ModelState.AddModelError("DonoFK", "Alteração incorreta do Dono");
             }
@@ -83,96 +92,134 @@ namespace spitifi.Controllers
             //primeiro criaremos o album e a sua foto e depois as musicas
             if (ModelState.IsValid)
             {
-                foreach (var file in musicasNovas)
+                List<string> arrayPathMusicas = new List<string>();
+                var fotoDeleteAlbum = "";
+
+                try
                 {
-                    if (!file.ContentType.StartsWith("audio"))
+                    album.DonoFK = utlizador.First().Id;
+
+                    foreach (var file in musicasNovas)
                     {
-                        ModelState.AddModelError("",
-                            "Uma ou mais músicas com extensão inválida, use .wav ou .mp3 por favor");
-                        //Fazer a associação do Username por meio do Email do campo Identity User, ignorar a linha 93, alterá-la depois
-                        ViewData["DonoFK"] = User.Identity.Name.Split("@").First();
-                        return View(album);
-                    }
-                }
-                
-                if (!(fotoAlbum.ContentType == "image/png" || fotoAlbum.ContentType == "image/jpeg"))
-                {
-                    ModelState.AddModelError("", "Formato Inválido. Insira uma foto com formato JPEG ou PNG");
-                }
-                else
-                {
-                    haImagem = true;
-                    // gerar nome imagem
-                    Guid g = Guid.NewGuid();
-                    // atrás do nome adicionamos a pasta onde a escrevemos
-                    nomeImagem = g.ToString();
-                    string extensaoImagem = Path.GetExtension(fotoAlbum.FileName).ToLowerInvariant();
-                    nomeImagem += extensaoImagem;
-                    // guardar o nome do ficheiro na BD
-                    album.Foto = "imagens/" + nomeImagem;
-                }
-
-                // se existe uma imagem para escrever no disco
-                if (haImagem)
-                {
-                    // vai construir o path para o diretório onde são guardadas as imagens
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/imagens");
-
-                    // antes de escrevermos o ficheiro, vemos se o diretório existe
-                    if (!Directory.Exists(filePath))
-                        Directory.CreateDirectory(filePath);
-
-                    // atualizamos o Path para incluir o nome da imagem
-                    filePath = Path.Combine(filePath, nomeImagem);
-
-                    // escreve a imagem
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await fotoAlbum.CopyToAsync(fileStream);
+                        if (!file.ContentType.StartsWith("audio"))
+                        {
+                            ModelState.AddModelError("",
+                                "Uma ou mais músicas com extensão inválida, use .wav ou .mp3 por favor");
+                            var userId = _userManager.GetUserId(User);
+                            ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId)
+                                .Username;
+                            return View();
+                        }
                     }
 
-                    //Criação das músicas
-                    foreach (var formFile in musicasNovas)
+                    if (!(fotoAlbum.ContentType == "image/png" || fotoAlbum.ContentType == "image/jpeg"))
                     {
+                        ModelState.AddModelError("", "Formato Inválido. Insira uma foto com formato JPEG ou PNG");
+                        var userId = _userManager.GetUserId(User);
+                        ViewData["DonoNome"] =
+                            _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId).Username;
+                        return View();
+                    }
+
+                    {
+                        haImagem = true;
                         // gerar nome imagem
                         Guid g = Guid.NewGuid();
                         // atrás do nome adicionamos a pasta onde a escrevemos
-                        nomeMusica = g.ToString();
-                        string extensaoMusica = Path.GetExtension(formFile.FileName).ToLowerInvariant();
-                        nomeMusica += extensaoMusica;
+                        nomeImagem = g.ToString();
+                        string extensaoImagem = Path.GetExtension(fotoAlbum.FileName).ToLowerInvariant();
+                        nomeImagem += extensaoImagem;
+                        // guardar o nome do ficheiro na BD
+                        album.Foto = "imagens/" + nomeImagem;
+                    }
+
+                    // se existe uma imagem para escrever no disco
+                    if (haImagem)
+                    {
                         // vai construir o path para o diretório onde são guardadas as imagens
-                        var filePathMusica = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/musicas");
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/imagens");
 
                         // antes de escrevermos o ficheiro, vemos se o diretório existe
-                        if (!Directory.Exists(filePathMusica))
-                            Directory.CreateDirectory(filePathMusica);
+                        if (!Directory.Exists(filePath))
+                            Directory.CreateDirectory(filePath);
 
                         // atualizamos o Path para incluir o nome da imagem
-                        filePathMusica = Path.Combine(filePathMusica, nomeMusica);
+                        filePath = Path.Combine(filePath, nomeImagem);
+                        //guardar o caminho da imagem para caso algo corra mal, possamos eliminar a foto da bd no nosso bloco de catch
+                        fotoDeleteAlbum = filePath;
 
                         // escreve a imagem
-                        using (var fileStream = new FileStream(filePathMusica, FileMode.Create))
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
                         {
-                            await formFile.CopyToAsync(fileStream);
+                            await fotoAlbum.CopyToAsync(fileStream);
                         }
 
-                        var novaMusica = new Musica
-                            { DonoFK = album.DonoFK, Nome = formFile.FileName, FilePath = "musicas/" + nomeMusica };
-
-                        album.Musicas.Add(novaMusica);
-
-                        //usar o using para executar o bloco de código para executar aquela ação, é despejado assim que executado e não espera até ao final do controller
-                        using (var fileStream = new FileStream(filePathMusica, FileMode.Create))
+                        //Criação das músicas
+                        foreach (var formFile in musicasNovas)
                         {
-                            await formFile.CopyToAsync(fileStream);
+                            // gerar nome imagem
+                            Guid g = Guid.NewGuid();
+                            // atrás do nome adicionamos a pasta onde a escrevemos
+                            nomeMusica = g.ToString();
+                            string extensaoMusica = Path.GetExtension(formFile.FileName).ToLowerInvariant();
+                            nomeMusica += extensaoMusica;
+                            // vai construir o path para o diretório onde são guardadas as imagens
+                            var filePathMusica = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/musicas");
+
+                            // antes de escrevermos o ficheiro, vemos se o diretório existe
+                            if (!Directory.Exists(filePathMusica))
+                                Directory.CreateDirectory(filePathMusica);
+
+                            // atualizamos o Path para incluir o nome da imagem
+                            filePathMusica = Path.Combine(filePathMusica, nomeMusica);
+
+                            // escreve a imagem
+                            using (var fileStream = new FileStream(filePathMusica, FileMode.Create))
+                            {
+                                await formFile.CopyToAsync(fileStream);
+                            }
+
+                            //adicionar ao array para eliminar as musicas no bloco catch caso algo falhe na criação
+                            arrayPathMusicas.Add(filePathMusica);
+
+                            var novaMusica = new Musica
+                                { DonoFK = album.DonoFK, Nome = formFile.FileName, FilePath = "musicas/" + nomeMusica };
+
+                            album.Musicas.Add(novaMusica);
+
+                            //usar o using para executar o bloco de código para executar aquela ação, é despejado assim que executado e não espera até ao final do controller
+                            using (var fileStream = new FileStream(filePathMusica, FileMode.Create))
+                            {
+                                await formFile.CopyToAsync(fileStream);
+                            }
                         }
                     }
-                }
 
-                _context.Add(album);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    _context.Add(album);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("", "Algo correu mal, por favor tente novamente");
+
+                    if (System.IO.File.Exists(fotoDeleteAlbum))
+                    {
+                        System.IO.File.Delete(fotoDeleteAlbum);
+                    }
+
+                    foreach (var musicaDelete in arrayPathMusicas)
+                    {
+                        if (System.IO.File.Exists(musicaDelete))
+                        {
+                            System.IO.File.Delete(musicaDelete);
+                        }
+                    }
+
+                    throw;
+                }
             }
+
             ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Username", album.DonoFK);
             return View(album);
         }
@@ -207,8 +254,10 @@ namespace spitifi.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(album);
         }
 

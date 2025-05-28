@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto.Engines;
 using spitifi.Data;
@@ -88,7 +89,6 @@ namespace spitifi.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [EmailAddress]
             [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{1,4}$")]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -136,7 +136,7 @@ namespace spitifi.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _userStore.SetUserNameAsync(user, Input.Utilizador.Username, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
@@ -197,12 +197,17 @@ namespace spitifi.Areas.Identity.Pages.Account
                         var utilizador = new Utilizadores
                         {
                             Username = Input.Utilizador.Username,
+                            IdentityUser = user.Id,
                             IsArtista = Input.Utilizador.IsArtista,
                             Foto = fotoUser
                         };
                         _context.Add(utilizador);
                         _context.SaveChanges();
-
+                        
+                        if(Input.Utilizador.IsArtista){
+                            _userManager.AddToRoleAsync(user, "Artista").Wait();
+                        }
+                        
                         var userId = await _userManager.GetUserIdAsync(user);
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
