@@ -1,5 +1,13 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject UserManager<IdentityUser> UserManager
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var isLoggedIn = currentUser != null;
+    var isAdmin = isLoggedIn && await UserManager.IsInRoleAsync(currentUser, "Admin");
+    var isArtista = isLoggedIn && await UserManager.IsInRoleAsync(currentUser, "artista");
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,35 +55,43 @@
 
             <p></p>
 
-            <div>
-                <!--<a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by Graphics Plazza - Flaticon</a>-->
-                <img src="/assets/icons/addMusic.png" width="25" height="25">
-                <a class="nav-link" asp-area="" asp-controller="Musica" asp-action="Create"
-                   style="display: inline;color: white">Publicar Musica</a>
-            </div>
+            @if (isArtista)
+            {
+                <div>
+                    <!--<a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by Graphics Plazza - Flaticon</a>-->
+                    <img src="/assets/icons/addMusic.png" width="25" height="25">
+                    <a class="nav-link" asp-area="" asp-controller="Musica" asp-action="Create"
+                       style="display: inline;color: white">Publicar Musica</a>
+                </div>
 
-            <p></p>
+                <p></p>
 
-            <div>
-                <!--<a href="https://www.flaticon.com/free-icons/add-to-playlist" title="add to playlist icons">Add to playlist icons created by Elite Art - Flaticon</a>-->
-                <img src="/assets/icons/add-to-playlist.png" width="25" height="25">
-                <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Create"
-                   style="display: inline;color: white">Criar Album</a>
-            </div>
+                <div>
+                    <!--<a href="https://www.flaticon.com/free-icons/add-to-playlist" title="add to playlist icons">Add to playlist icons created by Elite Art - Flaticon</a>-->
+                    <img src="/assets/icons/add-to-playlist.png" width="25" height="25">
+                    <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Create"
+                       style="display: inline;color: white">Criar Album</a>
+                </div>
 
+                <p></p>
 
-            <p></p>
+                <hr/>
 
-            <hr/>
+                <p></p>
+            } else {
+                <div>
+                    <!--<a href="https://www.flaticon.com/free-icons/add-to-playlist" title="add to playlist icons">Add to playlist icons created by Elite Art - Flaticon</a>-->
+                    <img src="/assets/icons/add-to-playlist.png" width="25" height="25">
+                    <a class="nav-link" asp-area="" asp-controller="Album" asp-action="CreateUserPlaylist"
+                       style="display: inline;color: white">Criar Playlist</a>
+                </div>
 
-            <p></p>
+                <p></p>
 
-            @{
-                var currentUser = await UserManager.GetUserAsync(User);
-                var isLoggedIn = currentUser != null;
-                var isAdmin = isLoggedIn && await UserManager.IsInRoleAsync(currentUser, "Administrador");
+                <hr/>
+
+                <p></p>
             }
-
             @if (isAdmin)
             {
                 <p></p>

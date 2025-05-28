@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using spitifi.Data;
 using spitifi.Data.DbModels;
+using spitifi.Models;
 
 namespace spitifi.Controllers
 {
@@ -24,9 +25,31 @@ namespace spitifi.Controllers
         }
 
         // GET: Album
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            int? pageNumber,   
+            int pageSize )
         {
-            return View(await _context.Album.ToListAsync());
+            
+            if (pageSize == 0)
+            {
+                pageSize = 5;
+            }
+            var applicationDbContext = _context.Musica.
+                Include(m => m.Dono).
+                Include(m=>m.Album);
+            
+            // Create base query with includes
+            var query = _context.Album.AsQueryable();
+    
+            // Apply pagination using Page.CreateAsync
+            var paginatedResult = await Page<Album>.CreateAsync(
+                source: query,
+                pageIndex: pageNumber ?? 1,  //página 1 caso pageNumber 0
+                pageSize: pageSize
+            );
+            
+            return View(paginatedResult);
+            
         }
 
         // GET: Album/Details/5
@@ -55,6 +78,7 @@ namespace spitifi.Controllers
         [Authorize]
         public IActionResult Create()
         {
+            Console.WriteLine("xungas2");
             var userId = _userManager.GetUserId(User);
             ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId).Username;
             return View();
@@ -63,11 +87,10 @@ namespace spitifi.Controllers
         // POST: Album/Create
         //
         [HttpPost]
-        [Authorize(Roles = "artista")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Titulo")] Album album, [Bind("Nome")] Musica musica,
+        public async Task<IActionResult> Create([Bind("Id,Titulo")] Album album,
             IFormFile fotoAlbum, List<IFormFile> musicasNovas)
         {
+            Console.WriteLine("xungas1");
             //ModelState.Remove("DonoFK");
             //variaveis para validações
 
@@ -201,6 +224,7 @@ namespace spitifi.Controllers
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine("erro create");
                     ModelState.AddModelError("", "Algo correu mal, por favor tente novamente");
 
                     if (System.IO.File.Exists(fotoDeleteAlbum))

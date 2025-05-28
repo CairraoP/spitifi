@@ -1,51 +1,45 @@
-@model IEnumerable<spitifi.Data.DbModels.Musica>
+@model Page<spitifi.Data.DbModels.Musica>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Index";
+    // since the page model isn't the music dbModel but a paginator we can't access the music displayname from anywhere
+    //ths dumbItem allows to use the musica dbModel attributes
+    var dumbitem = new spitifi.Data.DbModels.Musica();
 }
 
 <h1>Músicas</h1>
 
-
 <table class="table" style="color:white">
     <thead>
     <tr>
-
+        <th><!-- Foto do album --></th>
         <th>
-            <!-- Foto do album -->
+            @Html.DisplayNameFor(model => dumbitem.Nome)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Nome)
-        </th>
-
-        <th>
-            @Html.DisplayNameFor(model => model.Album.Titulo)
+            @Html.DisplayNameFor(model => dumbitem.Album.Titulo)
         </th>
         <th>Opções</th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @foreach (var item in Model)  
     {
         <tr data-song-name="@item.Nome"
             data-album-art="@item.Album.Foto"
             data-artist="@item.Dono.Username"
             data-file-path="@item.FilePath">
             <td>
-                <!--<a></a>-->
                 <img style="max-height: 100px; max-width: 100px" src="@item.Album.Foto"/>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Nome)
+                @System.IO.Path.GetFileNameWithoutExtension(item.Nome)
                 <br/>
-                <span id="musicListArtistUsername">
-                @Html.DisplayFor(modelItem => item.Dono.Username)
-                </span>
+                    @Html.DisplayFor(modelItem => item.Dono.Username)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => @item.Album.Titulo)
+                @Html.DisplayFor(modelItem => item.Album.Titulo)
             </td>
-
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
@@ -55,6 +49,55 @@
     </tbody>
 </table>
 
+<!-- Pagination controls -->
+<div class="pagination">
+    @if (Model.HasPreviousPage) {
+        <a asp-action="Index" 
+           asp-route-pageNumber="@(Model.PageIndex - 1)"
+           asp-route-pageSize="@Model.PageSize">
+            <b>Anterior</b>
+        </a>
+    }
+    &nbsp
+    <span>Página @Model.PageIndex de @Model.TotalPages </span>
+    &nbsp
+    @if (Model.HasNextPage) {
+        <a asp-action="Index"
+           asp-route-pageNumber="@(Model.PageIndex + 1)"
+           asp-route-pageSize="@Model.PageSize">
+            <b>Próxima</b>
+        </a>
+    }
+</div>
+<style>
+  select[name="pageSize"] {
+    background-color: #333;
+    color: white;
+    padding: 8px 12px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  select[name="pageSize"] option {
+    background-color: #444;
+    color: white;
+  }
+  select[name="pageSize"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+</style>
+<form asp-action="Index" method="get">
+    <label>Músicas por páginas: </label>
+    <select name="pageSize" onchange="this.form.submit()">
+        <option value="5" selected="@(Model.PageSize == 5)">5</option>
+        <option value="10" selected="@(Model.PageSize == 10)">10</option>
+        <option value="25" selected="@(Model.PageSize == 25)">25</option>
+        <option value="50" selected="@(Model.PageSize == 50)">50</option>
+    </select>
+    <input type="hidden" name="pageNumber" value="1" />
+</form>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
