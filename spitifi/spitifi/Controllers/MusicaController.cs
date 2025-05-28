@@ -25,9 +25,13 @@ namespace spitifi.Controllers
 
         // GET: Musica
         public async Task<IActionResult> Index(
-            int? pageNumber,   // Gets page number from query string
-            int pageSize = 2) // Default 10 items per page)
+            int? pageNumber,   
+            int pageSize )
         {
+            if (pageSize == 0)
+            {
+                pageSize = 5;
+            }
             var applicationDbContext = _context.Musica.
                 Include(m => m.Dono).
                 Include(m=>m.Album);

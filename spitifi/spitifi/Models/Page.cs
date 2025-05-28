@@ -10,7 +10,7 @@ public class Page<T> : List<T>
 
     public Page(List<T> items, int count, int pageIndex, int pageSize)
     {
-        PageSize = pageSize;
+        PageSize = pageSize == 0 ? 10 : pageSize;
         PageIndex = pageIndex;
         TotalPages = (int)Math.Ceiling(count / (double)pageSize);
         this.AddRange(items);

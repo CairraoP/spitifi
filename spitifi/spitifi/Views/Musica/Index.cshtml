@@ -14,10 +14,10 @@
     <tr>
         <th><!-- Foto do album --></th>
         <th>
-            @Html.DisplayNameFor(model => dumbitem.Nome) <!-- Fixed -->
+            @Html.DisplayNameFor(model => dumbitem.Nome)
         </th>
         <th>
-            @Html.DisplayNameFor(model => dumbitem.Album.Titulo) <!-- Fixed -->
+            @Html.DisplayNameFor(model => dumbitem.Album.Titulo)
         </th>
         <th>Opções</th>
     </tr>
@@ -33,11 +33,9 @@
                 <img style="max-height: 100px; max-width: 100px" src="@item.Album.Foto"/>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Nome)
+                @System.IO.Path.GetFileNameWithoutExtension(item.Nome)
                 <br/>
-                <span id="musicListArtistUsername">
                     @Html.DisplayFor(modelItem => item.Dono.Username)
-                </span>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Album.Titulo)
@@ -57,24 +55,41 @@
         <a asp-action="Index" 
            asp-route-pageNumber="@(Model.PageIndex - 1)"
            asp-route-pageSize="@Model.PageSize">
-            Previous
+            <b>Anterior</b>
         </a>
     }
-    
-    <span>Page @Model.PageIndex of @Model.TotalPages</span>
-    
+    &nbsp
+    <span>Página @Model.PageIndex de @Model.TotalPages </span>
+    &nbsp
     @if (Model.HasNextPage) {
-        <a asp-action="Index" 
+        <a asp-action="Index"
            asp-route-pageNumber="@(Model.PageIndex + 1)"
            asp-route-pageSize="@Model.PageSize">
-            Next
+            <b>Próxima</b>
         </a>
     }
 </div>
-
-<!-- Page size selector -->
+<style>
+  select[name="pageSize"] {
+    background-color: #333;
+    color: white;
+    padding: 8px 12px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  select[name="pageSize"] option {
+    background-color: #444;
+    color: white;
+  }
+  select[name="pageSize"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+</style>
 <form asp-action="Index" method="get">
-    <label>Items per page:</label>
+    <label>Músicas por páginas: </label>
     <select name="pageSize" onchange="this.form.submit()">
         <option value="5" selected="@(Model.PageSize == 5)">5</option>
         <option value="10" selected="@(Model.PageSize == 10)">10</option>
