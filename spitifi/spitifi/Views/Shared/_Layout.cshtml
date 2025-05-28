@@ -78,8 +78,20 @@
                 <hr/>
 
                 <p></p>
+            } else {
+                <div>
+                    <!--<a href="https://www.flaticon.com/free-icons/add-to-playlist" title="add to playlist icons">Add to playlist icons created by Elite Art - Flaticon</a>-->
+                    <img src="/assets/icons/add-to-playlist.png" width="25" height="25">
+                    <a class="nav-link" asp-area="" asp-controller="Album" asp-action="CreateUserPlaylist"
+                       style="display: inline;color: white">Criar Playlist</a>
+                </div>
+
+                <p></p>
+
+                <hr/>
+
+                <p></p>
             }
-            
             @if (isAdmin)
             {
                 <p></p>

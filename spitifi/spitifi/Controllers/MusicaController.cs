@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using spitifi.Data;
 using spitifi.Data.DbModels;
+using spitifi.Models;
 
 namespace spitifi.Controllers
 {
@@ -23,10 +24,28 @@ namespace spitifi.Controllers
         }
 
         // GET: Musica
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            int? pageNumber,   // Gets page number from query string
+            int pageSize = 2) // Default 10 items per page)
         {
-            var applicationDbContext = _context.Musica.Include(m => m.Dono).Include(m=>m.Album);
-            return View(await applicationDbContext.ToListAsync());
+            var applicationDbContext = _context.Musica.
+                Include(m => m.Dono).
+                Include(m=>m.Album);
+            
+            // Create base query with includes
+            var query = _context.Musica
+                .Include(m => m.Dono)
+                .Include(m => m.Album)
+                .AsQueryable();
+    
+            // Apply pagination using Page.CreateAsync
+            var paginatedResult = await Page<Musica>.CreateAsync(
+                source: query,
+                pageIndex: pageNumber ?? 1,  // Default to page 1 if null
+                pageSize: pageSize
+            );
+            
+            return View(paginatedResult);
         }
 
         // GET: Musica/Details/5

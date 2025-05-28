@@ -55,6 +55,7 @@ namespace spitifi.Controllers
         [Authorize]
         public IActionResult Create()
         {
+            Console.WriteLine("xungas2");
             var userId = _userManager.GetUserId(User);
             ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId).Username;
             return View();
@@ -63,11 +64,10 @@ namespace spitifi.Controllers
         // POST: Album/Create
         //
         [HttpPost]
-        [Authorize(Roles = "artista")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Titulo")] Album album, [Bind("Nome")] Musica musica,
+        public async Task<IActionResult> Create([Bind("Id,Titulo")] Album album,
             IFormFile fotoAlbum, List<IFormFile> musicasNovas)
         {
+            Console.WriteLine("xungas1");
             //ModelState.Remove("DonoFK");
             //variaveis para validações
 
@@ -201,6 +201,7 @@ namespace spitifi.Controllers
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine("erro create");
                     ModelState.AddModelError("", "Algo correu mal, por favor tente novamente");
 
                     if (System.IO.File.Exists(fotoDeleteAlbum))
