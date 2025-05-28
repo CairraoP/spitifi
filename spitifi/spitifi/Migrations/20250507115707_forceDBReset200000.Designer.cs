@@ -12,8 +12,8 @@ using spitifi.Data;
 namespace spitifi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250507113240_forceDBReset2000_testSeedExistingRecord")]
-    partial class forceDBReset2000_testSeedExistingRecord
+    [Migration("20250507115707_forceDBReset200000")]
+    partial class forceDBReset200000
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -170,7 +170,7 @@ namespace spitifi.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.PT",
                             NormalizedUserName = "ADMIN@MAIL.PT",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPir2/XWuoczmfbhBFDMa6S6lNkdjuU6pLi4sYpBK3quEHuwNErMk0iOuQFOKqJxnw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKfmhnSa0e1U6XrSP2/FwVG0OYNz+QHhmaQOQqWyK5pWzlo3W8s4sRCKZme/J9dJ/w==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "29c12eb3-07f7-4cd8-a5d2-ab4e40e6d064",
                             TwoFactorEnabled = false,
@@ -186,7 +186,7 @@ namespace spitifi.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JONAS@MAIL.PT",
                             NormalizedUserName = "JONAS@MAIL.PT",
-                            PasswordHash = "AQAAAAIAAYagAAAAELswAGHtPoWEYTI9+y7I2T7BsIqgfJm69lRVzBlU4nxXqtdkhmRd49RoPTc3sUlz5w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOkIWGRctw3mUs4iGL3XwnqqyZ1bqO//ceP45d4zbl2ehxX6UDz+0Ov40dNab9quGQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "99c12eb3-07f7-4cd8-a5d2-ab4e40e6d064",
                             TwoFactorEnabled = false,
