@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace spitifi.Migrations
 {
     /// <inheritdoc />
-    public partial class forceDBReset2000 : Migration
+    public partial class forceDBReset200000 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -337,8 +337,8 @@ namespace spitifi.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "admin", 0, "4f58a2a5-5148-48f6-bc1c-74cae86a2172", "admin@mail.pt", true, false, null, "ADMIN@MAIL.PT", "ADMIN@MAIL.PT", "AQAAAAIAAYagAAAAENMkn+dutNQroaqi62ysFFaXvlONpiuz4g7wu5/574fe6e0whCweY6hkd/1h1JZnrQ==", null, false, "29c12eb3-07f7-4cd8-a5d2-ab4e40e6d064", false, "admin@mail.pt" },
-                    { "jonas", 0, "9f58a2a5-5148-48f6-bc1c-74cae86a2172", "jonas@mail.pt", true, false, null, "JONAS@MAIL.PT", "JONAS@MAIL.PT", "AQAAAAIAAYagAAAAEA17Ajb1quyew4K6exLA6k5Wv2guDz38SiRu+iX2Aoqae63LxDMn7OzsASq2ERWpzQ==", null, false, "99c12eb3-07f7-4cd8-a5d2-ab4e40e6d064", false, "jonas@mail.pt" }
+                    { "admin", 0, "4f58a2a5-5148-48f6-bc1c-74cae86a2172", "admin@mail.pt", true, false, null, "ADMIN@MAIL.PT", "ADMIN@MAIL.PT", "AQAAAAIAAYagAAAAEKfmhnSa0e1U6XrSP2/FwVG0OYNz+QHhmaQOQqWyK5pWzlo3W8s4sRCKZme/J9dJ/w==", null, false, "29c12eb3-07f7-4cd8-a5d2-ab4e40e6d064", false, "admin@mail.pt" },
+                    { "jonas", 0, "9f58a2a5-5148-48f6-bc1c-74cae86a2172", "jonas@mail.pt", true, false, null, "JONAS@MAIL.PT", "JONAS@MAIL.PT", "AQAAAAIAAYagAAAAEOkIWGRctw3mUs4iGL3XwnqqyZ1bqO//ceP45d4zbl2ehxX6UDz+0Ov40dNab9quGQ==", null, false, "99c12eb3-07f7-4cd8-a5d2-ab4e40e6d064", false, "jonas@mail.pt" }
                 });
 
             migrationBuilder.InsertData(

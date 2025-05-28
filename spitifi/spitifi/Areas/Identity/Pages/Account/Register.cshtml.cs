@@ -116,6 +116,8 @@ namespace spitifi.Areas.Identity.Pages.Account
             public Utilizadores Utilizador { get; set; }
 
             public IFormFile Logo { get; set; }
+
+            public Boolean eArtista { get; set; }
         }
 
 
@@ -217,24 +219,44 @@ namespace spitifi.Areas.Identity.Pages.Account
                             values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                             protocol: Request.Scheme);
 
-                        _mailer.SendEmail(Input.Email, "Email de Confirmação",
-                            $"Por favor clique <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>aqui</a>. para confirmar o seu email");
-
-                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                        {
-                            return RedirectToPage("RegisterConfirmation",
-                                new { email = Input.Email, returnUrl = returnUrl });
-                        }
-                        else
-                        {
-                            await _signInManager.SignInAsync(user, isPersistent: false);
-                            return LocalRedirect(returnUrl);
-                        }
-                }
-                    foreach (var error in result.Errors)
+                    var utilizador = new Utilizadores
                     {
-                        ModelState.AddModelError(string.Empty, error.Description);
+                        Username = Input.Utilizador.Username,
+                        //IsArtista = Input.Utilizador.IsArtista,
+                        Foto = fotoUser
+                    };
+                    _context.Add(utilizador);
+                    _context.SaveChanges();
+
+                    var userId = await _userManager.GetUserIdAsync(user);
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var callbackUrl = Url.Page(
+                        "/Account/ConfirmEmail",
+                        pageHandler: null,
+                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                        protocol: Request.Scheme);
+
+                    _mailer.SendEmail(Input.Email, "Email de Confirmação",
+                        $"Por favor clique <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>aqui</a>. para confirmar o seu email");
+
+                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    {
+                        return RedirectToPage("RegisterConfirmation",
+                            new { email = Input.Email, returnUrl = returnUrl });
                     }
+                    else
+                    {
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        return LocalRedirect(returnUrl);
+                    }
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
                 // If we got this far, something failed, redisplay form
                 return Page();
             }

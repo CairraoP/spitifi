@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="MailKit" Version="4.12.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.16" />
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.11" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.11" />
@@ -20,7 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Migrations\" />
       <Folder Include="wwwroot\imagens\utilizadores\" />
       <Folder Include="wwwroot\musicas\" />
     </ItemGroup>
