@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
@@ -111,28 +112,37 @@ namespace spitifi.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 // caso o cliente insira um email podemos ir buscar o user da Identity com a linha abaixo
-                var userSrcByEmail = await _userManager.FindByEmailAsync(Input.Email);
-                
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(userSrcByEmail.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
+                try
                 {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    var userSrcByEmail = await _userManager.FindByEmailAsync(Input.Email);
+
+
+                    // This doesn't count login failures towards account lockout
+                    // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                    var result = await _signInManager.PasswordSignInAsync(userSrcByEmail.UserName, Input.Password,
+                        Input.RememberMe, lockoutOnFailure: false);
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation("User logged in.");
+                        return LocalRedirect(returnUrl);
+                    }
+
+                    if (result.RequiresTwoFactor)
+                    {
+                        return RedirectToPage("./LoginWith2fa",
+                            new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                    }
+
+                    if (result.IsLockedOut)
+                    {
+                        _logger.LogWarning("User account locked out.");
+                        return RedirectToPage("./Lockout");
+                    }
                 }
-                if (result.RequiresTwoFactor)
+                catch
                 {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
-                }
-                else
-                {
-                    var result2 = await _signInManager.PasswordSignInAsync(userSrcByEmail.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                    var userSrcByUsername = await _userManager.FindByNameAsync(Input.Email);
+                    var result2 = await _signInManager.PasswordSignInAsync(userSrcByUsername.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                     if (result2.Succeeded)
                     {
                         _logger.LogInformation("User logged in.");
