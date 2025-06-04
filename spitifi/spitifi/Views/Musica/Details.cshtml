@@ -43,3 +43,31 @@
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+<script>
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/likes")
+        .configureLogging(signalR.LogLevel.Information)
+        .withAutomaticReconnect()
+        .build();
+
+    async function start() {
+        try {
+            await connection.start();
+            
+            connection.on("whatever", (message) => {
+                console.log(message)
+            });
+
+
+            console.log("SignalR Connected.");
+        } catch (err) {
+            console.log(err);
+            setTimeout(start, 5000);
+        }
+    };
+    
+    // Start the connection.
+    start();
+    </script>
