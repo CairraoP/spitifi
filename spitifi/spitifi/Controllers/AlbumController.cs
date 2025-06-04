@@ -91,7 +91,6 @@ namespace spitifi.Controllers
             IFormFile fotoAlbum, List<IFormFile> musicasNovas)
         {
             Console.WriteLine("xungas1");
-            //ModelState.Remove("DonoFK");
             //variaveis para validações
 
             var utilizadorAux = _context.Users.First(au => au.UserName == User.Identity.Name);
@@ -100,9 +99,6 @@ namespace spitifi.Controllers
             bool haImagem = false;
             string nomeImagem = "";
             string nomeMusica = "";
-
-            //var fotoAux = _context.Album.FirstOrDefault(a=>a.Id == album.Id);
-            //album.Foto = fotoAux.Foto;
 
             if (!utlizador.Any())
             {

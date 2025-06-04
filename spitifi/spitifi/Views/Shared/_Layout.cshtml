@@ -42,7 +42,7 @@
             </div>
 
             <p></p>
-
+            
             <div>
                 <!--<a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by Elite Art - Flaticon</a>-->
                 <img src="/assets/icons/playlist.png" width="25" height="25">
@@ -55,7 +55,7 @@
             <hr/>
 
             <p></p>
-
+            
             @if (isArtista)
             {
                 <div>
@@ -73,13 +73,19 @@
                     <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Create"
                        style="display: inline;color: white">Criar Album</a>
                 </div>
-
+                
                 <p></p>
-
+                
+                <div>
+                    <!--<a href="https://www.flaticon.com/free-icons/add-to-playlist" title="add to playlist icons">Add to playlist icons created by Elite Art - Flaticon</a>-->
+                    <img src="/assets/icons/add-to-playlist.png" width="25" height="25">
+                    <a class="nav-link" asp-area="" asp-controller="Album" asp-action="CreateUserPlaylist"
+                       style="display: inline;color: white">Criar Playlist</a>
+                </div>
+                <p></p>
                 <hr/>
 
-                <p></p>
-            } else {
+            } else if (isLoggedIn){
                 <div>
                     <!--<a href="https://www.flaticon.com/free-icons/add-to-playlist" title="add to playlist icons">Add to playlist icons created by Elite Art - Flaticon</a>-->
                     <img src="/assets/icons/add-to-playlist.png" width="25" height="25">
@@ -99,16 +105,16 @@
                 <p></p>
                 <p></p>
                 <div>
-                    <img src="/assets/icons/search.png" width="25" height="25">
+                    <img src="/assets/icons/user.png" width="25" height="25">
                     <a class="nav-link " asp-area="" asp-controller="Utilizadores" asp-action="Index"
                        style="display: inline;color: white">Utilizadores</a>
                 </div>
+                <p></p>
+                <hr/>
             }
-
+            
             <p></p>
-
-
-
+            <p></p>
             <partial name="_LoginPartial"/>
         </div>
     </div>
