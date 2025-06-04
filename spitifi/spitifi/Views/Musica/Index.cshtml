@@ -135,3 +135,34 @@
         });
     });
 </script>
+
+<!-- Script para fazer a ligação ao webSocket-->
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/gostosSocket")
+        .withAutomaticReconnect()
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+
+    async function start() {
+        try {
+            await connection.start();
+            
+            connection.on("AtualizarGostos", (idMusica, numGostos) => {
+                document.getElementById("VerificarElemento" + idMusica).innerHTML = numGostos;
+            });
+            
+            console.log("SignalR Connected.");
+        } catch (err) {
+            console.log(err);
+            setTimeout(start, 5000);
+        }
+    };
+    
+    function updateGosto(idMusica){
+        connection.invoke("AtualizarGostos", idMusica);
+    }
+    
+    // Start the connection.
+    start();
+</script>

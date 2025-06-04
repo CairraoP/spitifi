@@ -62,4 +62,6 @@ public class Musica
     /// Lista de utilizadores que gostaram da música
     /// </summary>
     public ICollection<Gostos> ListaGostos { get; set; } = [];
+    
+    public ICollection<AlbumPlayList> ListaPlayList { get; set; } = [];
 }
