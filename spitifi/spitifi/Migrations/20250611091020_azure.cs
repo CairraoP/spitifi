@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace spitifi.Migrations
 {
     /// <inheritdoc />
-    public partial class forceDBReset200000 : Migration
+    public partial class azure : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -82,7 +82,8 @@ namespace spitifi.Migrations
                     Foto = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     IdentityUser = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsArtista = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -242,6 +243,26 @@ namespace spitifi.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "AlbumPlayList",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    PlayListFK = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AlbumPlayList", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AlbumPlayList_Album_PlayListFK",
+                        column: x => x.PlayListFK,
+                        principalTable: "Album",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Musica",
                 columns: table => new
                 {
@@ -267,6 +288,31 @@ namespace spitifi.Migrations
                         name: "FK_Musica_Utilizadores_DonoFK",
                         column: x => x.DonoFK,
                         principalTable: "Utilizadores",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "AlbumPlayListMusica",
+                columns: table => new
+                {
+                    ListaPlayListId = table.Column<int>(type: "int", nullable: false),
+                    MusicasId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AlbumPlayListMusica", x => new { x.ListaPlayListId, x.MusicasId });
+                    table.ForeignKey(
+                        name: "FK_AlbumPlayListMusica_AlbumPlayList_ListaPlayListId",
+                        column: x => x.ListaPlayListId,
+                        principalTable: "AlbumPlayList",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AlbumPlayListMusica_Musica_MusicasId",
+                        column: x => x.MusicasId,
+                        principalTable: "Musica",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -337,8 +383,8 @@ namespace spitifi.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "admin", 0, "4f58a2a5-5148-48f6-bc1c-74cae86a2172", "admin@mail.pt", true, false, null, "ADMIN@MAIL.PT", "ADMIN@MAIL.PT", "AQAAAAIAAYagAAAAEKfmhnSa0e1U6XrSP2/FwVG0OYNz+QHhmaQOQqWyK5pWzlo3W8s4sRCKZme/J9dJ/w==", null, false, "29c12eb3-07f7-4cd8-a5d2-ab4e40e6d064", false, "admin@mail.pt" },
-                    { "jonas", 0, "9f58a2a5-5148-48f6-bc1c-74cae86a2172", "jonas@mail.pt", true, false, null, "JONAS@MAIL.PT", "JONAS@MAIL.PT", "AQAAAAIAAYagAAAAEOkIWGRctw3mUs4iGL3XwnqqyZ1bqO//ceP45d4zbl2ehxX6UDz+0Ov40dNab9quGQ==", null, false, "99c12eb3-07f7-4cd8-a5d2-ab4e40e6d064", false, "jonas@mail.pt" }
+                    { "admin", 0, "4f58a2a5-5148-48f6-bc1c-74cae86a2172", "admin@mail.pt", true, false, null, "ADMIN@MAIL.PT", "ADMIN@MAIL.PT", "AQAAAAIAAYagAAAAEHOqrpwOq1NamK1oJBLr43qRWBHLRxxrVG3DoLWseIDCiQiljPnRiJpSdXokZXMdmQ==", null, false, "29c12eb3-07f7-4cd8-a5d2-ab4e40e6d064", false, "admin@mail.pt" },
+                    { "jonas", 0, "9f58a2a5-5148-48f6-bc1c-74cae86a2172", "jonas@mail.pt", true, false, null, "JONAS@MAIL.PT", "JONAS@MAIL.PT", "AQAAAAIAAYagAAAAEPOERIWu1WULFFbUqPovySqW6Yo8aGD53yNQqvIL3pvWBe87eq8Edb9vtJVZooiw9Q==", null, false, "99c12eb3-07f7-4cd8-a5d2-ab4e40e6d064", false, "jonas@mail.pt" }
                 });
 
             migrationBuilder.InsertData(
@@ -354,6 +400,16 @@ namespace spitifi.Migrations
                 name: "IX_Album_DonoFK",
                 table: "Album",
                 column: "DonoFK");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AlbumPlayList_PlayListFK",
+                table: "AlbumPlayList",
+                column: "PlayListFK");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AlbumPlayListMusica_MusicasId",
+                table: "AlbumPlayListMusica",
+                column: "MusicasId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -417,6 +473,9 @@ namespace spitifi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AlbumPlayListMusica");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -436,6 +495,9 @@ namespace spitifi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Gostos");
+
+            migrationBuilder.DropTable(
+                name: "AlbumPlayList");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
