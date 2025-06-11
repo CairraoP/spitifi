@@ -22,21 +22,6 @@ namespace spitifi.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("AlbumPlayListMusica", b =>
-                {
-                    b.Property<int>("ListaPlayListId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MusicasId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ListaPlayListId", "MusicasId");
-
-                    b.HasIndex("MusicasId");
-
-                    b.ToTable("AlbumPlayListMusica");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -182,7 +167,7 @@ namespace spitifi.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.PT",
                             NormalizedUserName = "ADMIN@MAIL.PT",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHOqrpwOq1NamK1oJBLr43qRWBHLRxxrVG3DoLWseIDCiQiljPnRiJpSdXokZXMdmQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEERbPkVuxmaBeuKDStvr1NmXFvHyu/314Kx4DBKBUeOKl2VAMd79bqL6tLaSGd9YqA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "29c12eb3-07f7-4cd8-a5d2-ab4e40e6d064",
                             TwoFactorEnabled = false,
@@ -198,7 +183,7 @@ namespace spitifi.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JONAS@MAIL.PT",
                             NormalizedUserName = "JONAS@MAIL.PT",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPOERIWu1WULFFbUqPovySqW6Yo8aGD53yNQqvIL3pvWBe87eq8Edb9vtJVZooiw9Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENCpEXYyjMG3OMuEYSAy2Ue2iuKjnVp0X4/eIGpyhz/Uo0PSNRCPmGuv/AoqgN29tQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "99c12eb3-07f7-4cd8-a5d2-ab4e40e6d064",
                             TwoFactorEnabled = false,
@@ -303,6 +288,21 @@ namespace spitifi.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("MusicaPlayList", b =>
+                {
+                    b.Property<int>("ListaPlayListId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MusicasId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ListaPlayListId", "MusicasId");
+
+                    b.HasIndex("MusicasId");
+
+                    b.ToTable("MusicaPlayList");
+                });
+
             modelBuilder.Entity("spitifi.Data.DbModels.Album", b =>
                 {
                     b.Property<int>("Id")
@@ -325,24 +325,6 @@ namespace spitifi.Migrations
                     b.HasIndex("DonoFK");
 
                     b.ToTable("Album");
-                });
-
-            modelBuilder.Entity("spitifi.Data.DbModels.AlbumPlayList", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("PlayListFK")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlayListFK");
-
-                    b.ToTable("AlbumPlayList");
                 });
 
             modelBuilder.Entity("spitifi.Data.DbModels.Colabs", b =>
@@ -406,6 +388,24 @@ namespace spitifi.Migrations
                     b.ToTable("Musica");
                 });
 
+            modelBuilder.Entity("spitifi.Data.DbModels.PlayList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DonoFK")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DonoFK");
+
+                    b.ToTable("PlayList");
+                });
+
             modelBuilder.Entity("spitifi.Data.DbModels.Utilizadores", b =>
                 {
                     b.Property<int>("Id")
@@ -431,21 +431,6 @@ namespace spitifi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Utilizadores");
-                });
-
-            modelBuilder.Entity("AlbumPlayListMusica", b =>
-                {
-                    b.HasOne("spitifi.Data.DbModels.AlbumPlayList", null)
-                        .WithMany()
-                        .HasForeignKey("ListaPlayListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("spitifi.Data.DbModels.Musica", null)
-                        .WithMany()
-                        .HasForeignKey("MusicasId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -499,6 +484,21 @@ namespace spitifi.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MusicaPlayList", b =>
+                {
+                    b.HasOne("spitifi.Data.DbModels.PlayList", null)
+                        .WithMany()
+                        .HasForeignKey("ListaPlayListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("spitifi.Data.DbModels.Musica", null)
+                        .WithMany()
+                        .HasForeignKey("MusicasId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("spitifi.Data.DbModels.Album", b =>
                 {
                     b.HasOne("spitifi.Data.DbModels.Utilizadores", "Dono")
@@ -508,17 +508,6 @@ namespace spitifi.Migrations
                         .IsRequired();
 
                     b.Navigation("Dono");
-                });
-
-            modelBuilder.Entity("spitifi.Data.DbModels.AlbumPlayList", b =>
-                {
-                    b.HasOne("spitifi.Data.DbModels.Album", "PlayList")
-                        .WithMany()
-                        .HasForeignKey("PlayListFK")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PlayList");
                 });
 
             modelBuilder.Entity("spitifi.Data.DbModels.Colabs", b =>
@@ -574,6 +563,17 @@ namespace spitifi.Migrations
                         .IsRequired();
 
                     b.Navigation("Album");
+
+                    b.Navigation("Dono");
+                });
+
+            modelBuilder.Entity("spitifi.Data.DbModels.PlayList", b =>
+                {
+                    b.HasOne("spitifi.Data.DbModels.Utilizadores", "Dono")
+                        .WithMany()
+                        .HasForeignKey("DonoFK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Dono");
                 });

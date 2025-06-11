@@ -41,7 +41,6 @@ public class Album
     public Utilizadores Dono { get; set; }
     
     
-    
     /// <summary>
     /// Lista de músicas pertencentes ao albúm
     /// </summary>

@@ -63,5 +63,5 @@ public class Musica
     /// </summary>
     public ICollection<Gostos> ListaGostos { get; set; } = [];
     
-    public ICollection<AlbumPlayList> ListaPlayList { get; set; } = [];
+    public ICollection<PlayList> ListaPlayList { get; set; } = [];
 }

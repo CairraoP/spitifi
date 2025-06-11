@@ -20,92 +20,81 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
 </head>
 <body style="background-color: #666666; color: #ffffff">
-<div class="sidenav" style="background-color: #333333">
-    <div class="container-fluid">
+<div id="mySidebar" class="sidebar">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+    
+    <div class="p-3">
         <div>
-            <!--<a href="https://www.flaticon.com/free-icons/spotify-sketch" title="spotify sketch icons">Spotify sketch icons created by Pixel perfect - Flaticon</a>-->
             <img src="/assets/icons/spotify.png" width="25" height="25">
             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"
-               style="display: inline; color: #ffffff; ">Spitifi</a>
+               style="display: inline; color: #ffffff;">Spitifi</a>
         </div>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-        </button>
-        <div class="flex-column">
-            <p></p>
+        <hr/>
+        <div>
+            <img src="/assets/icons/music.png" width="25" height="25">
+            <a class="nav-link" asp-area="" asp-controller="Musica" asp-action="Index"
+               style="display: inline;">Mostrar Musicas</a>
+        </div>
+        <br>
+        <div>
+            <img src="/assets/icons/playlist.png" width="25" height="25">
+            <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Index"
+               style="display: inline;">Mostrar Albums</a>
+        </div>
+        <hr />
+
+        @if (isLoggedIn)
+        {
             <div>
-                <!--<a href="https://www.flaticon.com/free-icons/explore" title="explore icons">Explore icons created by Graphics Plazza - Flaticon</a>-->
-                <img src="/assets/icons/music.png" width="25" height="25">
-                <a class="nav-link" asp-area="" asp-controller="Musica" asp-action="Index"
-                   style="display: inline; color: #ffffff">Mostrar Musicas</a>
+                <img src="/assets/icons/add-to-playlist.png" width="25" height="25">
+                <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Create"
+                   style="display: inline;">Criar Album</a>
             </div>
             <br>
-            <div>
-                <!--<a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by Elite Art - Flaticon</a>-->
-                <img src="/assets/icons/playlist.png" width="25" height="25">
-                <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Index"
-                   style="display: inline; color: white">Mostrar Albums</a>
-            </div>
-            <hr/>
-            
-            @if (isLoggedIn)
+            @if (isArtista)
             {
                 <div>
-                    <!--<a href="https://www.flaticon.com/free-icons/add-to-playlist" title="add to playlist icons">Add to playlist icons created by Elite Art - Flaticon</a>-->
-                    <img src="/assets/icons/add-to-playlist.png" width="25" height="25">
-                    <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Create"
-                       style="display: inline;color: white">Criar Album</a>
-                </div>
-                <br>
-                @if (isArtista){
-                <div>
-                    <!--<a href="https://www.flaticon.com/free-icons/add-to-playlist" title="add to playlist icons">Add to playlist icons created by Elite Art - Flaticon</a>-->
                     <img src="/assets/icons/add-to-playlist.png" width="25" height="25">
                     <a class="nav-link" asp-area="" asp-controller="Album" asp-action="CreateUserPlaylist"
-                       style="display: inline;color: white">Criar Playlist</a>
+                       style="display: inline;">Criar Playlist</a>
                 </div>
-                }
-                <hr/>
             }
-            @if (isAdmin)
-            {
-                <br>
-                <div>
-                    <img src="/assets/icons/user.png" width="25" height="25">
-                    <a class="nav-link " asp-area="" asp-controller="Utilizadores" asp-action="Index"
-                       style="display: inline;color: white">Utilizadores</a>
-                </div>
-                <p></p>
-                <hr/>
-            }
-            
-            <p></p>
-            <p></p>
-            <partial name="_LoginPartial"/>
-        </div>
+            <hr />
+        }
+        @if (isAdmin)
+        {
+            <br>
+            <div>
+                <img src="/assets/icons/user.png" width="25" height="25">
+                <a class="nav-link " asp-area="" asp-controller="Utilizadores" asp-action="Index"
+                   style="display: inline;">Utilizadores</a>
+            </div>
+            <hr />
+        }
+        <partial name="_LoginPartial" />
     </div>
 </div>
 <div class="main-content">
+    <button id = "buttonSideBar" class="openbtn" onclick="openNav()">☰</button>
     <!--Ao adicionar o css logo nesta div, como o render vem depois, podemos definir qual o max-width para todas as views e assim resolveu-se o problema de sobreposição da sidebar--->
-    <main role="main" class="pb-3">
+    <main role="main" class="main-css">
         @RenderBody()
     </main>
 </div>
 
 <!-- In _Layout.cshtml -->
 <footer class="border-top footer text-muted">
-    <div id="audioContainer" class="container" style="background-color: #666666; display: none;">
-        <img id="footerAlbumArt" src="" alt="Album Art"/>
-        <div>
-            <div id="footerSongName"></div>
-            <div id="footerArtist"></div>
-        </div>
-        <audio id="footerAudioPlayer" controls>
-            <!-- Audio sources will be added dynamically -->
-        </audio>
-        
+<div id="audioContainer" class="container" style="background-color: #666666; display: none;">
+    <img id="footerAlbumArt" src="" alt="Album Art"/>
+    <div>
+        <div id="footerSongName"></div>
+        <div id="footerArtist"></div>
     </div>
+    <audio id="footerAudioPlayer" controls>
+        <!-- Audio sources will be added dynamically -->
+    </audio>
+
+</div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -113,3 +102,14 @@
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+<script>
+    //Script para abrir e fechar o menu lateral
+    function openNav() {
+        document.getElementById("mySidebar").style.width = "250px";
+    }
+
+    function closeNav() {
+        document.getElementById("mySidebar").style.width = "0";
+    }
+</script>
