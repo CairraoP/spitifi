@@ -92,7 +92,6 @@ namespace spitifi.Controllers
             
             if (ModelState.IsValid)
             {
-               
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
