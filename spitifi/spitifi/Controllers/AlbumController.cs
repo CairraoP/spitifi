@@ -78,7 +78,6 @@ namespace spitifi.Controllers
         [Authorize]
         public IActionResult Create()
         {
-            Console.WriteLine("xungas2");
             var userId = _userManager.GetUserId(User);
             ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId).Username;
             return View();
@@ -90,7 +89,6 @@ namespace spitifi.Controllers
         public async Task<IActionResult> Create([Bind("Id,Titulo")] Album album,
             IFormFile fotoAlbum, List<IFormFile> musicasNovas)
         {
-            Console.WriteLine("xungas1");
             //variaveis para validações
 
             var utilizadorAux = _context.Users.First(au => au.UserName == User.Identity.Name);
@@ -145,7 +143,7 @@ namespace spitifi.Controllers
                         // gerar nome imagem
                         Guid g = Guid.NewGuid();
                         // atrás do nome adicionamos a pasta onde a escrevemos
-                        nomeImagem = g.ToString();
+                        nomeImagem = g.ToString() + "_"+fotoAlbum.FileName;
                         string extensaoImagem = Path.GetExtension(fotoAlbum.FileName).ToLowerInvariant();
                         nomeImagem += extensaoImagem;
                         // guardar o nome do ficheiro na BD
