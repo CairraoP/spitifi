@@ -67,5 +67,5 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Utilizadores> Utilizadores { get; set; }
     public DbSet<Album> Album { get; set; }
     
-    public DbSet<AlbumPlayList> AlbumPlayList { get; set; }
+    public DbSet<PlayList> PlayList { get; set; }
 }

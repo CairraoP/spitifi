@@ -59,8 +59,9 @@ html {
     font-size: 36px;
   }
 
-  #main {
-    margin-left: 0;
+  .main-css {
+    margin-left: 0px; /* same as sidebar width */
+    padding: 20px;
   }
 
   #buttonSideBar {
@@ -124,6 +125,7 @@ input[type="range"] {
   padding: 20px;
   overflow-x: hidden;
 }
+
 .main-content {
   margin-left: 250px; /* same as sidebar width */
   padding: 20px;
