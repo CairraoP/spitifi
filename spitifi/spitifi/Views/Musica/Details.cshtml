@@ -2,9 +2,16 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Details";
+    
+    var dono = false;
+    var userNameDono = Model.Dono.Username;
+    if (User.Identity?.Name == userNameDono)
+    {
+        dono = true;
+    }
 }
 
-<h1>Details</h1>
+<h1>Detalhes</h1>
 
 <div>
     <h4>Musica</h4>
@@ -40,8 +47,12 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @if (dono)
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a>
+        <a asp-action="Delete" asp-route-id="@Model?.Id">Apagar Musica</a>
+    }
+    <a asp-action="Index">Voltar</a>
 </div>
 
 <script>

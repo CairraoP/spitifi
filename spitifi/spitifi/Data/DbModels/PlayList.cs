@@ -7,6 +7,9 @@ public class PlayList
 {
     public int Id { get; set; }
     
+    public string Nome { get; set; }
+    
+    public string Foto { get; set; }
     /// <summary>
     /// FK para referenciar que utilizador criou a playlist
     /// </summary>

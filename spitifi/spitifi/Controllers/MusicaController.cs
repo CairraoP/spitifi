@@ -17,10 +17,12 @@ namespace spitifi.Controllers
     public class MusicaController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public MusicaController(ApplicationDbContext context)
+        public MusicaController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Musica
@@ -227,6 +229,7 @@ namespace spitifi.Controllers
             var musica = await _context.Musica
                 .Include(m => m.Dono)
                 .FirstOrDefaultAsync(m => m.Id == id);
+            
             if (musica == null)
             {
                 return NotFound();
@@ -240,12 +243,19 @@ namespace spitifi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var musica = await _context.Musica.FindAsync(id);
-            if (musica != null)
-            {
-                _context.Musica.Remove(musica);
-            }
+            //Como já não se apagou o labum, este include ficou redundante
+            var musica = _context.Musica.Include(m => m.Album).FirstOrDefault(m => m.Id == id);
+            var album = musica.Album;
 
+            var partialPathMusic = musica.FilePath; // e.g. "albumcover.jpg"
+            
+            var fullPathMusic = Path.Combine(_webHostEnvironment.WebRootPath, partialPathMusic.Replace("/", Path.DirectorySeparatorChar.ToString()));
+
+            if (fullPathMusic != null && System.IO.File.Exists(fullPathMusic))
+            {
+                System.IO.File.Delete(fullPathMusic);
+            }
+            _context.Musica.Remove(musica);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

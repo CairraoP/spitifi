@@ -64,6 +64,10 @@ html {
     padding: 20px;
   }
 
+  footer {
+    width: 100%;
+    margin-left: 0px; /* same as sidebar width */
+  }
   #buttonSideBar {
     display: inline-block;
     font-size: 20px;
@@ -126,7 +130,15 @@ input[type="range"] {
   overflow-x: hidden;
 }
 
-.main-content {
-  margin-left: 250px; /* same as sidebar width */
-  padding: 20px;
+@media screen and (min-width: 993px) {
+  .main-content {
+    margin-left: 250px; /* same as sidebar width */
+    padding: 20px;
+    flex: 1;
+  }
+  footer {
+    display: flex;
+    width: 100%;
+    margin-left: 250px; /* same as sidebar width */
+  }
 }
