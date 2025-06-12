@@ -23,6 +23,7 @@
     <ItemGroup>
       <Folder Include="wwwroot\imagens\utilizadores\" />
       <Folder Include="wwwroot\musicas\" />
+      <Folder Include="wwwroot\playlist\" />
     </ItemGroup>
 
     <ItemGroup>

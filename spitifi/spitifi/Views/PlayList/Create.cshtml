@@ -20,13 +20,14 @@ reutiliza-se o código do Album, este html precisa de ser alterado-->
                 <span asp-validation-for="Nome" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DonoFK" class="control-label"></label>
-                <input class="form-control" value="@ViewData["DonoNome"]" readonly/>
-                <span asp-validation-for="DonoFK" class="text-danger"></span>
+                <label class="control-label">Selecione Músicas</label>
+                <select name="selectedMusicas" class="form-control" 
+                        multiple asp-items="ViewBag.MusicaList"></select>
+                <span asp-validation-for="Musicas" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Foto" class="control-label"></label>
-                <input type ="file" name="fotoAlbum" class="form-control" />
+                <input type ="file" name="fotoPlaylist" class="form-control" />
                 <span asp-validation-for="Foto" class="text-danger"></span>
             </div>
             <div class="form-group">

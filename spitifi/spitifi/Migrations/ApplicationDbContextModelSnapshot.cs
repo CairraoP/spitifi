@@ -167,7 +167,7 @@ namespace spitifi.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.PT",
                             NormalizedUserName = "ADMIN@MAIL.PT",
-                            PasswordHash = "AQAAAAIAAYagAAAAEERbPkVuxmaBeuKDStvr1NmXFvHyu/314Kx4DBKBUeOKl2VAMd79bqL6tLaSGd9YqA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDwUwLW0hDDRIZ8Aij8OMm/cvNqc5rP39aSxePBemMzqN6XlaLYvPs9GdehmJCqJCQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "29c12eb3-07f7-4cd8-a5d2-ab4e40e6d064",
                             TwoFactorEnabled = false,
@@ -183,7 +183,7 @@ namespace spitifi.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JONAS@MAIL.PT",
                             NormalizedUserName = "JONAS@MAIL.PT",
-                            PasswordHash = "AQAAAAIAAYagAAAAENCpEXYyjMG3OMuEYSAy2Ue2iuKjnVp0X4/eIGpyhz/Uo0PSNRCPmGuv/AoqgN29tQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELq2QajnmisEec4NytoR6vOZBrnfxfPZv4nRiq02a+3eFdmU4l1yvQvb/AsqWtsYMA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "99c12eb3-07f7-4cd8-a5d2-ab4e40e6d064",
                             TwoFactorEnabled = false,
@@ -398,6 +398,12 @@ namespace spitifi.Migrations
 
                     b.Property<int>("DonoFK")
                         .HasColumnType("int");
+
+                    b.Property<string>("Foto")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Nome")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
