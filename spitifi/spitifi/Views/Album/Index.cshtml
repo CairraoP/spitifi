@@ -1,19 +1,14 @@
 @using spitifi.Data.DbModels
-@using SQLitePCL
 @model Page<spitifi.Data.DbModels.Album>
 
 @{
     ViewData["Title"] = "Index";
+    // since the page model isn't the music dbModel but a paginator we can't access the music displayname from anywhere
+    //ths dumbItem allows to use the musica dbModel attributes
     var dumbitem = new Album();
-    
 }
 
 <h1>Albúms</h1>
-<!--
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
--->
 <table class="table">
     <thead>
     <tr>
@@ -57,7 +52,7 @@
             }
         </tr>
     }
-    º
+    
     </tbody>
 </table>
 
