@@ -1,0 +1,47 @@
+@model spitifi.Data.DbModels.PlayList
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<!-- Agora é começar a alterar o código para saber como fazer com a escolha de músicas, aproveitar e 
+reutiliza-se o código do Album, este html precisa de ser alterado-->
+<h4>PlayList</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Nome" class="control-label"></label>
+                <input asp-for="Nome" class="form-control" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DonoFK" class="control-label"></label>
+                <input class="form-control" value="@ViewData["DonoNome"]" readonly/>
+                <span asp-validation-for="DonoFK" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Foto" class="control-label"></label>
+                <input type ="file" name="fotoAlbum" class="form-control" />
+                <span asp-validation-for="Foto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Musicas" class="control-label"></label>
+               <!-- <input type="file" name="musicasNovas" class="form-control"  multiple/> -->
+                <span asp-validation-for="Musicas" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
