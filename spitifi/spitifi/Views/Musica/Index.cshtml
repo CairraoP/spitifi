@@ -23,7 +23,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)  
+    @foreach (var item in Model)
     {
         <tr data-song-name="@item.Nome"
             data-album-art="@item.Album.Foto"
@@ -35,7 +35,7 @@
             <td>
                 @System.IO.Path.GetFileNameWithoutExtension(item.Nome)
                 <br/>
-                    @Html.DisplayFor(modelItem => item.Dono.Username)
+                @Html.DisplayFor(modelItem => item.Dono.Username)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Album.Titulo)
@@ -50,8 +50,9 @@
 
 <!-- Pagination controls -->
 <div class="pagination">
-    @if (Model.HasPreviousPage) {
-        <a asp-action="Index" 
+    @if (Model.HasPreviousPage)
+    {
+        <a asp-action="Index"
            asp-route-pageNumber="@(Model.PageIndex - 1)"
            asp-route-pageSize="@Model.PageSize">
             <b>Anterior</b>
@@ -60,7 +61,8 @@
     &nbsp
     <span>Página @Model.PageIndex de @Model.TotalPages </span>
     &nbsp
-    @if (Model.HasNextPage) {
+    @if (Model.HasNextPage)
+    {
         <a asp-action="Index"
            asp-route-pageNumber="@(Model.PageIndex + 1)"
            asp-route-pageSize="@Model.PageSize">
@@ -69,23 +71,25 @@
     }
 </div>
 <style>
-  select[name="pageSize"] {
-    background-color: #333;
-    color: white;
-    padding: 8px 12px;
-    border: 1px solid #555;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  select[name="pageSize"] option {
-    background-color: #444;
-    color: white;
-  }
-  select[name="pageSize"]:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-  }
+    select[name="pageSize"] {
+        background-color: #333;
+        color: white;
+        padding: 8px 12px;
+        border: 1px solid #555;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    select[name="pageSize"] option {
+        background-color: #444;
+        color: white;
+    }
+
+    select[name="pageSize"]:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
 </style>
 <form asp-action="Index" method="get">
     <label>Músicas por páginas: </label>
@@ -95,7 +99,7 @@
         <option value="25" selected="@(Model.PageSize == 25)">25</option>
         <option value="50" selected="@(Model.PageSize == 50)">50</option>
     </select>
-    <input type="hidden" name="pageNumber" value="1" />
+    <input type="hidden" name="pageNumber" value="1"/>
 </form>
 
 <script>
@@ -146,22 +150,22 @@
     async function start() {
         try {
             await connection.start();
-            
+
             connection.on("AtualizarGostos", (idMusica, numGostos) => {
                 document.getElementById("VerificarElemento" + idMusica).innerHTML = numGostos;
             });
-            
+
             console.log("SignalR Connected.");
         } catch (err) {
             console.log(err);
             setTimeout(start, 5000);
         }
     };
-    
-    function updateGosto(idMusica){
+
+    function updateGosto(idMusica) {
         connection.invoke("AtualizarGostos", idMusica);
     }
-    
+
     // Start the connection.
     start();
 </script>

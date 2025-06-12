@@ -1,7 +1,9 @@
-@model IEnumerable<spitifi.Data.DbModels.PlayList>
+@model Page<spitifi.Data.DbModels.PlayList>
+@using spitifi.Data.DbModels
 
 @{
     ViewData["Title"] = "Index";
+    var dumbitem = new PlayList();
 }
 
 <h1>Index</h1>
@@ -11,18 +13,31 @@
 </p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Dono)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => dumbitem.Foto)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => dumbitem.Nome)
+        </th>
+        <th>
+            
+        </th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
+        //! meter dono na tabela index de playlist e album
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Dono.Username)
+                <img style="max-height: 100px; max-width: 100px" src="@item.Foto" alt=""/>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
@@ -30,6 +45,59 @@
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>
+<!-- Pagination controls -->
+<div class="pagination">
+    @if (Model.HasPreviousPage)
+    {
+        <a asp-action="Index"
+           asp-route-pageNumber="@(Model.PageIndex - 1)"
+           asp-route-pageSize="@Model.PageSize">
+            <b>Anterior</b>
+        </a>
+    }
+    &nbsp
+    <span>Página @Model.PageIndex de @Model.TotalPages </span>
+    &nbsp
+    @if (Model.HasNextPage)
+    {
+        <a asp-action="Index"
+           asp-route-pageNumber="@(Model.PageIndex + 1)"
+           asp-route-pageSize="@Model.PageSize">
+            <b>Próxima</b>
+        </a>
+    }
+</div>
+<style>
+    select[name="pageSize"] {
+        background-color: #333;
+        color: white;
+        padding: 8px 12px;
+        border: 1px solid #555;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    select[name="pageSize"] option {
+        background-color: #444;
+        color: white;
+    }
+
+    select[name="pageSize"]:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+</style>
+<form asp-action="Index" method="get">
+    <label>Albúms por páginas: </label>
+    <select name="pageSize" onchange="this.form.submit()">
+        <option value="5" selected="@(Model.PageSize == 5)">5</option>
+        <option value="10" selected="@(Model.PageSize == 10)">10</option>
+        <option value="25" selected="@(Model.PageSize == 25)">25</option>
+        <option value="50" selected="@(Model.PageSize == 50)">50</option>
+    </select>
+    <input type="hidden" name="pageNumber" value="1"/>
+</form>

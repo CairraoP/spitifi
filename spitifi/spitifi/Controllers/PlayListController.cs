@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using spitifi.Data;
 using spitifi.Data.DbModels;
+using spitifi.Models;
 
 namespace spitifi.Controllers
 {
@@ -23,10 +24,27 @@ namespace spitifi.Controllers
         }
 
         // GET: PlayList
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index( int? pageNumber,   
+            int pageSize )
         {
-            var applicationDbContext = _context.PlayList.Include(p => p.Dono);
-            return View(await applicationDbContext.ToListAsync());
+            if (pageSize == 0)
+            {
+                pageSize = 5;
+            }
+            var applicationDbContext = _context.PlayList
+                .Include(m => m.Dono).ToList();
+            
+            // Create base query with includes
+            var query = _context.PlayList.AsQueryable();
+    
+            // Apply pagination using Page.CreateAsync
+            var paginatedResult = await Page<PlayList>.CreateAsync(
+                source: query,
+                pageIndex: pageNumber ?? 1,  //página 1 caso pageNumber 0
+                pageSize: pageSize
+            );
+            
+            return View(paginatedResult);
         }
 
         // GET: PlayList/Details/5
@@ -132,7 +150,7 @@ namespace spitifi.Controllers
             if (haImagem)
             {
                 // vai construir o path para o diretório onde são guardadas as imagens
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/imagens");
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/playlist");
 
                 // antes de escrevermos o ficheiro, vemos se o diretório existe
                 if (!Directory.Exists(filePath))
