@@ -1,9 +1,11 @@
 @using spitifi.Data.DbModels
+@using SQLitePCL
 @model Page<spitifi.Data.DbModels.Album>
 
 @{
     ViewData["Title"] = "Index";
     var dumbitem = new Album();
+    
 }
 
 <h1>Albúms</h1>
@@ -14,41 +16,57 @@
 -->
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                <!--@Html.DisplayNameFor(model => dumbitem.Foto)-->
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => dumbitem.Titulo)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            <!--@Html.DisplayNameFor(model => dumbitem.Foto)-->
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => dumbitem.Titulo)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
-                <img style ="max-height: 100px; max-width: 100px" src = "@item.Foto" alt=""/>
+                <img style="max-height: 100px; max-width: 100px" src="@item.Foto" alt=""/>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Titulo)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
             </td>
+            @{
+                //Na teoria, este código pode ser interpretado de duas maneiras distintas, logo
+                //ser aplicado de 2 maneiras diferentes.
+                //1) Assumimos que mesmo que o artista não queira mais a sua conta na app isso não implique a remoção
+                // das suas músicas. Logo temos de meter o "?"
+                //2) Assumimos que isso nunca aconteceria e portanto não se tinha de meter o "?"
+                
+                //Objetivo: caso o utilizador que está na sessão seja o dono de um item/album, pode apaga-lo
+                var dono = item.Dono?.Username;
+                @if (User.Identity?.Name == dono)
+                {
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@item.Id">Apagar Album</a>
+                    </td>
+                }
+            }
         </tr>
-}
-º
+    }
+    º
     </tbody>
 </table>
 
 
 <!-- Pagination controls -->
 <div class="pagination">
-    @if (Model.HasPreviousPage) {
-        <a asp-action="Index" 
+    @if (Model.HasPreviousPage)
+    {
+        <a asp-action="Index"
            asp-route-pageNumber="@(Model.PageIndex - 1)"
            asp-route-pageSize="@Model.PageSize">
             <b>Anterior</b>
@@ -57,7 +75,8 @@
     &nbsp
     <span>Página @Model.PageIndex de @Model.TotalPages </span>
     &nbsp
-    @if (Model.HasNextPage) {
+    @if (Model.HasNextPage)
+    {
         <a asp-action="Index"
            asp-route-pageNumber="@(Model.PageIndex + 1)"
            asp-route-pageSize="@Model.PageSize">
@@ -66,23 +85,25 @@
     }
 </div>
 <style>
-  select[name="pageSize"] {
-    background-color: #333;
-    color: white;
-    padding: 8px 12px;
-    border: 1px solid #555;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  select[name="pageSize"] option {
-    background-color: #444;
-    color: white;
-  }
-  select[name="pageSize"]:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-  }
+    select[name="pageSize"] {
+        background-color: #333;
+        color: white;
+        padding: 8px 12px;
+        border: 1px solid #555;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    select[name="pageSize"] option {
+        background-color: #444;
+        color: white;
+    }
+
+    select[name="pageSize"]:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
 </style>
 <form asp-action="Index" method="get">
     <label>Albúms por páginas: </label>
@@ -92,5 +113,5 @@
         <option value="25" selected="@(Model.PageSize == 25)">25</option>
         <option value="50" selected="@(Model.PageSize == 50)">50</option>
     </select>
-    <input type="hidden" name="pageNumber" value="1" />
+    <input type="hidden" name="pageNumber" value="1"/>
 </form>

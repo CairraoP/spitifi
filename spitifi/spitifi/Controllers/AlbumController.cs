@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using spitifi.Data;
 using spitifi.Data.DbModels;
 using spitifi.Models;
@@ -17,11 +18,13 @@ namespace spitifi.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AlbumController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public AlbumController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _userManager = userManager;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Album
@@ -34,9 +37,8 @@ namespace spitifi.Controllers
             {
                 pageSize = 5;
             }
-            var applicationDbContext = _context.Musica.
-                Include(m => m.Dono).
-                Include(m=>m.Album);
+            var applicationDbContext = _context.Album
+                .Include(m => m.Dono).ToList();
             
             // Create base query with includes
             var query = _context.Album.AsQueryable();
@@ -143,7 +145,7 @@ namespace spitifi.Controllers
                         // gerar nome imagem
                         Guid g = Guid.NewGuid();
                         // atrás do nome adicionamos a pasta onde a escrevemos
-                        nomeImagem = g.ToString() + "_"+fotoAlbum.FileName;
+                        nomeImagem = g.ToString();
                         string extensaoImagem = Path.GetExtension(fotoAlbum.FileName).ToLowerInvariant();
                         nomeImagem += extensaoImagem;
                         // guardar o nome do ficheiro na BD
@@ -302,10 +304,39 @@ namespace spitifi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var album = await _context.Album.FindAsync(id);
+            //buscar os albuns e as musicas associadas ao album
+            var album =  _context.Album.Include(a =>a.Musicas).FirstOrDefault(a=> a.Id == id)!;
+
             if (album != null)
             {
-                _context.Album.Remove(album);
+                //apagar os recursos relacionados ao album, neste caso a foto e as musicas, para isso usamos também o DELETE do
+                //Model das músicas
+                var partialPath = album.Foto; // buscar o caminho relativo da foto
+
+                //juntar como caminho do wwwroot
+                var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, partialPath.Replace("/", Path.DirectorySeparatorChar.ToString()));
+
+                if (System.IO.File.Exists(fullPath))
+                {
+                    System.IO.File.Delete(fullPath);
+                }
+
+                //Se eliminarmos um album, eliminamos também as músicas que estão presentes no album e o seu ficheiro no wwwroot.
+                foreach (var musica in album.Musicas)
+                {
+                    var partialPathMusic = musica.FilePath; // e.g. "albumcover.jpg"
+                    
+                    var fullPathMusic = Path.Combine(_webHostEnvironment.WebRootPath, partialPathMusic.Replace("/", Path.DirectorySeparatorChar.ToString()));
+
+                    if (System.IO.File.Exists(fullPathMusic))
+                    {
+                        System.IO.File.Delete(fullPathMusic);
+                    }
+                    _context.Musica.Remove(musica);
+                }
+
+                _context.Album.Remove(album); 
+                await _context.SaveChangesAsync();
             }
 
             await _context.SaveChangesAsync();

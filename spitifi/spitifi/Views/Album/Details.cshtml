@@ -3,9 +3,16 @@
 
 @{
     ViewData["Title"] = "Details";
+    
+    var dono = false;
+    
+    if (User.Identity?.Name == Model.Dono.Username)
+    {
+         dono = true;
+    }
 }
 <body style="background-color: #666666">
-<h1>Details</h1>
+<h1>Detalhes</h1>
 
 <div>
     <h4>Album</h4>
@@ -34,12 +41,16 @@
                     <source src="/@musica.FilePath" type="audio/wav">
                     <source src="/@musica.FilePath" type="audio/mpeg">
                 </audio>
+                @if(dono)
+                {
+                    <a asp-controller="Musica" asp-action="Delete" asp-route-id="@musica.Id">Apagar</a>
+                }
             }
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a>
+    <a asp-action="Index">Voltar</a>
 </div>
 </body>
