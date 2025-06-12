@@ -3,10 +3,12 @@
 
 @{
     ViewData["Title"] = "Index";
+    // since the page model isn't the music dbModel but a paginator we can't access the music displayname from anywhere
+    //ths dumbItem allows to use the musica dbModel attributes
     var dumbitem = new PlayList();
 }
 
-<h1>Index</h1>
+<h1>Playlists</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -19,6 +21,9 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => dumbitem.Nome)
+        </th>
+        <th>
+            Criador
         </th>
         <th>
             
@@ -35,6 +40,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dono.Username)
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
