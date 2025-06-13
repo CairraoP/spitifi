@@ -142,11 +142,15 @@ namespace spitifi.Areas.Identity.Pages.Account
                 catch
                 {
                     var userSrcByUsername = await _userManager.FindByNameAsync(Input.Email);
-                    var result2 = await _signInManager.PasswordSignInAsync(userSrcByUsername.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-                    if (result2.Succeeded)
+                    if(userSrcByUsername != null)
                     {
-                        _logger.LogInformation("User logged in.");
-                        return LocalRedirect(returnUrl);
+                        var result2 = await _signInManager.PasswordSignInAsync(userSrcByUsername.UserName,
+                            Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                        if (result2.Succeeded)
+                        {
+                            _logger.LogInformation("User logged in.");
+                            return LocalRedirect(returnUrl);
+                        }
                     }
                     else
                     {
