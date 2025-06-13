@@ -55,7 +55,7 @@ builder.Services.AddSingleton<JwtService>();
 builder.Services.AddAuthorization();
 
 // Register JWT Service
-builder.Services.AddScoped<JwtService>();
+builder.Services.AddSingleton<JwtService>();
 
 
 //
