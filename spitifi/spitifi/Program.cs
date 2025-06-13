@@ -51,13 +51,6 @@ builder.Services.AddAuthentication()
 // o que é um singleton? o que é um transient? o que é um scoped?
 builder.Services.AddSingleton<JwtService>();
 
-// Add Authorization
-builder.Services.AddAuthorization();
-
-// Register JWT Service
-builder.Services.AddSingleton<JwtService>();
-
-
 //
 //Definir variavel/variaveis de configuração
 builder.Services.Configure<EmailSenderConfigModel>(builder.Configuration.GetSection("EmailConf"));
