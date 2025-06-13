@@ -1,10 +1,14 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using spitifi.Areas.Identity.Pages.Account;
 using spitifi.Data;
 using spitifi.Services.Email;
 using spitifi.Data.DbInitializerDev;
+using spitifi.Services.JWT;
 using spitifi.Services.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +26,34 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// Add JWT Authentication
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
+// Add Authorization
+builder.Services.AddAuthorization();
+
+// Register JWT Service
+builder.Services.AddScoped<JwtService>();
+
+
 //
 //Definir variavel/variaveis de configuração
 builder.Services.Configure<EmailSenderConfigModel>(builder.Configuration.GetSection("EmailConf"));
