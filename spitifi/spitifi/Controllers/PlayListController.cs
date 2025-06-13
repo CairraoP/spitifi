@@ -98,6 +98,7 @@ namespace spitifi.Controllers
                 // Get current Identity user
                 var currentUser = await _userManager.GetUserAsync(User);
 
+                //Esta linha noa faz sentido ou faz? Se os metodo só terá disponível para quem está login nao precisamos desta segunda validação
                 if (currentUser == null)
                 {
                     // Handle unauthenticated user
@@ -143,14 +144,14 @@ namespace spitifi.Controllers
                 string extensaoImagem = Path.GetExtension(fotoPlaylist.FileName).ToLowerInvariant();
                 nomeImagem += extensaoImagem;
                 // guardar o nome do ficheiro na BD
-                playList.Foto = "playlist/" + nomeImagem;
+                playList.Foto = "imagens/" + nomeImagem;
             }
 
             // se existe uma imagem para escrever no disco
             if (haImagem)
             {
                 // vai construir o path para o diretório onde são guardadas as imagens
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/playlist");
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/imagens/");
 
                 // antes de escrevermos o ficheiro, vemos se o diretório existe
                 if (!Directory.Exists(filePath))
