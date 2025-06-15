@@ -136,66 +136,83 @@ namespace spitifi.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                //Ir buscar o resultado da query à Identity para o nome e email submetidos pelo utilizador
+                var utilizadorJaExiste = await _userManager.FindByEmailAsync(Input.Email);
+                var nomeJaExiste = await _userManager.FindByNameAsync(Input.Utilizador.Username);
 
-                await _userStore.SetUserNameAsync(user, Input.Utilizador.Username, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                var result = await _userManager.CreateAsync(user, Input.Password);
-
-                if (result.Succeeded)
+                //Verificar se o nome ou o email (que devem ser únicos) já existem na Identity
+                if (utilizadorJaExiste != null)
                 {
-                    bool haImagem = false;
-                    string nomeImagem = "";
-                    string fotoUser = "";
-                    var fotoUserFile = Input.Logo;
+                    ModelState.AddModelError("Input.Email", "Email já existente");
+                }
+                else if (nomeJaExiste != null)
+                {
+                    ModelState.AddModelError("Input.Utilizador.Username", "Nome já existente");
+                }
+                else
+                {
+                    var user = CreateUser();
 
-                    _logger.LogInformation("Utilizador criou uma conta.");
+                    await _userStore.SetUserNameAsync(user, Input.Utilizador.Username, CancellationToken.None);
+                    await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                    var result = await _userManager.CreateAsync(user, Input.Password);
 
-                    if (fotoUserFile == null)
+                    if (result.Succeeded)
                     {
-                        fotoUser = "assets/icons/user.png";
-                    }
-                    else
-                    {
-                        //Criar aqui validação FOTO
-                        if (!(fotoUserFile.ContentType == "image/png" || fotoUserFile.ContentType == "image/jpeg"))
+                        bool haImagem = false;
+                        string nomeImagem = "";
+                        string fotoUser = "";
+                        var fotoUserFile = Input.Logo;
+
+                        _logger.LogInformation("Utilizador criou uma conta.");
+
+                        if (fotoUserFile == null)
                         {
-                            ModelState.AddModelError("", "Formato Inválido. Insira uma foto com formato JPEG ou PNG");
+                            fotoUser = "assets/icons/user.png";
                         }
                         else
                         {
-                            haImagem = true;
-                            // gerar nome imagem
-                            Guid g = Guid.NewGuid();
-                            // atrás do nome adicionamos a pasta onde a escrevemos
-                            nomeImagem = g.ToString();
-                            string extensaoImagem = Path.GetExtension(fotoUserFile.FileName).ToLowerInvariant();
-                            nomeImagem += extensaoImagem;
-                            // guardar o nome do ficheiro na BD
-                            fotoUser = "imagens/utilizadores/" + nomeImagem;
-                        }
-
-                        // se existe uma imagem para escrever no disco
-                        if (haImagem)
-                        {
-                            // vai construir o path para o diretório onde são guardadas as imagens
-                            var filePath = Path.Combine(Directory.GetCurrentDirectory(),
-                                @"wwwroot/imagens/utilizadores");
-
-                            // antes de escrevermos o ficheiro, vemos se o diretório existe
-                            if (!Directory.Exists(filePath))
-                                Directory.CreateDirectory(filePath);
-
-                            // atualizamos o Path para incluir o nome da imagem
-                            filePath = Path.Combine(filePath, nomeImagem);
-
-                            // escreve a imagem
-                            using (var fileStream = new FileStream(filePath, FileMode.Create))
+                            //Criar aqui validação FOTO
+                            if (!(fotoUserFile.ContentType == "image/png" || fotoUserFile.ContentType == "image/jpeg"))
                             {
-                                await fotoUserFile.CopyToAsync(fileStream);
+                                ModelState.AddModelError("",
+                                    "Formato Inválido. Insira uma foto com formato JPEG ou PNG");
+                            }
+                            else
+                            {
+                                haImagem = true;
+                                // gerar nome imagem
+                                Guid g = Guid.NewGuid();
+                                // atrás do nome adicionamos a pasta onde a escrevemos
+                                nomeImagem = g.ToString();
+                                string extensaoImagem = Path.GetExtension(fotoUserFile.FileName).ToLowerInvariant();
+                                nomeImagem += extensaoImagem;
+                                // guardar o nome do ficheiro na BD
+                                fotoUser = "imagens/utilizadores/" + nomeImagem;
+                            }
+
+                            // se existe uma imagem para escrever no disco
+                            if (haImagem)
+                            {
+                                // vai construir o path para o diretório onde são guardadas as imagens
+                                var filePath = Path.Combine(Directory.GetCurrentDirectory(),
+                                    @"wwwroot/imagens/utilizadores");
+
+                                // antes de escrevermos o ficheiro, vemos se o diretório existe
+                                if (!Directory.Exists(filePath))
+                                    Directory.CreateDirectory(filePath);
+
+                                // atualizamos o Path para incluir o nome da imagem
+                                filePath = Path.Combine(filePath, nomeImagem);
+
+                                // escreve a imagem
+                                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                                {
+                                    await fotoUserFile.CopyToAsync(fileStream);
+                                }
                             }
                         }
-                    }
+
                         var utilizador = new Utilizadores
                         {
                             Username = Input.Utilizador.Username,
@@ -205,11 +222,12 @@ namespace spitifi.Areas.Identity.Pages.Account
                         };
                         _context.Add(utilizador);
                         _context.SaveChanges();
-                        
-                        if(Input.Utilizador.IsArtista){
+
+                        if (Input.Utilizador.IsArtista)
+                        {
                             _userManager.AddToRoleAsync(user, "Artista").Wait();
                         }
-                        
+
                         var userId = await _userManager.GetUserIdAsync(user);
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -218,29 +236,30 @@ namespace spitifi.Areas.Identity.Pages.Account
                             pageHandler: null,
                             values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                             protocol: Request.Scheme);
-                    
-                    _mailer.SendEmail(Input.Email, "Email de Confirmação",
-                        $"Por favor clique <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>aqui</a>. para confirmar o seu email");
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation",
-                            new { email = Input.Email, returnUrl = returnUrl });
+                        _mailer.SendEmail(Input.Email, "Email de Confirmação",
+                            $"Por favor clique <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>aqui</a>. para confirmar o seu email");
+
+                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                        {
+                            return RedirectToPage("RegisterConfirmation",
+                                new { email = Input.Email, returnUrl = returnUrl });
+                        }
+                        else
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            return LocalRedirect(returnUrl);
+                        }
                     }
-                    else
+
+                    foreach (var error in result.Errors)
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        ModelState.AddModelError(string.Empty, error.Description);
                     }
-                }
 
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    // If we got this far, something failed, redisplay form
+                    return Page();
                 }
-
-                // If we got this far, something failed, redisplay form
-                return Page();
             }
 
             return null;
