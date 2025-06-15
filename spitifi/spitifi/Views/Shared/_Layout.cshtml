@@ -52,17 +52,17 @@
         @if (isLoggedIn)
         {
             <div>
-                <img src="/assets/icons/add-to-playlist.png" width="25" height="25">
+                <img src="/assets/icons/add-to-playlist.png" width="25" height="25" style="padding-right: 32px">
                 <a class="nav-link" asp-area="" asp-controller="Album" asp-action="Create"
-                   style="display: inline;">Criar Album</a>
+                   style="display: inline; padding-left: 32px;">Criar Album</a>
             </div>
             <br>
             @if (isArtista)
             {
                 <div>
-                    <img src="/assets/icons/add-to-playlist.png" width="25" height="25">
+                    <img src="/assets/icons/add-to-playlist.png" width="25" height="25" style="padding-right: 32px">
                     <a class="nav-link" asp-area="" asp-controller="PlayList" asp-action="Create"
-                       style="display: inline;">Criar Playlist</a>
+                       style="display: inline;padding-left: 32px;">Criar Playlist</a>
                 </div>
             }
             <hr />
@@ -71,9 +71,9 @@
         {
             <br>
             <div>
-                <img src="/assets/icons/user.png" width="25" height="25">
+                <img src="/assets/icons/user.png" width="25" height="25" style="padding-right: 32px">
                 <a class="nav-link " asp-area="" asp-controller="Utilizadores" asp-action="Index"
-                   style="display: inline;">Utilizadores</a>
+                   style="display: inline;padding-left: 32px;">Utilizadores</a>
             </div>
             <hr />
         }
