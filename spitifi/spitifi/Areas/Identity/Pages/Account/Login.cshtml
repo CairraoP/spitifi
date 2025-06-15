@@ -2,7 +2,7 @@
 @model LoginModel
 
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = "Iniciar Sessão";
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -13,7 +13,7 @@
                 <h2>Espaço para fazer o login</h2>
                 <hr />
                 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                <h6>Email</h6>
+                <h6>Email ou Nome de Utilizador</h6>
                 <div class="form-floating mb-3">
                     <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="n0me@exemplo.com" />
                     <label asp-for="Input.Email" class="form-label">Email</label>
@@ -32,7 +32,7 @@
                     </label>
                 </div>
                 <div>
-                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Login</button>
                 </div>
                 <div>
                     <p> 

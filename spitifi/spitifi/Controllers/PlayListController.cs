@@ -57,7 +57,9 @@ namespace spitifi.Controllers
 
             var playList = await _context.PlayList
                 .Include(p => p.Dono)
+                .Include(p => p.Musicas).ThenInclude(m => m.Album)
                 .FirstOrDefaultAsync(m => m.Id == id);
+            
             if (playList == null)
             {
                 return NotFound();
@@ -184,13 +186,17 @@ namespace spitifi.Controllers
                 return NotFound();
             }
 
-            var playList = await _context.PlayList.FindAsync(id);
+            var playList = await _context.PlayList
+                .Include(pl => pl.Musicas)
+                .FirstOrDefaultAsync(pl => pl.Id == id);
+            
             if (playList == null)
             {
                 return NotFound();
             }
 
-            ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Username", playList.DonoFK);
+            ViewBag.ListaMusicas = _context.Musica.OrderBy(m => m.Nome).ToList();
+            
             return View(playList);
         }
 
@@ -199,18 +205,56 @@ namespace spitifi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DonoFK")] PlayList playList)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome")] PlayList playList, int[]  musicasSelecionadas)
         {
             if (id != playList.Id)
             {
                 return NotFound();
+            }
+            
+            var playlist = await _context.PlayList.Where(pl => pl.Id == id)
+                                                .Include(pl => pl.Musicas)
+                                                .FirstOrDefaultAsync();
+            
+            var oldPlaylist = playlist.Musicas.Select(m => m.Id).ToList();
+            
+            //avaliar se o utilizador retirou ou adicionou musicas à nossa playlist
+            var adicionadas = musicasSelecionadas.Except(oldPlaylist);
+            var retiradas = oldPlaylist.Except(musicasSelecionadas.ToList());
+            
+            // se alguma musica foi adicionada ou retirada
+            // é necessário alterar a lista de musicas na playlist 
+            
+            if (adicionadas.Any() || retiradas.Any()) {
+
+                if (retiradas.Any()) {
+                    // retirar a Category 
+                    foreach (int oldMusica in retiradas) {
+                        var musicToRemove = playlist.Musicas.FirstOrDefault(c => c.Id == oldMusica);
+                        playlist.Musicas.Remove(musicToRemove);
+                    }
+                }
+                if (adicionadas.Any()) {
+                    // adicionar a Category 
+                    foreach (int newMusic in adicionadas) {
+                        var musicToAdd = await _context.Musica.FirstOrDefaultAsync(pl => pl.Id == newMusic);
+                        playlist.Musicas.Add(musicToAdd);
+                    }
+                }
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(playList);
+                    /* a EF só permite a manipulação de um único objeto de um mesmo tipo
+                     *  por esse motivo, como estamos a usar o objeto 'lesson'
+                     *  temos de o atualizar com os dados que vêm da View
+                     */
+                    playlist.Nome = playList.Nome;
+                    
+                    //atualizar o nosso contexto
+                    _context.Update(playlist);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

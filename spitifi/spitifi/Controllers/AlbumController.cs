@@ -243,25 +243,110 @@ namespace spitifi.Controllers
             ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Username", album.DonoFK);
             return View(album);
         }
+        
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var album = await _context.Album.FindAsync(id);
+            
+            // guardamos em sessão o id da categoria que o utilizador quer editar
+            // se ele fizer um post para um Id diferente, ele está a tentar alterar algo que não devia
+            HttpContext.Session.SetInt32("albumId", album.Id);
+            
+            if (album == null)
+            {
+                return NotFound();
+            }
+            return View(album);
+        }
 
         // POST: Album/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Titulo,Foto")] Album album)
+        public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Album")] Album album, IFormFile fotoAlbum)
         {
             if (id != album.Id)
             {
                 return NotFound();
             }
 
+            var albumDaSessao = HttpContext.Session.GetInt32("albumId");
+
+            if (albumDaSessao != id)
+            {
+                ModelState.AddModelError("Id", "Valores alterados incorretamente");
+                return View(album);
+            }
+            
+            bool haImagem = false;
+            string nomeImagem = "";
+            string nomeMusica = "";
+            var fotoDeleteAlbum = "";
+            var antigaFotoAlbum = album.Foto;
+            
             if (ModelState.IsValid)
             {
                 try
                 {
+                    if (fotoAlbum == null)
+                    {
+                        
+                    }else {
+                    //repetir a validação feita na criação do album pela primeira vez para as validações serem consistentes em toda a app
+                    if (!(fotoAlbum.ContentType == "image/png" || fotoAlbum.ContentType == "image/jpeg"))
+                    {
+                        ModelState.AddModelError("", "Formato Inválido. Insira uma foto com formato JPEG ou PNG");
+                        var userId = _userManager.GetUserId(User);
+                        ViewData["DonoNome"] =
+                            _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId).Username;
+                        return View();
+                    }
+                    else
+                    {
+                        {
+                            haImagem = true;
+                            // gerar nome imagem
+                            Guid g = Guid.NewGuid();
+                            // atrás do nome adicionamos a pasta onde a escrevemos
+                            nomeImagem = g.ToString();
+                            string extensaoImagem = Path.GetExtension(fotoAlbum.FileName).ToLowerInvariant();
+                            nomeImagem += extensaoImagem;
+                            // guardar o nome do ficheiro na BD
+                            album.Foto = "imagens/" + nomeImagem;
+                        }
+
+                        // se existe uma imagem para escrever no disco
+                        if (haImagem)
+                        {
+                            // vai construir o path para o diretório onde são guardadas as imagens
+                            var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/imagens");
+
+                            // antes de escrevermos o ficheiro, vemos se o diretório existe
+                            if (!Directory.Exists(filePath))
+                                Directory.CreateDirectory(filePath);
+
+                            // atualizamos o Path para incluir o nome da imagem
+                            filePath = Path.Combine(filePath, nomeImagem);
+                            //guardar o caminho da imagem para caso algo corra mal, possamos eliminar a foto da bd no nosso bloco de catch
+                            fotoDeleteAlbum = filePath;
+
+                            // escreve a imagem
+                            using (var fileStream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await fotoAlbum.CopyToAsync(fileStream);
+                            }
+                        }
+                    }
+                    }
                     _context.Update(album);
                     await _context.SaveChangesAsync();
+                    HttpContext.Session.SetInt32("albumId", 0);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -271,6 +356,17 @@ namespace spitifi.Controllers
                     }
                     else
                     {
+                        //apagar a foto do album nova caso algo corra mal
+                        ModelState.AddModelError("", "Algo correu mal, por favor tente novamente");
+
+                        if (System.IO.File.Exists(fotoDeleteAlbum))
+                        {
+                            System.IO.File.Delete(fotoDeleteAlbum);
+                        }
+    
+                        //repor a foto anterior
+                        album.Foto = antigaFotoAlbum;
+                        
                         throw;
                     }
                 }

@@ -15,7 +15,7 @@
 <h1>Detalhes</h1>
 
 <div>
-    <h4>Album</h4>
+    <h4>Albúm</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -44,13 +44,13 @@
                 @if(dono)
                 {
                     <a asp-controller="Musica" asp-action="Delete" asp-route-id="@musica.Id">Apagar</a>
+                    <a asp-controller="Musica" asp-action="Edit" asp-route-id="@musica.Id">Editar Musica</a>
                 }
             }
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a>
     <a asp-action="Index">Voltar</a>
 </div>
 </body>
