@@ -13,6 +13,9 @@ public class Album
     
     /// <summary>
     /// Título da albúm
+    ///
+    /// Nota: deveria de ter sido posto um REGEX para a validação do Nome, como não foi e para não deitar a abase de dados abaixo, vamos tratar disso
+    /// após a criação do album
     /// </summary>
     [Display(Name = "Albúm")]
     public string Titulo { get; set; }

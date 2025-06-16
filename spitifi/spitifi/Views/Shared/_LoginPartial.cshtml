@@ -1,13 +1,24 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using spitifi.Data
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+<!-- Import do contexto da BD feito aqui-->
+@inject ApplicationDbContext Context
 
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
+        //procurar o utlizador na nossa BD para importar a foto escolhida por ele. Para isso também foi preciso importar a variavel global Context.
+        var userContext = Context.Utilizadores.FirstOrDefault(u => u.Username == User.Identity.Name);
         <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Olá @User.Identity?.Name!</a>
+            <div class="d-flex align-items-center">
+                <img src="@userContext?.Foto" width="25" height="25" class="mr-2"/>
+                <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                    Olá @User.Identity?.Name!
+                </a>
+            </div>
         </li>
+        
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                 <div>

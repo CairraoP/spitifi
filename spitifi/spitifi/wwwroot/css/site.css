@@ -1,7 +1,15 @@
+a {
+  text-decoration: none;
+  color: white;   
+}
+
 html {
   font-size: 14px;
 }
 .nav-link {
+  padding: 7px 14px 7px 32px !important;
+}
+.navbar-brand {
   padding: 7px 14px 7px 32px !important;
 }
 .sidebar {
