@@ -21,7 +21,9 @@
         <th>
             @Html.DisplayNameFor(model => dumbitem.Dono.Username)
         </th>
-        <th></th>
+        <th>
+            Opções
+        </th>
     </tr>
     </thead>
     <tbody>
@@ -35,11 +37,11 @@
                 @Html.DisplayFor(modelItem => item.Titulo)
             </td>
             <td>
-                Artista
+                @Html.DisplayFor(modelItem => item.Dono.Username)
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
-            </td>
+            
             @{
                 //Na teoria, este código pode ser interpretado de duas maneiras distintas, logo
                 //ser aplicado de 2 maneiras diferentes.
@@ -50,15 +52,13 @@
                 //Objetivo: caso o utilizador que está na sessão seja o dono de um item/album, pode apaga-lo
                 var dono = item.Dono?.Username;
                 @if (User.Identity?.Name == dono)
-                {
-                    <td>
-                        <a asp-action="Delete" asp-route-id="@item.Id">Apagar Album</a>
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Editar Album</a>
-                    </td>
+                {   <a> | </a>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Apagar Album</a>
+                    <a> | </a>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar Album</a>
                 }
             }
+            </td>
         </tr>
     }
     

@@ -94,41 +94,21 @@ namespace spitifi.Controllers
         {
             bool haImagem = false;
             string nomeImagem = "";
+            string fotoDeletePlaylist = "";
             
             if (ModelState.IsValid)
             {
                 // Get current Identity user
                 var currentUser = await _userManager.GetUserAsync(User);
 
-                //Esta linha noa faz sentido ou faz? Se os metodo só terá disponível para quem está login nao precisamos desta segunda validação
-                if (currentUser == null)
-                {
-                    // Handle unauthenticated user
-                    return Challenge(); // Redirects to login page
-                }
-
-                // Find matching Utilizadores record
+                // Query para ir buscar o utlizador
                 var utilizador = await _context.Utilizadores
                     .FirstOrDefaultAsync(u => u.IdentityUser == currentUser.Id);
-
-                if (utilizador == null)
-                {
-                    // Create new Utilizadores record
-                    utilizador = new Utilizadores
-                    {
-                        IdentityUser = currentUser.Id,
-                        Username = currentUser.UserName,
-                        IsArtista = false
-                    };
-
-                    _context.Utilizadores.Add(utilizador);
-                    await _context.SaveChangesAsync();
-                }
-
-                // Set playlist owner
+                
+                // Fazer a referência FK
                 playList.DonoFK = utilizador.Id;
 
-                // Process selected songs
+                // Processar as músicas escolhidas
                 if (selectedMusicas != null && selectedMusicas.Any())
                 {
                     var selectedMusicasList = await _context.Musica
@@ -149,30 +129,44 @@ namespace spitifi.Controllers
                 playList.Foto = "imagens/" + nomeImagem;
             }
 
-            // se existe uma imagem para escrever no disco
-            if (haImagem)
+            try
             {
-                // vai construir o path para o diretório onde são guardadas as imagens
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/imagens/");
-
-                // antes de escrevermos o ficheiro, vemos se o diretório existe
-                if (!Directory.Exists(filePath))
-                    Directory.CreateDirectory(filePath);
-
-                // atualizamos o Path para incluir o nome da imagem
-                filePath = Path.Combine(filePath, nomeImagem);
-    
-
-                // escreve a imagem
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                // se existe uma imagem para escrever no disco
+                if (haImagem)
                 {
-                    await fotoPlaylist.CopyToAsync(fileStream);
+                    // vai construir o path para o diretório onde são guardadas as imagens
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/imagens");
+
+                    // antes de escrevermos o ficheiro, vemos se o diretório existe
+                    if (!Directory.Exists(filePath))
+                        Directory.CreateDirectory(filePath);
+
+                    // atualizamos o Path para incluir o nome da imagem
+                    filePath = Path.Combine(filePath, nomeImagem);
+
+                    fotoDeletePlaylist = filePath;
+
+                    // escreve a imagem
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await fotoPlaylist.CopyToAsync(fileStream);
+                    }
+
+                    _context.Add(playList);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("", "Algo correu mal, por favor tente novamente");
+
+                if (System.IO.File.Exists(fotoDeletePlaylist))
+                {
+                    System.IO.File.Delete(fotoDeletePlaylist);
                 }
 
-
-                _context.Add(playList);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                throw;
             }
 
             return View(playList);

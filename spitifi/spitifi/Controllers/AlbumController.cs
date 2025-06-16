@@ -115,7 +115,7 @@ namespace spitifi.Controllers
             }
 
             if (fotoAlbum == null){
-                ModelState.AddModelError("", "Não introduziste uma foto");
+                ModelState.AddModelError("Foto", "Não introduziste uma foto");
                 ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId).Username;
                 return View();
             }
@@ -140,7 +140,7 @@ namespace spitifi.Controllers
                     {
                         if (!file.ContentType.StartsWith("audio"))
                         {
-                            ModelState.AddModelError("",
+                            ModelState.AddModelError("Musicas",
                                 "Uma ou mais músicas com extensão inválida, use .wav ou .mp3 por favor");
                             ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId)
                                 .Username;
