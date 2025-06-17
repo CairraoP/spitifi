@@ -129,6 +129,7 @@ namespace spitifi.Controllers
                 playList.Foto = "imagens/" + nomeImagem;
             }
 
+            
             try
             {
                 // se existe uma imagem para escrever no disco
