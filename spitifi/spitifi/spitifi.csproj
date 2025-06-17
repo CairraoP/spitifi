@@ -34,9 +34,9 @@
         <DependentUpon>Index.cshtml</DependentUpon>
       </None>
     </ItemGroup>
-
+    
     <ItemGroup>
-        <Content Include="wwwroot\**\*">
+        <Content Update="wwwroot\**\*">
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
     </ItemGroup>
