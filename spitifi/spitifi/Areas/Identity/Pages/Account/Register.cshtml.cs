@@ -168,7 +168,7 @@ namespace spitifi.Areas.Identity.Pages.Account
 
                         if (fotoUserFile == null)
                         {
-                            fotoUser = "assets/icons/user.png";
+                            fotoUser = "/assets/icons/user.png";
                         }
                         else
                         {
