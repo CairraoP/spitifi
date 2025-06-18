@@ -61,9 +61,10 @@ public class Utilizadores
     /// </summary>
     public List<Gostos> ListaGostos { get; set; } = [];
     
-    
     /// <summary>
     /// Albúms criados pelo Utilizador
     /// </summary>
     public List<Album> Albums { get; set; } = new List<Album>();
+    
+    public List<PlayList> Playlists { get; set; } = new List<PlayList>();
 }
