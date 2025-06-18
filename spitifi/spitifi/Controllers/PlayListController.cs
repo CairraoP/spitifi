@@ -97,33 +97,9 @@ namespace spitifi.Controllers
             
             if (ModelState.IsValid)
             {
-                // Get current Identity user
-                var currentUser = await _userManager.GetUserAsync(User);
-
-                //Esta linha noa faz sentido ou faz? Se os metodo só terá disponível para quem está login nao precisamos desta segunda validação
-                if (currentUser == null)
-                {
-                    // Handle unauthenticated user
-                    return Challenge(); // Redirects to login page
-                }
-
                 // Find matching Utilizadores record
                 var utilizador = await _context.Utilizadores
-                    .FirstOrDefaultAsync(u => u.IdentityUser == currentUser.Id);
-
-                if (utilizador == null)
-                {
-                    // Create new Utilizadores record
-                    utilizador = new Utilizadores
-                    {
-                        IdentityUser = currentUser.Id,
-                        Username = currentUser.UserName,
-                        IsArtista = false
-                    };
-
-                    _context.Utilizadores.Add(utilizador);
-                    await _context.SaveChangesAsync();
-                }
+                    .FirstOrDefaultAsync(u => u.Username == User.Identity.Name);
 
                 // Set playlist owner
                 playList.DonoFK = utilizador.Id;

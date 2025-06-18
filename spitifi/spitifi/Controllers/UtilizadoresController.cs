@@ -8,16 +8,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using spitifi.Data;
 using spitifi.Data.DbModels;
+using spitifi.Services.AlbumEraser;
 
 namespace spitifi.Controllers
 {
     public class UtilizadoresController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private AlbumEraser _AlbumEraser;
 
-        public UtilizadoresController(ApplicationDbContext context)
+        public UtilizadoresController(ApplicationDbContext context, AlbumEraser albumEraser)
         {
             _context = context;
+            _AlbumEraser = albumEraser;
         }
 
         // GET: Utilizadores
@@ -148,10 +151,24 @@ namespace spitifi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var utilizadores = await _context.Utilizadores.FindAsync(id);
-            if (utilizadores != null)
+            var utilizador = await _context.Utilizadores
+                .Include(u => u.Albums)
+                  .ThenInclude(u => u.Musicas)
+                .Include(u => u.Playlists)
+                .FirstOrDefaultAsync(u => u.Id == id);
+            
+            if (utilizador != null)
             {
-                _context.Utilizadores.Remove(utilizadores);
+                foreach (PlayList playList in utilizador.Playlists)
+                {
+                    _context.Remove(playList);
+                }
+
+                foreach (Album album in utilizador.Albums)
+                {
+                    await _AlbumEraser.AlbumEraserFunction(album.Id);
+                }
+                _context.Utilizadores.Remove(utilizador);
             }
 
             await _context.SaveChangesAsync();

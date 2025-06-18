@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using spitifi.Data;
 using spitifi.Data.DbModels;
 using spitifi.Models;
+using spitifi.Services.AlbumEraser;
 
 namespace spitifi.Controllers
 {
@@ -19,12 +20,13 @@ namespace spitifi.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IWebHostEnvironment _webHostEnvironment;
-
-        public AlbumController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IWebHostEnvironment webHostEnvironment)
+        private AlbumEraser _AlbumEraser;
+        public AlbumController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IWebHostEnvironment webHostEnvironment,  AlbumEraser albumEraser)
         {
             _context = context;
             _userManager = userManager;
             _webHostEnvironment = webHostEnvironment;
+            _AlbumEraser = albumEraser;
         }
 
         // GET: Album
@@ -416,42 +418,7 @@ namespace spitifi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            //buscar os albuns e as musicas associadas ao album
-            var album =  _context.Album.Include(a =>a.Musicas).FirstOrDefault(a=> a.Id == id)!;
-
-            if (album != null)
-            {
-                //apagar os recursos relacionados ao album, neste caso a foto e as musicas, para isso usamos também o DELETE do
-                //Model das músicas
-                var partialPath = album.Foto; // buscar o caminho relativo da foto
-
-                //juntar como caminho do wwwroot
-                var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, partialPath.Replace("/", Path.DirectorySeparatorChar.ToString()));
-
-                if (System.IO.File.Exists(fullPath))
-                {
-                    System.IO.File.Delete(fullPath);
-                }
-
-                //Se eliminarmos um album, eliminamos também as músicas que estão presentes no album e o seu ficheiro no wwwroot.
-                foreach (var musica in album.Musicas)
-                {
-                    var partialPathMusic = musica.FilePath; // e.g. "albumcover.jpg"
-                    
-                    var fullPathMusic = Path.Combine(_webHostEnvironment.WebRootPath, partialPathMusic.Replace("/", Path.DirectorySeparatorChar.ToString()));
-
-                    if (System.IO.File.Exists(fullPathMusic))
-                    {
-                        System.IO.File.Delete(fullPathMusic);
-                    }
-                    _context.Musica.Remove(musica);
-                }
-
-                _context.Album.Remove(album); 
-                await _context.SaveChangesAsync();
-            }
-
-            await _context.SaveChangesAsync();
+            await _AlbumEraser.AlbumEraserFunction(id);
             return RedirectToAction(nameof(Index));
         }
 
