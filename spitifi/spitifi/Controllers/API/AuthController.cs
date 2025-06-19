@@ -26,10 +26,6 @@ namespace spitifi.Controllers.API
 
         [HttpGet]
         [Route("hello")]
-        // Identity
-        // [Authorize] 
-        //
-        // JWT
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public ActionResult Hello()
         {

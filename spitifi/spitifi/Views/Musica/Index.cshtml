@@ -31,31 +31,25 @@
             data-album-art="@item.Album.Foto"
             data-artist="@item.Dono.Username"
             data-file-path="@item.FilePath">
-            
-            <td>
-        @if (User.Identity.IsAuthenticated)
-        {
-            <!-- Add data attribute for initial liked state -->
-            <img id="heart-@item.Id" 
-                 src="@(item.ListaGostos.Any(g => g.Utilizador.Username == User.Identity.Name) ? "/assets/icons/heart_filled.png" : "/assets/icons/heart_empty.png")"
-                 onclick="updateGosto(@item.Id)"
-                 style="cursor: pointer; width: 24px; height: 24px;"
-                 data-liked="@(item.ListaGostos.Any(g => g.Utilizador.Username == User.Identity.Name).ToString().ToLower())" />
-        }
-        <p id=@("foto" + item.Id)>@item.ListaGostos.Count()</p>
-        
-        <!--
-        @if (User.Identity.IsAuthenticated)
-        {
-            <button onclick="updateGosto(@item.Id)" class="form-control">Like</button>
-        }
 
-        <p id=@("foto" + item.Id)>@item.ListaGostos.Count()</p>
-        -->
-            </td>
-            
             <td>
-                <img style="max-height: 100px; max-width: 100px" src="@item.Album.Foto"/>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <!-- Add data attribute for initial liked state -->
+                    <img id="heart-@item.Id"
+                         src="@(item.ListaGostos.Any(g => g.Utilizador.Username == User.Identity.Name) ? "/assets/icons/heart_filled.png" : "/assets/icons/heart_empty.png")"
+                         onclick="updateGosto(@item.Id)"
+                         style="cursor: pointer; width: 24px; height: 24px;"
+                         data-liked="@(item.ListaGostos.Any(g => g.Utilizador.Username == User.Identity.Name).ToString().ToLower())"/>
+                }
+                <p id=@("foto" + item.Id)>@item.ListaGostos.Count()</p>
+
+            </td>
+
+            <td>
+                <img style="max-height: 100px; max-width: 100px"
+                     src="@item.Album.Foto" 
+                     onerror="this.onerror=null; this.src='/assets/icons/musicPlaceholder.png'"/>
             </td>
             <td>
                 @System.IO.Path.GetFileNameWithoutExtension(item.Nome)
@@ -163,7 +157,7 @@
         });
     });
 
-<!-- script para fazer a ligação ao webSocket-->
+    <!-- script para fazer a ligação ao webSocket-->
 
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/likes")
