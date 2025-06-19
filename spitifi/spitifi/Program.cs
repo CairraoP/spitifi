@@ -8,6 +8,7 @@ using spitifi.Areas.Identity.Pages.Account;
 using spitifi.Data;
 using spitifi.Services.Email;
 using spitifi.Data.DbInitializerDev;
+using spitifi.Services.AlbumEraser;
 using spitifi.Services.JWT;
 using spitifi.Services.SignalR;
 
@@ -64,6 +65,7 @@ builder.Services.AddSingleton<JwtService>();
 builder.Services.Configure<EmailSenderConfigModel>(builder.Configuration.GetSection("EmailConf"));
 
 builder.Services.AddTransient<ICustomMailer, CustomMailer>();
+builder.Services.AddTransient<AlbumEraser>();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSignalR();

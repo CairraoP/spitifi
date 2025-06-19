@@ -16,7 +16,7 @@
             <!--@Html.DisplayNameFor(model => dumbitem.Foto)-->
         </th>
         <th>
-            @Html.DisplayNameFor(model => dumbitem.Titulo)
+            Artista
         </th>
         <th>
             @Html.DisplayNameFor(model => dumbitem.Dono.Username)
@@ -29,13 +29,13 @@
     {
         <tr>
             <td>
-                <img style="max-height: 100px; max-width: 100px" src="@item.Foto" alt=""/>
+                <img style="max-height: 100px; max-width: 100px" src="/@item.Foto" alt=""/>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Titulo)
             </td>
             <td>
-                Artista
+                @Html.DisplayFor(modelItem => item.Dono.Username)
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
