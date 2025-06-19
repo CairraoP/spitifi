@@ -98,14 +98,11 @@ namespace spitifi.Controllers
             
             if (ModelState.IsValid)
             {
-                // Get current Identity user
-                var currentUser = await _userManager.GetUserAsync(User);
-
-                // Query para ir buscar o utlizador
+                // Find matching Utilizadores record
                 var utilizador = await _context.Utilizadores
-                    .FirstOrDefaultAsync(u => u.IdentityUser == currentUser.Id);
-                
-                // Fazer a referência FK
+                    .FirstOrDefaultAsync(u => u.Username == User.Identity.Name);
+
+                // Set playlist owner
                 playList.DonoFK = utilizador.Id;
 
                 // Processar as músicas escolhidas

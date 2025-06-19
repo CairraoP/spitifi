@@ -167,7 +167,7 @@ namespace spitifi.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.PT",
                             NormalizedUserName = "ADMIN@MAIL.PT",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDwUwLW0hDDRIZ8Aij8OMm/cvNqc5rP39aSxePBemMzqN6XlaLYvPs9GdehmJCqJCQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENjg3/ak6Cyfc61O1Ct/PF1AckP3f6N+4oU9FU7JoJ0lnvYC7QnompJV3Jrw/uqRNA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "29c12eb3-07f7-4cd8-a5d2-ab4e40e6d064",
                             TwoFactorEnabled = false,
@@ -183,7 +183,7 @@ namespace spitifi.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JONAS@MAIL.PT",
                             NormalizedUserName = "JONAS@MAIL.PT",
-                            PasswordHash = "AQAAAAIAAYagAAAAELq2QajnmisEec4NytoR6vOZBrnfxfPZv4nRiq02a+3eFdmU4l1yvQvb/AsqWtsYMA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECoguzmPqWcxp3ifCpnO17PnC3qCO5IDHsoy4HdIOlA4mbZuVVxv/nKHp5RSFqelzw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "99c12eb3-07f7-4cd8-a5d2-ab4e40e6d064",
                             TwoFactorEnabled = false,
@@ -576,7 +576,7 @@ namespace spitifi.Migrations
             modelBuilder.Entity("spitifi.Data.DbModels.PlayList", b =>
                 {
                     b.HasOne("spitifi.Data.DbModels.Utilizadores", "Dono")
-                        .WithMany()
+                        .WithMany("Playlists")
                         .HasForeignKey("DonoFK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -605,6 +605,8 @@ namespace spitifi.Migrations
                     b.Navigation("ListaDono");
 
                     b.Navigation("ListaGostos");
+
+                    b.Navigation("Playlists");
                 });
 #pragma warning restore 612, 618
         }
