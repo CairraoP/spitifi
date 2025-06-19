@@ -47,10 +47,8 @@
     </dl>
 </div>
 <div>
-    @if (dono)
-    {
-        <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a>
-        <a asp-action="Delete" asp-route-id="@Model?.Id">Apagar Musica</a>
+    @if(dono){
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a><a> | </a><a asp-action="Delete" asp-route-id="@Model?.Id">Apagar Musica</a><a> | </a>
     }
     <a asp-action="Index">Voltar</a>
 </div>

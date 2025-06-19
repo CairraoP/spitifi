@@ -95,7 +95,20 @@ namespace spitifi.Controllers
             bool haImagem = false;
             string nomeImagem = "";
             string fotoDeletePlaylist = "";
-            
+
+            if (fotoPlaylist == null)
+            {
+                ModelState.AddModelError("Foto", "Não foi inserida nenhuma foto");
+                return View();
+            }
+
+            if (string.IsNullOrEmpty(playList.Nome))
+            {
+                ModelState.AddModelError("Nome", "Não foi inserido nenhum Nome para a Playlist");
+                return View();
+            }
+
+
             if (ModelState.IsValid)
             {
                 // Find matching Utilizadores record

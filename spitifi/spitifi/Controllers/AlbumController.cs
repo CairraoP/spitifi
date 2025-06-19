@@ -109,7 +109,7 @@ namespace spitifi.Controllers
                 ModelState.AddModelError("DonoFK", "Alteração incorreta do Dono");
             }
 
-            if (album.Titulo == null || album.Titulo == "")
+            if (string.IsNullOrEmpty(album.Titulo))
             {
                 ModelState.AddModelError("Titulo", "Não introduziste um título");
                 ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId).Username;
