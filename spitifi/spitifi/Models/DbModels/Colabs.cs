@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace spitifi.Data.DbModels;
+namespace spitifi.Models.DbModels;
 
 [PrimaryKey(nameof(UtilizadorFK),nameof(MusicaFK))]
 public class Colabs

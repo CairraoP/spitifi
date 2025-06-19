@@ -5,6 +5,7 @@
         <Nullable>disable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>aspnet-spitifi-d3e41b66-d0e8-4c59-bf1c-174876206c49</UserSecretsId>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -18,6 +19,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11" />
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.3" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.2" />
     </ItemGroup>
 
     <ItemGroup>

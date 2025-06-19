@@ -1,10 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using spitifi.Data.DbModels;
 
-namespace spitifi.Data.DbModels;
+namespace spitifi.Models.DbModels;
 
 /// <summary>
 /// Utilizadores da aplicação

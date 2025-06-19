@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using spitifi.Data;
-using spitifi.Data.DbModels;
 using spitifi.Models;
+using spitifi.Models.DbModels;
 
 namespace spitifi.Controllers
 {

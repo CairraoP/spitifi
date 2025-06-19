@@ -25,7 +25,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto.Engines;
 using spitifi.Data;
-using spitifi.Data.DbModels;
+using spitifi.Models.DbModels;
 using spitifi.Services.Email;
 using Document = Microsoft.CodeAnalysis.Document;
 
