@@ -1,10 +1,11 @@
-@model Page<spitifi.Data.DbModels.Musica>
+@using spitifi.Models.DbModels
+@model Page<spitifi.Models.DbModels.Musica>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Index";
     // since the page model isn't the music dbModel but a paginator we can't access the music displayname from anywhere
     //ths dumbItem allows to use the musica dbModel attributes
-    var dumbitem = new spitifi.Data.DbModels.Musica();
+    var dumbitem = new Musica();
 }
 
 <h1>Músicas</h1>

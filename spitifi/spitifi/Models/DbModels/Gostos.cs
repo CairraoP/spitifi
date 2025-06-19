@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace spitifi.Data.DbModels;
+namespace spitifi.Models.DbModels;
 
 /// <summary>
 /// Gostos de músicas

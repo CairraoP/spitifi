@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using spitifi.Data.DbModels;
 using Microsoft.AspNetCore.Identity;
+using spitifi.Models.DbModels;
 
 namespace spitifi.Data;
 

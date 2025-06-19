@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using spitifi.Data;
-using spitifi.Data.DbModels;
+using spitifi.Models.DbModels;
 
 namespace spitifi.Services.SignalR;
 

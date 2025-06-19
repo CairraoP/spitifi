@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
 
-namespace spitifi.Data.DbModels;
+namespace spitifi.Models.DbModels;
 
 public class Album
 {
