@@ -47,10 +47,9 @@ namespace spitifi.Controllers
             // Apply pagination using Page.CreateAsync
             var paginatedResult = await Page<Musica>.CreateAsync(
                 source: query,
-                pageIndex: pageNumber ?? 1,  // Default to page 1 if null
+                pageIndex: pageNumber ?? 1, // Default to page 1 if null
                 pageSize: pageSize
             );
-            
             return View(paginatedResult);
         }
 
@@ -66,7 +65,6 @@ namespace spitifi.Controllers
                 .Include(m => m.Dono)
                 .Include(m => m.Album)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            
             if (musica == null)
             {
                 return NotFound();
@@ -108,7 +106,7 @@ namespace spitifi.Controllers
             {
                 return NotFound();
             }
-
+            
             var musica = await _context.Musica.FindAsync(id);
             
             if (musica == null)
@@ -118,7 +116,7 @@ namespace spitifi.Controllers
             ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Username", musica.DonoFK);
             return View(musica);
         }
-
+        
         // POST: Musica/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.

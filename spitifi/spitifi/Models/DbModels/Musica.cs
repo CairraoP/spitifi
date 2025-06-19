@@ -62,5 +62,9 @@ public class Musica
     /// </summary>
     public ICollection<Gostos> ListaGostos { get; set; } = [];
     
+    
+    /// <summary>
+    /// playlists criadas pelo utilizador
+    /// </summary>
     public ICollection<PlayList> ListaPlayList { get; set; } = [];
 }

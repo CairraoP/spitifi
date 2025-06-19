@@ -3,8 +3,8 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Index";
-    // since the page model isn't the music dbModel but a paginator we can't access the music displayname from anywhere
-    //ths dumbItem allows to use the musica dbModel attributes
+    // since the page model isn't the music dbModel but a paginator, we can't access the music displayname from anywhere
+    // this dumbItem allows to use the Musica Model attributes
     var dumbitem = new Musica();
 }
 
@@ -13,6 +13,7 @@
 <table class="table" style="color:white">
     <thead>
     <tr>
+        <th><!-- like button --></th>
         <th><!-- Foto do album --></th>
         <th>
             @Html.DisplayNameFor(model => dumbitem.Nome)
@@ -30,6 +31,29 @@
             data-album-art="@item.Album.Foto"
             data-artist="@item.Dono.Username"
             data-file-path="@item.FilePath">
+            
+            <td>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <!-- Add data attribute for initial liked state -->
+            <img id="heart-@item.Id" 
+                 src="@(item.ListaGostos.Any(g => g.Utilizador.Username == User.Identity.Name) ? "/assets/icons/heart_filled.png" : "/assets/icons/heart_empty.png")"
+                 onclick="updateGosto(@item.Id)"
+                 style="cursor: pointer; width: 24px; height: 24px;"
+                 data-liked="@(item.ListaGostos.Any(g => g.Utilizador.Username == User.Identity.Name).ToString().ToLower())" />
+        }
+        <p id=@("foto" + item.Id)>@item.ListaGostos.Count()</p>
+        
+        <!--
+        @if (User.Identity.IsAuthenticated)
+        {
+            <button onclick="updateGosto(@item.Id)" class="form-control">Like</button>
+        }
+
+        <p id=@("foto" + item.Id)>@item.ListaGostos.Count()</p>
+        -->
+            </td>
+            
             <td>
                 <img style="max-height: 100px; max-width: 100px" src="@item.Album.Foto"/>
             </td>
@@ -138,12 +162,11 @@
             });
         });
     });
-</script>
 
-<!-- Script para fazer a ligação ao webSocket-->
-<script>
+<!-- script para fazer a ligação ao webSocket-->
+
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/gostosSocket")
+        .withUrl("/likes")
         .withAutomaticReconnect()
         .configureLogging(signalR.LogLevel.Information)
         .build();
@@ -152,8 +175,36 @@
         try {
             await connection.start();
 
+            // Existing count update handler
             connection.on("AtualizarGostos", (idMusica, numGostos) => {
-                document.getElementById("VerificarElemento" + idMusica).innerHTML = numGostos;
+                document.getElementById("foto" + idMusica).innerHTML = numGostos;
+            });
+
+            // Like state update handler
+            connection.on("AtualizarGostoState", (idMusica, isLiked) => {
+                const heart = document.getElementById(`heart-${idMusica}`);
+                if (heart) {
+                    heart.src = isLiked ? "/assets/icons/heart_filled.png" : "/assets/icons/heart_empty.png";
+                    heart.dataset.liked = isLiked.toString();
+                }
+            });
+
+            // New handler for initial states
+            connection.on("ReceiveInitialStates", (states) => {
+                states.forEach(state => {
+                    // Update count
+                    const countElement = document.getElementById(`foto${state.songId}`);
+                    if (countElement) {
+                        countElement.textContent = state.count;
+                    }
+
+                    // Update heart icon
+                    const heart = document.getElementById(`heart-${state.songId}`);
+                    if (heart) {
+                        heart.src = state.liked ? "/assets/icons/heart_filled.png" : "/assets/icons/heart_empty.png";
+                        heart.dataset.liked = state.liked.toString();
+                    }
+                });
             });
 
             console.log("SignalR Connected.");
@@ -164,9 +215,16 @@
     };
 
     function updateGosto(idMusica) {
+        const heart = document.getElementById(`heart-${idMusica}`);
+        // Immediately toggle visual state for responsiveness
+        if (heart) {
+            const isLiked = heart.dataset.liked === 'true';
+            heart.src = isLiked ? "/assets/icons/heart_empty.png" : "/assets/icons/heart_filled.png";
+            heart.dataset.liked = (!isLiked).toString();
+        }
         connection.invoke("AtualizarGostos", idMusica);
     }
 
-    // Start the connection.
+    // start the connection.
     start();
 </script>

@@ -18,11 +18,38 @@ public class LikesServices : Hub
     }
 
     [Authorize]
-    public override Task OnConnectedAsync()
+    public override async Task OnConnectedAsync()
     {
-        Clients.All.SendAsync("OnConnectedAsync", "Nova conexão: "+Context.ConnectionId);  
-        return base.OnConnectedAsync();
+        try
+        {
+            var username = Context.User.Identity.Name;
+            var user = await _applicationDbContext.Utilizadores
+                .Include(u => u.ListaGostos)
+                .FirstOrDefaultAsync(u => u.Username == username);
+        
+            // Get all songs the user might see (simplified for demo - in real app, you'd want to scope this)
+            var allSongs = await _applicationDbContext.Musica
+                .Include(m => m.ListaGostos)
+                .ToListAsync();
+        
+            var initialStates = allSongs.Select(song => new
+            {
+                songId = song.Id,
+                count = song.ListaGostos.Count,
+                liked = user?.ListaGostos?.Any(g => g.MusicaFK == song.Id) ?? false
+            }).ToList();
+        
+            // Send initial states to the newly connected client
+            await Clients.Caller.SendAsync("ReceiveInitialStates", initialStates);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending initial states");
+        }
+    
+        await base.OnConnectedAsync();
     }
+
     
     [Authorize]
     public void AtualizarGostos(int idMusica)
@@ -57,7 +84,14 @@ public class LikesServices : Hub
         
         var numGostos = _applicationDbContext.Gostos.Where(g => g.MusicaFK==idMusica).Count();
         
+        // get current user's new liked state
+        var newState = _applicationDbContext.Gostos
+            .Any(g => g.MusicaFK == idMusica && 
+                      g.Utilizador.Username == Context.User.Identity.Name);
+        
         Clients.All.SendAsync("AtualizarGostos", idMusica, numGostos);
-
+        
+        // send new state only to the caller
+        Clients.Caller.SendAsync("AtualizarGostoState", idMusica, newState);
     }
 }
