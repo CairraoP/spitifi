@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using spitifi.Data;
-using spitifi.Data.DbModels;
+using spitifi.Models.DbModels;
 using spitifi.Services.AlbumEraser;
 
 namespace spitifi.Controllers

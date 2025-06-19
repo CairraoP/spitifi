@@ -1,5 +1,4 @@
 using spitifi.Data.DbInitializerDev;
-using spitifi.Data.DbModels;
 using Microsoft.AspNetCore.Identity;
 
 namespace spitifi.Data.DbInitializerDev;
