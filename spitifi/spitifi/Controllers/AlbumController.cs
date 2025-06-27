@@ -419,6 +419,7 @@ namespace spitifi.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _AlbumEraser.AlbumEraserFunction(id);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

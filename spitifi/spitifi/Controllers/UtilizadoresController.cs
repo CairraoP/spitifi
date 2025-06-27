@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,15 +13,18 @@ using spitifi.Services.AlbumEraser;
 
 namespace spitifi.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class UtilizadoresController : Controller
     {
         private readonly ApplicationDbContext _context;
         private AlbumEraser _AlbumEraser;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public UtilizadoresController(ApplicationDbContext context, AlbumEraser albumEraser)
+        public UtilizadoresController(ApplicationDbContext context, AlbumEraser albumEraser, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _AlbumEraser = albumEraser;
+            _userManager = userManager;
         }
 
         // GET: Utilizadores
@@ -38,6 +42,7 @@ namespace spitifi.Controllers
             }
             
             var utilizadores = await _context.Utilizadores
+                .Include(u => u.Albums).ThenInclude(m => m.Musicas)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (utilizadores == null)
             {
@@ -128,7 +133,7 @@ namespace spitifi.Controllers
         }
 
         // GET: Utilizadores/Delete/5
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles="Administrador")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -147,15 +152,17 @@ namespace spitifi.Controllers
         }
 
         // POST: Utilizadores/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var utilizador = await _context.Utilizadores
                 .Include(u => u.Albums)
                   .ThenInclude(u => u.Musicas)
                 .Include(u => u.Playlists)
                 .FirstOrDefaultAsync(u => u.Id == id);
+
+            var utilizadorIdentity = await _userManager.FindByNameAsync(utilizador.Username);
             
             if (utilizador != null)
             {
@@ -169,9 +176,10 @@ namespace spitifi.Controllers
                     await _AlbumEraser.AlbumEraserFunction(album.Id);
                 }
                 _context.Utilizadores.Remove(utilizador);
+                await _context.SaveChangesAsync();
+                
+                await _userManager.DeleteAsync(utilizadorIdentity);
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -179,5 +187,6 @@ namespace spitifi.Controllers
         {
             return _context.Utilizadores.Any(e => e.Id == id);
         }
+
     }
 }

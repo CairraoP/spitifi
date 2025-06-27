@@ -52,8 +52,7 @@ public class AlbumEraser
                 _context.Musica.Remove(musica);
             }
             
-            _context.Album.Remove(album); 
-            await _context.SaveChangesAsync();
+            _context.Album.Remove(album);
         }
     }
 }

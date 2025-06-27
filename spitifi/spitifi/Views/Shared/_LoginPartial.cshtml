@@ -10,9 +10,14 @@
     {
         //procurar o utlizador na nossa BD para importar a foto escolhida por ele. Para isso também foi preciso importar a variavel global Context.
         var userContext = Context.Utilizadores.FirstOrDefault(u => u.Username == User.Identity.Name);
+        var foto = userContext?.Foto;
+        if (foto == null)
+        {
+            foto = "assets/icons/user.png";
+        }
         <li class="nav-item">
             <div class="d-flex align-items-center">
-                <img src="/@userContext?.Foto" width="25" height="25" class="mr-2"/>
+                <img src="/@foto" width="25" height="25" class="mr-2"/>
                 <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
                     Olá @User.Identity?.Name!
                 </a>
@@ -24,7 +29,7 @@
                 <div>
                     <!--<a href="https://www.flaticon.com/free-icons/logout" title="logout icons">Logout icons created by SumberRejeki - Flaticon</a>-->
                     <img src="/assets/icons/logout.png" width="25" height="25">
-                    <button type="submit" class="nav-link btn btn-link" style="display: inline; color: white">Terminar Sessão</button>
+                    <button type="submit" class="nav-link btn btn-link" style="display: inline; color: white; font-size: 18px">Terminar Sessão</button>
                 </div>
             </form>
         </li>

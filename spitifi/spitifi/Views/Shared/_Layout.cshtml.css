@@ -15,6 +15,13 @@ a.navbar-brand {
   word-break: break-all;
 }
 
+.sidebar-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 10px;
+}
+
 a {
   color: #ffffff;
 }

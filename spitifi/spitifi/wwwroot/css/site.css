@@ -12,6 +12,7 @@ html {
 .navbar-brand {
   padding: 7px 14px 7px 32px !important;
 }
+
 .sidebar {
   height: 100%;
   position: fixed;
@@ -26,7 +27,7 @@ html {
 
 .sidebar a {
   text-decoration: none;
-  font-size: 20px;
+  font-size: 18px;
   color: #5c636a;
   display: block;
   transition: 0.3s;
@@ -57,6 +58,12 @@ html {
   .sidebar {
     width: 0; 
     padding-top: 60px;
+  }
+  .sidebar-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 10px;
   }
 
   .sidebar .closebtn {
@@ -158,5 +165,9 @@ input[type="range"] {
   .main-content {
     margin-left: 250px;
     padding: 20px;
+  }
+  
+  .sidebar-text{
+    font-size: 10px;
   }
 }
