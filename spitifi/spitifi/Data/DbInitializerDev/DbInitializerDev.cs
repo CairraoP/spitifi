@@ -1,5 +1,6 @@
 using spitifi.Data.DbInitializerDev;
 using Microsoft.AspNetCore.Identity;
+using spitifi.Models.DbModels;
 
 namespace spitifi.Data.DbInitializerDev;
 
@@ -50,6 +51,19 @@ public class DbInitializerDev
             PasswordHash = hasher.HashPassword(null, "Bb0_bb")
         };
 
+        IdentityUser u3 = new IdentityUser
+        {
+            Id = "John Mayer",
+            UserName = "johnM@mail.pt",
+            NormalizedUserName = "JOHNM@MAIL.PT",
+            Email = "johnM@mail.pt",
+            NormalizedEmail = "JOHNM@MAIL.PT",
+            EmailConfirmed = true,
+            SecurityStamp = "39c12eb3-07f7-4cd8-a5d2-ab4e40e6d064",
+            ConcurrencyStamp = "2f58a2a5-5148-48f6-bc1c-74cae86a2172",
+            PasswordHash = hasher.HashPassword(null, "Cc0_cc")
+        };
+
         if (await dbContext.Users.FindAsync(u1.Id) == null)
         {
             dbContext.Users.Add(u1);
@@ -65,8 +79,7 @@ public class DbInitializerDev
 
         IdentityRole role_admin = new IdentityRole { Id = "a", Name = "Administrador", NormalizedName = "ADMINISTRADOR" };
         IdentityRole role_artista = new IdentityRole { Id = "ar", Name = "Artista", NormalizedName = "ARTISTA" };
-        IdentityRole role_user = new IdentityRole { Id = "user", Name = "User", NormalizedName = "USER" };
-        
+
         if (await dbContext.Roles.FindAsync(role_admin.Id) == null)
         {
             dbContext.Roles.Add(role_admin);
@@ -78,15 +91,9 @@ public class DbInitializerDev
             dbContext.Roles.Add(role_artista);
             haAdicao = true;
         }
-        
-        if (await dbContext.Roles.FindAsync(role_user.Id) == null)
-        {
-            dbContext.Add(role_user);
-            haAdicao = true;
-        }
 
         IdentityUserRole<string> user_role_1 = new IdentityUserRole<string> { UserId = "admin", RoleId = "a" };
-        IdentityUserRole<string> user_role_2 = new IdentityUserRole<string> { UserId = "jonas", RoleId = "user" };
+        IdentityUserRole<string> user_role_3 = new IdentityUserRole<string> { UserId = "johnM", RoleId = "ar" };
 
         if (await dbContext.UserRoles.FindAsync(user_role_1.UserId, user_role_1.RoleId) == null)
         {
@@ -94,11 +101,10 @@ public class DbInitializerDev
             haAdicao = true;
         } 
         
-        if (await dbContext.UserRoles.FindAsync(user_role_2.UserId, user_role_2.RoleId) == null)
+        if (await dbContext.UserRoles.FindAsync(user_role_3.UserId, user_role_3.RoleId) == null)
         {
-            dbContext.UserRoles.Add(user_role_2);
+            dbContext.UserRoles.Add(user_role_3);
             haAdicao = true;
         }
-        
-    }
+        }
 }
