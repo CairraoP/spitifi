@@ -124,6 +124,23 @@ builder.Services.AddDistributedMemoryCache();
 
 var app = builder.Build();
 
+// Add this BEFORE any database operations
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    
+    // Explicitly open connection
+    if (dbContext.Database.GetDbConnection().State != System.Data.ConnectionState.Open)
+    {
+        dbContext.Database.OpenConnection();
+    }
+    
+    // Ensure database is created (sync version)
+    dbContext.Database.EnsureCreated();
+}
+
+app.UseItToSeedSqlServer();
+
 // Enable middleware for Swagger (in all environments)
 app.UseSwagger();
 app.UseSwaggerUI(options =>
@@ -135,7 +152,7 @@ app.UseSwaggerUI(options =>
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
-    //app.UseItToSeedSqlServer();
+    // app.UseItToSeedSqlServer();
 }
 else
 {

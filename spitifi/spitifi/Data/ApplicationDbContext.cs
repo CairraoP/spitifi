@@ -12,9 +12,10 @@ public class ApplicationDbContext : IdentityDbContext
         : base(options)
     {
     }
+    /*
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        
+        /*
         //importa todo o comportamento do metodo 
         // aquando da sua definição na SuperClasse
         base.OnModelCreating(modelBuilder);
@@ -71,7 +72,7 @@ public class ApplicationDbContext : IdentityDbContext
             new IdentityUserRole<string> { UserId = "admin", RoleId = "a" },
             new IdentityUserRole<string> { UserId = "John Mayer", RoleId = "ar" });
     }
-
+*/
     public DbSet<Gostos> Gostos { get; set; }
     public DbSet<Musica> Musica { get; set; }
     public DbSet<Utilizadores> Utilizadores { get; set; }
