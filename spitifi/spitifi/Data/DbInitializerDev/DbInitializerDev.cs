@@ -7,9 +7,8 @@ namespace spitifi.Data.DbInitializerDev;
 
 public class DbInitializerDev
 {
-    internal static async void Initialize(ApplicationDbContext dbContext)
+    internal static async Task Initialize(ApplicationDbContext dbContext)
     {
-
         /*
          * https://stackoverflow.com/questions/70581816/how-to-seed-data-in-net-core-6-with-entity-framework
          *
@@ -24,9 +23,9 @@ public class DbInitializerDev
 
         // var auxiliar
         bool haAdicao = false;
-        
+
         var hasher = new PasswordHasher<IdentityUser>();
-        
+
         IdentityUser u1 = new IdentityUser
         {
             Id = "admin",
@@ -64,18 +63,21 @@ public class DbInitializerDev
             ConcurrencyStamp = "2f58a2a5-5148-48f6-bc1c-74cae86a2172",
             PasswordHash = hasher.HashPassword(null, "Cc0_cc")
         };
-
+        Console.Write("Before if");
         if (await dbContext.Users.FindAsync(u1.Id) == null)
         {
+            Console.Write("Inside if; before add");
             dbContext.Users.Add(u1);
+            Console.Write("Inside if; after add; bafore addAsync");
             await dbContext.Utilizadores.AddAsync(new Utilizadores
             {
                 Id = 50,
                 Username = u1.UserName
             });
+            Console.Write("Inside if; after add; bafore afterAsync");
             haAdicao = true;
         }
-        
+
         if (await dbContext.Users.FindAsync(u2.Id) == null)
         {
             dbContext.Users.Add(u2);
@@ -86,7 +88,7 @@ public class DbInitializerDev
             });
             haAdicao = true;
         }
-        
+
         if (await dbContext.Users.FindAsync(u3.Id) == null)
         {
             dbContext.Users.Add(u3);
@@ -99,7 +101,8 @@ public class DbInitializerDev
         }
 
 
-        IdentityRole role_admin = new IdentityRole { Id = "a", Name = "Administrador", NormalizedName = "ADMINISTRADOR" };
+        IdentityRole role_admin = new IdentityRole
+            { Id = "a", Name = "Administrador", NormalizedName = "ADMINISTRADOR" };
         IdentityRole role_artista = new IdentityRole { Id = "ar", Name = "Artista", NormalizedName = "ARTISTA" };
 
         if (await dbContext.Roles.FindAsync(role_admin.Id) == null)
@@ -107,7 +110,7 @@ public class DbInitializerDev
             dbContext.Roles.Add(role_admin);
             haAdicao = true;
         }
-        
+
         if (await dbContext.Roles.FindAsync(role_artista.Id) == null)
         {
             dbContext.Roles.Add(role_artista);
@@ -115,18 +118,23 @@ public class DbInitializerDev
         }
 
         IdentityUserRole<string> user_role_1 = new IdentityUserRole<string> { UserId = "admin", RoleId = "a" };
-        IdentityUserRole<string> user_role_3 = new IdentityUserRole<string> { UserId = "johnM", RoleId = "ar" };
+        IdentityUserRole<string> user_role_3 = new IdentityUserRole<string> { UserId = "John Mayer", RoleId = "ar" };
 
         if (await dbContext.UserRoles.FindAsync(user_role_1.UserId, user_role_1.RoleId) == null)
         {
             dbContext.UserRoles.Add(user_role_1);
             haAdicao = true;
-        } 
-        
+        }
+
         if (await dbContext.UserRoles.FindAsync(user_role_3.UserId, user_role_3.RoleId) == null)
         {
             dbContext.UserRoles.Add(user_role_3);
             haAdicao = true;
+        }
+
+        if (haAdicao)
+        {
+            await dbContext.SaveChangesAsync();
         }
 
         var dono = dbContext.Utilizadores.FirstOrDefault(u => u.Id == 52);
@@ -139,7 +147,7 @@ public class DbInitializerDev
                 DonoFK = dono.Id,
                 Foto = @"\assets\imagesSeed\texto.PNG"
             };
-            
+
             if (!dbContext.Album.Any(a => a.Id == a1.Id))
             {
                 dbContext.Album.Add(a1);
@@ -162,10 +170,10 @@ public class DbInitializerDev
                 AlbumFK = 60,
                 FilePath = @"\assets\musicsSeed\Bee Gees - More Than A Woman (Lyric Video).mp3"
             };
-            
+
             a1.Musicas.Add(m1);
             a1.Musicas.Add(m2);
-        
+
             Album a2 = new Album
             {
                 Id = 70,
@@ -173,7 +181,7 @@ public class DbInitializerDev
                 DonoFK = dono.Id,
                 Foto = @"\assets\imagesSeed\Pilha Alcalina.PNG"
             };
-            
+
             if (!dbContext.Album.Any(a => a.Id == a2.Id))
             {
                 dbContext.Album.Add(a2);
@@ -186,7 +194,8 @@ public class DbInitializerDev
                 Nome = "Seed21",
                 DonoFK = dono.Id,
                 AlbumFK = 70,
-                FilePath = @"\assets\musicsSeed\Come and get Your Love(Guardians of the Galaxy Intro song) - Redbone.mp3"
+                FilePath =
+                    @"\assets\musicsSeed\Come and get Your Love(Guardians of the Galaxy Intro song) - Redbone.mp3"
             };
             Musica m4 = new Musica
             {
@@ -204,18 +213,18 @@ public class DbInitializerDev
                 AlbumFK = 70,
                 FilePath = @"\assets\musicsSeed\Gravity by John Mayer.mp3"
             };
-            
+
             a2.Musicas.Add(m3);
             a2.Musicas.Add(m4);
             a2.Musicas.Add(m5);
-            
+
             dono.Albums.Add(a1);
             dono.Albums.Add(a2);
-            
-        if (haAdicao)
-        {
-            await dbContext.SaveChangesAsync();
+
+            if (haAdicao)
+            {
+                await dbContext.SaveChangesAsync();
+            }
         }
-        }
-        }
+    }
 }
