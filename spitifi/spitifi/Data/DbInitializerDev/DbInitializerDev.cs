@@ -129,6 +129,11 @@ public class DbInitializerDev
             haAdicao = true;
         }
 
+        if (haAdicao)
+        {
+            await dbContext.SaveChangesAsync(); 
+        }
+
         var dono = dbContext.Utilizadores.FirstOrDefault(u => u.Id == 52);
         if (dono != null)
         {
