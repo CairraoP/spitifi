@@ -1,5 +1,6 @@
 using spitifi.Data.DbInitializerDev;
 using Microsoft.AspNetCore.Identity;
+using NuGet.Protocol;
 using spitifi.Models.DbModels;
 
 namespace spitifi.Data.DbInitializerDev;
@@ -67,12 +68,33 @@ public class DbInitializerDev
         if (await dbContext.Users.FindAsync(u1.Id) == null)
         {
             dbContext.Users.Add(u1);
+            await dbContext.Utilizadores.AddAsync(new Utilizadores
+            {
+                Id = 50,
+                Username = u1.UserName
+            });
             haAdicao = true;
         }
         
         if (await dbContext.Users.FindAsync(u2.Id) == null)
         {
             dbContext.Users.Add(u2);
+            await dbContext.Utilizadores.AddAsync(new Utilizadores
+            {
+                Id = 51,
+                Username = u2.UserName
+            });
+            haAdicao = true;
+        }
+        
+        if (await dbContext.Users.FindAsync(u3.Id) == null)
+        {
+            dbContext.Users.Add(u3);
+            await dbContext.Utilizadores.AddAsync(new Utilizadores
+            {
+                Id = 52,
+                Username = u3.UserName
+            });
             haAdicao = true;
         }
 
@@ -105,6 +127,95 @@ public class DbInitializerDev
         {
             dbContext.UserRoles.Add(user_role_3);
             haAdicao = true;
+        }
+
+        var dono = dbContext.Utilizadores.FirstOrDefault(u => u.Id == 52);
+        if (dono != null)
+        {
+            Album a1 = new Album
+            {
+                Id = 60,
+                Titulo = "Seed1",
+                DonoFK = dono.Id,
+                Foto = @"\assets\imagesSeed\texto.PNG"
+            };
+            
+            if (!dbContext.Album.Any(a => a.Id == a1.Id))
+            {
+                dbContext.Album.Add(a1);
+                haAdicao = true;
+            }
+
+            Musica m1 = new Musica
+            {
+                Id = 70,
+                Nome = "Seed11",
+                DonoFK = dono.Id,
+                AlbumFK = 60,
+                FilePath = @"\assets\musicsSeed\3 Doors Down - Here Without You.mp3"
+            };
+            Musica m2 = new Musica
+            {
+                Id = 71,
+                Nome = "Seed12",
+                DonoFK = dono.Id,
+                AlbumFK = 60,
+                FilePath = @"\assets\musicsSeed\Bee Gees - More Than A Woman (Lyric Video).mp3"
+            };
+            
+            a1.Musicas.Add(m1);
+            a1.Musicas.Add(m2);
+        
+            Album a2 = new Album
+            {
+                Id = 70,
+                Titulo = "Seed2",
+                DonoFK = dono.Id,
+                Foto = @"\assets\imagesSeed\Pilha Alcalina.PNG"
+            };
+            
+            if (!dbContext.Album.Any(a => a.Id == a2.Id))
+            {
+                dbContext.Album.Add(a2);
+                haAdicao = true;
+            }
+
+            Musica m3 = new Musica
+            {
+                Id = 72,
+                Nome = "Seed21",
+                DonoFK = dono.Id,
+                AlbumFK = 70,
+                FilePath = @"\assets\musicsSeed\Come and get Your Love(Guardians of the Galaxy Intro song) - Redbone.mp3"
+            };
+            Musica m4 = new Musica
+            {
+                Id = 73,
+                Nome = "Seed22",
+                DonoFK = dono.Id,
+                AlbumFK = 70,
+                FilePath = @"\assets\musicsSeed\Encore.mp3"
+            };
+            Musica m5 = new Musica
+            {
+                Id = 74,
+                Nome = "Seed23",
+                DonoFK = dono.Id,
+                AlbumFK = 70,
+                FilePath = @"\assets\musicsSeed\Gravity by John Mayer.mp3"
+            };
+            
+            a2.Musicas.Add(m3);
+            a2.Musicas.Add(m4);
+            a2.Musicas.Add(m5);
+            
+            dono.Albums.Add(a1);
+            dono.Albums.Add(a2);
+            
+        if (haAdicao)
+        {
+            await dbContext.SaveChangesAsync();
+        }
         }
         }
 }
