@@ -9,7 +9,7 @@ internal static class DbInitializerExtension
         var services = scope.ServiceProvider;
         try {
             var context = services.GetRequiredService<ApplicationDbContext>();
-            DbInitializerDev.Initialize(context);
+            DbInitializerDev.Initialize(context).GetAwaiter().GetResult();
         }
         catch (Exception ex) {
 
