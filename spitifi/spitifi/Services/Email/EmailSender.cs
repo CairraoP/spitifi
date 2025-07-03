@@ -2,7 +2,6 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using spitifi.Areas.Identity.Pages.Account;
 
 namespace spitifi.Services.Email;
 
@@ -27,8 +26,8 @@ public class CustomMailer : ICustomMailer
     public void SendEmail(string email, string subject, string htmlMessage)
     {
         //variáveis provenientes da classe do EmailSenderConfigModel
-        var fromEmail = _mailConfig.fromEmail;
-        var fromPassword = _mailConfig.fromPassword;
+        var fromEmail = _mailConfig.FromEmail;
+        var fromPassword = _mailConfig.FromEmail;
 
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress("Equipa Spitifi", fromEmail));
@@ -44,7 +43,7 @@ public class CustomMailer : ICustomMailer
 
         using (var client = new SmtpClient())
         { 
-            client.Connect(_mailConfig.host, _mailConfig.port, SecureSocketOptions.StartTls);
+            client.Connect(_mailConfig.Host, _mailConfig.Port, SecureSocketOptions.StartTls);
             client.Authenticate(fromEmail, fromPassword);
             client.Send(message);
             client.Disconnect(true);

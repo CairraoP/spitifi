@@ -3,7 +3,10 @@ using spitifi.Data;
 
 namespace spitifi.Services.AlbumEraser;
 
-//Classe para apagar um Album, como a lógica ia ser dupplicada nos utilizadores e no controlador do Album, criou-se esta classe
+
+/// <summary>
+/// Classe para apagar um Album, como a lógica ia ser dupplicada nos utilizadores e no controlador do Album, criou-se esta classe
+/// </summary>
 public class AlbumEraser
 {
     private readonly ApplicationDbContext _context;

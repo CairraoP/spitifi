@@ -6,16 +6,27 @@ namespace spitifi.Models.ApiModels
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class musicController : ControllerBase
+    public class MusicController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public musicController(ApplicationDbContext context)
+        public MusicController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        [HttpGet("top6")]
+        /// <summary>
+        /// Devolve as 6 músicas mais gostadas
+        /// </summary>
+        /// <remarks>
+        /// Endpoint de livre utilização. Não requer token de autenticação
+        /// </remarks>
+        /// <returns>
+        /// <para>200 OK: Quando lista de músicas forem retornadas</para>
+        /// </returns>
+        /// <response code="200">Ranking de músicas</response>
+        [HttpGet]
+        [Route("top6")]
         public async Task<IActionResult> GetTop6Musicas()
         {
             var topMusicas = await _context.Musica

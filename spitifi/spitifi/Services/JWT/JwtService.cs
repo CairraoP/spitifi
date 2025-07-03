@@ -10,21 +10,27 @@ using Microsoft.IdentityModel.Tokens;
 public class JwtService
 {
     private readonly IConfiguration _config;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public JwtService(IConfiguration config)
+    public JwtService(IConfiguration config, UserManager<IdentityUser> userManager)
     {
         _config = config;
+        _userManager = userManager;
     }
-    public string GenerateToken(IdentityUser user) {
+    public async Task<string> GenerateToken(IdentityUser user) {
         var jwtSettings = _config.GetSection("Jwt");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var roles = await _userManager.GetRolesAsync(user);
+
 
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id),   // User ID
             new Claim(JwtRegisteredClaimNames.Email, user.Email),  // User Email - não será nulo pq é usado como UserName
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.Role, string.Join(",", roles)) // Single claim with comma-separated roles
+
         };
 
         var token = new JwtSecurityToken(

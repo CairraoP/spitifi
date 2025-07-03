@@ -1,36 +1,42 @@
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using spitifi.Areas.Identity.Pages.Account;
 using spitifi.Data;
-using spitifi.Services.Email;
 using spitifi.Data.DbInitializerDev;
 using spitifi.Services.AlbumEraser;
+using spitifi.Services.Email;
 using spitifi.Services.JWT;
 using spitifi.Services.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//-----------------------------------------------------------------------------------
+//-------------------- DATABASE CONFIGURATION ---------------------------------------
+//-----------------------------------------------------------------------------------
 var connectionString = builder.Configuration.GetConnectionString("ConStringMySQL") ??
-                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+                       throw new InvalidOperationException("Connection string not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(
-        builder.Configuration.GetConnectionString("ConStringMySQL"),
-        new MySqlServerVersion(new Version(8, 0, 39)) // Use your MySQL server version
+        connectionString,
+        new MySqlServerVersion(new Version(8, 0, 39))
     ));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+//-----------------------------------------------------------------------------------
+//-------------------- IDENTITY CONFIGURATION -----------------------------------------
+//-----------------------------------------------------------------------------------
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// uso de variáveis de sessão
+//-----------------------------------------------------------------------------------
+//-------------------- SESSION CONFIGURATION ----------------------------------------
+//-----------------------------------------------------------------------------------
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(10);
@@ -38,61 +44,97 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// JWT
+//-----------------------------------------------------------------------------------
+//-------------------- JWT AUTHENTICATION CONFIGURATION -----------------------------
+//-----------------------------------------------------------------------------------
 var jwtSettings = builder.Configuration.GetSection("Jwt");
-var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
 
-
-// configurar autenticação que valida token JWT
-builder.Services.AddAuthentication()
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidateLifetime = false,
+            ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtSettings["Issuer"],
             ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(key)
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            RoleClaimType = ClaimTypes.Role
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine($"JWT Auth Failed: {context.Exception.Message}");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                if (context.Principal?.Identity is ClaimsIdentity claimsIdentity)
+                {
+                    var roleClaims = claimsIdentity.FindAll(ClaimTypes.Role).ToList();
+                    foreach (var claim in roleClaims)
+                    {
+                        claimsIdentity.RemoveClaim(claim);
+                        foreach (var role in claim.Value.Split(','))
+                        {
+                            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Trim()));
+                        }
+                    }
+                }
+
+                return Task.CompletedTask;
+            }
         };
     });
 
-// o que é um singleton? o que é um transient? o que é um scoped?
-builder.Services.AddSingleton<JwtService>();
+builder.Services.AddScoped<JwtService>();
 
-//
-//Definir variavel/variaveis de configuração
+//-----------------------------------------------------------------------------------
+//-------------------- EMAIL SERVICES CONFIGURATION ---------------------------------
+//-----------------------------------------------------------------------------------
 builder.Services.Configure<EmailSenderConfigModel>(builder.Configuration.GetSection("EmailConf"));
-
 builder.Services.AddTransient<ICustomMailer, CustomMailer>();
+
+//-----------------------------------------------------------------------------------
+//-------------------- APPLICATION SERVICES CONFIGURATION ---------------------------
+//-----------------------------------------------------------------------------------
 builder.Services.AddTransient<AlbumEraser>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
+builder.Services.AddDistributedMemoryCache();
 
-// add swagger
-// https://learn.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-8.0&tabs=visual-studio
+//-----------------------------------------------------------------------------------
+//-------------------- SWAGGER CONFIGURATION ----------------------------------------
+//-----------------------------------------------------------------------------------
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1",new OpenApiInfo {
-        Title="Spitifi",
-        Version="v1",
-        Description="Spitifi API Controllers"
+    options.SwaggerDoc("v1", new OpenApiInfo 
+    {
+        Title = "Spitifi",
+        Version = "v2",
+        Description = "Spitifi API Controllers"
     });
     
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
-                      Enter 'Bearer' [space] and then your token in the text input below.
-                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+        Description = "JWT Authorization header using Bearer scheme. Example: 'Bearer token'",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
 
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -101,79 +143,74 @@ builder.Services.AddSwaggerGen(options =>
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header,
-
+                }
             },
-            new List<string>()
+            Array.Empty<string>()
         }
     });
 
-    // Caminho para o XML gerado
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory,xmlFile);
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath);
-
 });
 
-builder.Services.AddSignalR();
-
-builder.Services.AddDistributedMemoryCache();
-
+//===================================================================================
+//==================== APPLICATION SETUP ============================================
+//===================================================================================
 var app = builder.Build();
 
-// Add this BEFORE any database operations
+//-----------------------------------------------------------------------------------
+//-------------------- DATABASE INITIALIZATION --------------------------------------
+//-----------------------------------------------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    
-    // Explicitly open connection
     if (dbContext.Database.GetDbConnection().State != System.Data.ConnectionState.Open)
     {
         dbContext.Database.OpenConnection();
     }
-    
-    // Ensure database is created (sync version)
+
     dbContext.Database.EnsureCreated();
 }
 
 app.UseItToSeedSqlServer();
 
-// Enable middleware for Swagger (in all environments)
+//-----------------------------------------------------------------------------------
+//-------------------- SWAGGER UI MIDDLEWARE ----------------------------------------
+//-----------------------------------------------------------------------------------
 app.UseSwagger();
-app.UseSwaggerUI(options =>
-{
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Spitifi v1");
-});
+app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Spitifi v1"));
 
-// Configure the HTTP request pipeline.
+//-----------------------------------------------------------------------------------
+//-------------------- ENVIRONMENT CONFIGURATION ------------------------------------
+//-----------------------------------------------------------------------------------
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
-    // app.UseItToSeedSqlServer();
 }
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
+//-----------------------------------------------------------------------------------
+//-------------------- MIDDLEWARE PIPELINE ------------------------------------------
+//-----------------------------------------------------------------------------------
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 app.UseSession();
-//app.UseAuthentication();
+app.UseAuthentication();
 app.UseAuthorization();
 
+//-----------------------------------------------------------------------------------
+//-------------------- ENDPOINT CONFIGURATION ---------------------------------------
+//-----------------------------------------------------------------------------------
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
-
 app.MapHub<LikesServices>("/likes");
 
 app.Run();

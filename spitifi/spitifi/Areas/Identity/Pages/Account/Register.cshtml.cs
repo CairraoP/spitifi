@@ -3,31 +3,17 @@
 
 #nullable disable
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Reflection.Metadata;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Org.BouncyCastle.Crypto.Engines;
 using spitifi.Data;
 using spitifi.Models.DbModels;
 using spitifi.Services.Email;
-using Document = Microsoft.CodeAnalysis.Document;
 
 namespace spitifi.Areas.Identity.Pages.Account
 {
