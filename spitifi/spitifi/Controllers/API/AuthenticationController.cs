@@ -54,7 +54,7 @@ namespace spitifi.Controllers.API
         /// 
         ///     POST /login
         ///     {
-        ///         "Username": "aah@duh.com",
+        ///         "Username": "baaaaaaaaah",
         ///         "Password": "notSoVerySecurePassword"
         ///     }
         /// 
@@ -89,7 +89,7 @@ namespace spitifi.Controllers.API
             
             var token = _tokenService.GenerateToken(identityUser);
             
-            return Ok(token);
+            return Ok(new { Token = token });
         }
         
         /// <summary>

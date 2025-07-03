@@ -13,6 +13,10 @@ using spitifi.Services.Email;
 using spitifi.Services.JWT;
 using spitifi.Services.SignalR;
 
+//===================================================================================
+//==================== SERVICES CONFIGURATION =======================================
+//===================================================================================
+
 var builder = WebApplication.CreateBuilder(args);
 
 //-----------------------------------------------------------------------------------
@@ -28,7 +32,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 //-----------------------------------------------------------------------------------
-//-------------------- IDENTITY CONFIGURATION -----------------------------------------
+//-------------------- IDENTITY CONFIGURATION ---------------------------------------
 //-----------------------------------------------------------------------------------
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
@@ -52,8 +56,8 @@ var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
 
 builder.Services.AddAuthentication(options =>
     {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        //options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        //options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {

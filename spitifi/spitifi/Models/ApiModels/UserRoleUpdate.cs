@@ -10,7 +10,7 @@ public class UserRoleUpdate
     /// <summary>
     /// Identificador do utilizador, Identity username
     /// </summary>
-    /// <example>ahh@uuh.duh</example>
+    /// <example>buuuuuuuh</example>
     [Required]
     public string Username { get; set; }
 }
