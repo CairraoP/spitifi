@@ -1,6 +1,4 @@
-using spitifi.Data.DbInitializerDev;
 using Microsoft.AspNetCore.Identity;
-using NuGet.Protocol;
 using spitifi.Models.DbModels;
 
 namespace spitifi.Data.DbInitializerDev;
@@ -63,18 +61,18 @@ public class DbInitializerDev
             ConcurrencyStamp = "2f58a2a5-5148-48f6-bc1c-74cae86a2172",
             PasswordHash = hasher.HashPassword(null, "Cc0_cc")
         };
-        Console.Write("Before if");
+        
         if (await dbContext.Users.FindAsync(u1.Id) == null)
         {
-            Console.Write("Inside if; before add");
+            
             dbContext.Users.Add(u1);
-            Console.Write("Inside if; after add; bafore addAsync");
+            
             await dbContext.Utilizadores.AddAsync(new Utilizadores
             {
                 Id = 50,
                 Username = u1.UserName
             });
-            Console.Write("Inside if; after add; bafore afterAsync");
+            
             haAdicao = true;
         }
 
