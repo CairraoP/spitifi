@@ -10,14 +10,14 @@ public class ApiLoginModel
     /// <summary>
     /// Identificador do utilizador, Identity username
     /// </summary>
-    /// <example>ahh@uuh.duh</example>
+    /// <example>buuuuuuuh</example>
     [Required]
     public string Username { get; set; }
     
     /// <summary>
     /// Palavra passe do utilizador no identity
     /// </summary>
-    /// <example>notversecurepassword</example>
+    /// <example>notSoVerySecurePassword</example>
     [Required]
     public string Password { get; set; }
 }

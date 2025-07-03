@@ -82,14 +82,20 @@ builder.Services.AddAuthentication(options =>
             },
             OnTokenValidated = context =>
             {
+                // check if we have a valid claims identity
                 if (context.Principal?.Identity is ClaimsIdentity claimsIdentity)
                 {
+                    // find every existing role claims
                     var roleClaims = claimsIdentity.FindAll(ClaimTypes.Role).ToList();
                     foreach (var claim in roleClaims)
                     {
+                        // remove the original claim containing comma-separated roles
                         claimsIdentity.RemoveClaim(claim);
+                        
+                        // split combined roles (comma-separated roles) and create individual claims
                         foreach (var role in claim.Value.Split(','))
                         {
+                            // add new claim for each role
                             claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Trim()));
                         }
                     }

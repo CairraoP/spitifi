@@ -1,77 +1,219 @@
 ﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-* {
-  color: white;
-}
-
-#footerAlbumArt {
-  width: 100px;
-  height: 100px;
-}
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
-}
-
-.sidebar-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 10px;
-}
-
-a {
-  color: #ffffff;
-}
-
-.btn-primary {
-  color: white;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: white;
-  background-color: #333333;
-  border-color: #1861ac;
-}
-
-.border-top {
-  background-color: #666666 ;
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
-}
-
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
-}
-
+/* Add to existing CSS */
 #audioContainer {
-  transition: opacity 0.3s ease;
-  /* If you want a fade-in effect instead of instant show */
-  opacity: 0;
-  display: none !important;
+    /* Layout properties */
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-areas: "left middle right";
+    gap: 20px;
+    align-items: center;
+    padding: 15px;
+    background-color: #666666;
+
+    /* Initial hidden state */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
 }
 
 #audioContainer.show {
-  opacity: 1;
-  display: flex !important;
+    /* Show player */
+    opacity: 1;
+    visibility: visible;
+    display: grid !important;
 }
 
+/* Keep your existing area styles */
+#left {
+    grid-area: left;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    min-width: 200px;
+}
+
+#middle {
+    grid-area: middle;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+}
+
+#middleTop {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#middleBottom {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#right {
+    grid-area: right;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-width: 301px;
+}
+
+/* Keep your existing responsive styles */
+@media (max-width: 992px) {
+    #audioContainer {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "middle"
+            "left"
+            "right";
+    }
+
+    #left, #right {
+        justify-content: center;
+        max-width: 100%;
+    }
+
+    #right {
+        align-items: center;
+    }
+}
+
+
+* {
+    color: white;
+}
+
+#footerAlbumArt {
+    width: 100px;
+    height: 100px;
+}
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+.sidebar-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 10px;
+}
+
+a {
+    color: #ffffff;
+}
+
+.btn-primary {
+    color: white;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: white;
+    background-color: #333333;
+    border-color: #1861ac;
+}
+
+.border-top {
+    background-color: #666666;
+    border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+}
+
+#audioContainer {
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    display: none !important;
+}
+
+#audioContainer.show {
+    opacity: 1;
+    display: flex !important;
+}
+
+
+/* Left section styles */
+#left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 0 0 25%;
+    min-width: 200px;
+}
+
+/* Middle section styles */
+#middle {
+    flex: 1 1 50%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Right section styles */
+#right {
+    flex: 0 0 25%;
+    max-width: 301px;
+    text-align: right;
+}
+
+/* Audio player styling */
+#footerAudioPlayer {
+    width: 100%;
+    max-width: 600px;
+}
+
+/* Button group styling */
+#middleBottom {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #audioContainer {
+        flex-wrap: wrap;
+    }
+
+    #left, #middle, #right {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    #right {
+        text-align: center;
+    }
+}
