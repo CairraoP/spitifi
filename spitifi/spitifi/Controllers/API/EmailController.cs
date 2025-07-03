@@ -27,7 +27,7 @@ public class EmailController : ControllerBase
     /// <param name="Subject">Email Subject</param>
     /// <param name="Body">Email body text</param>
     /// <returns>
-    /// <para>200 OK: Quando o email foi enviado</para>
+    /// <para>200 OK: Se o email for enviado</para>
     /// <para>400 Bad Request: Quando não foi possivel realizar o envio do email</para>
     /// </returns>
     /// <response code="200">Success</response>

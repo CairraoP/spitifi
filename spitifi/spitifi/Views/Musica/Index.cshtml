@@ -27,7 +27,8 @@
     <tbody>
     @foreach (var item in Model)
     {
-        <tr data-song-name="@item.Nome"
+        <tr data-song-id="@item.Id"
+            data-song-name="@item.Nome"
             data-album-art="@item.Album.Foto"
             data-artist="@item.Dono.Username"
             data-file-path="@item.FilePath">
@@ -121,43 +122,174 @@
     <input type="hidden" name="pageNumber" value="1"/>
 </form>
 
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    // Function to build playlist from current page
+    function buildPlaylist() {
+        const playlist = [];
         const rows = document.querySelectorAll('tbody tr');
-        const audioContainer = document.getElementById('audioContainer');
 
         rows.forEach(row => {
-            row.addEventListener('click', function (event) {
-                // Ignore clicks on the audio player or its children
+            playlist.push({
+                id: row.dataset.songId,
+                name: row.dataset.songName,
+                albumArt: row.dataset.albumArt,
+                artist: row.dataset.artist,
+                filePath: row.dataset.filePath
+            });
+        });
+
+        return playlist;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            row.addEventListener('click', function(event) {
+                // Ignore clicks on like button and audio elements
+                if (event.target.closest('img[id^="heart-"]')) return;
                 if (event.target.closest('audio')) return;
 
-                // Extract data attributes
-                const songName = row.dataset.songName;
-                const albumArt = row.dataset.albumArt;
-                const artist = row.dataset.artist;
-                const filePath = row.dataset.filePath;
+                const playlist = buildPlaylist();
+                const songId = row.dataset.songId;
 
-                // Update footer content
-                document.getElementById('footerSongName').textContent = songName;
-                document.getElementById('footerArtist').textContent = artist;
-                document.getElementById('footerAlbumArt').src = albumArt;
+                // Find index of clicked song
+                const songIndex = playlist.findIndex(song => song.id === songId);
+                if (songIndex === -1) return;
 
-                // Update audio player
-                const audioPlayer = document.getElementById('footerAudioPlayer');
-                audioPlayer.innerHTML = `
-                <source src="${filePath}" type="audio/wav">
-                <source src="${filePath}" type="audio/mp3">
-            `;
-                audioPlayer.load();
-
-                // Show the hidden footer container
-                audioContainer.style.display = 'flex'; // or 'flex' depending on your layout
-                audioContainer.classList.add('show');
+                // Initialize or update player
+                if (!window.musicPlayer) {
+                    initPlayer(playlist);
+                }
+                window.musicPlayer.playTrack(songIndex);
             });
         });
     });
 
-    <!-- script para fazer a ligação ao webSocket-->
+    // Initialize the music player
+    function initPlayer(playlist) {
+        window.musicPlayer = {
+            playlist: playlist,
+            currentIndex: 0,
+            audioPlayer: document.getElementById('footerAudioPlayer'),
+            playMode: 'once',
+
+            playTrack: function(index) {
+                if (index < 0 || index >= this.playlist.length) return;
+
+                this.currentIndex = index;
+                const track = this.playlist[index];
+
+                // Update display
+                document.getElementById('footerSongName').textContent = 
+                    track.name.substring(0, track.name.lastIndexOf('.'));
+                document.getElementById('footerArtist').textContent = track.artist;
+                document.getElementById('footerAlbumArt').src = track.albumArt;
+                
+                // Set fallback for album art
+                document.getElementById('footerAlbumArt').onerror = function() {
+                    this.src = '/assets/icons/musicPlaceholder.png';
+                };
+
+                // Update audio source
+                this.audioPlayer.innerHTML = '';
+                const source = document.createElement('source');
+                source.src = track.filePath;
+
+                if (track.filePath.endsWith('.wav')) {
+                    source.type = 'audio/wav';
+                } else if (track.filePath.endsWith('.mp3')) {
+                    source.type = 'audio/mp3';
+                }
+
+                this.audioPlayer.appendChild(source);
+                this.audioPlayer.load();
+                this.audioPlayer.play();
+
+                // Show player
+                const container = document.getElementById('audioContainer');
+                container.classList.add('show');
+
+            },
+
+            nextTrack: function() {
+                let nextIndex = this.currentIndex + 1;
+
+                if (nextIndex >= this.playlist.length) {
+                    if (this.playMode === 'loopPlaylist') nextIndex = 0;
+                    else return; // Stop at end
+                }
+                this.playTrack(nextIndex);
+            },
+
+            prevTrack: function() {
+                let prevIndex = this.currentIndex - 1;
+
+                if (prevIndex < 0) {
+                    if (this.playMode === 'loopPlaylist') prevIndex = this.playlist.length - 1;
+                    else return; // Stop at start
+                }
+                this.playTrack(prevIndex);
+            },
+
+            setPlayMode: function(mode) {
+                this.playMode = mode;
+                this.audioPlayer.loop = (mode === 'loopTrack');
+            }
+        };
+
+        // Set default play mode
+        window.musicPlayer.setPlayMode('once');
+
+        // Setup event listeners
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            window.musicPlayer.prevTrack();
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            window.musicPlayer.nextTrack();
+        });
+
+        document.getElementById('playPauseBtn').addEventListener('click', () => {
+            const icon = document.querySelector('#playPauseBtn i');
+            if (window.musicPlayer.audioPlayer.paused) {
+                window.musicPlayer.audioPlayer.play();
+                icon.className = 'fas fa-pause';
+            } else {
+                window.musicPlayer.audioPlayer.pause();
+                icon.className = 'fas fa-play';
+            }
+        });
+
+        // Play mode selection
+        document.querySelectorAll('input[name="playMode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                window.musicPlayer.setPlayMode(e.target.value);
+            });
+        });
+
+        // Handle track ending
+        window.musicPlayer.audioPlayer.addEventListener('ended', () => {
+            if (window.musicPlayer.playMode === 'loopPlaylist') {
+                window.musicPlayer.nextTrack();
+            } else if (window.musicPlayer.playMode === 'once') {
+                window.musicPlayer.nextTrack();
+            }
+        });
+
+        // Update play/pause button state
+        window.musicPlayer.audioPlayer.addEventListener('play', () => {
+            document.querySelector('#playPauseBtn i').className = 'fas fa-pause';
+        });
+
+        window.musicPlayer.audioPlayer.addEventListener('pause', () => {
+            document.querySelector('#playPauseBtn i').className = 'fas fa-play';
+        });
+    }
+
+
+<!-- script para fazer a ligação ao webSocket-->
 
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/likes")
@@ -208,6 +340,7 @@
         }
     };
 
+    // when like button is pressed
     function updateGosto(idMusica) {
         const heart = document.getElementById(`heart-${idMusica}`);
         // Immediately toggle visual state for responsiveness

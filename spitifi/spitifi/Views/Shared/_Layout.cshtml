@@ -22,7 +22,7 @@
 <body style="background-color: #666666; color: #ffffff">
 <div id="mySidebar" class="sidebar">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-    
+
     <div class="p-3">
         <div>
             <img src="/assets/icons/spitifi.png" width="25" height="25">
@@ -47,7 +47,7 @@
             <a class="nav-link" asp-area="" asp-controller="PlayList" asp-action="Index"
                style="display: inline;">Mostrar PlayLists</a>
         </div>
-        <hr />
+        <hr/>
 
         @if (isLoggedIn)
         {
@@ -65,7 +65,8 @@
                        style="display: inline;padding-left: 32px;">Criar Album</a>
                 </div>
             }
-            <hr />
+
+            <hr/>
         }
         @if (isAdmin)
         {
@@ -74,33 +75,67 @@
                 <a class="nav-link " asp-area="" asp-controller="Utilizadores" asp-action="Index"
                    style="display: inline;padding-left: 32px;">Utilizadores</a>
             </div>
-            <hr />
+            <hr/>
         }
-        <partial name="_LoginPartial" />
+        <partial name="_LoginPartial"/>
     </div>
 </div>
 <div class="main-content">
-    <button id = "buttonSideBar" class="openbtn" onclick="openNav()">☰</button>
+    <button id="buttonSideBar" class="openbtn" onclick="openNav()">☰</button>
     <!--Ao adicionar o css logo nesta div, como o render vem depois, podemos definir qual o max-width para todas as views e assim resolveu-se o problema de sobreposição da sidebar--->
     <main role="main" class="main-css">
         @RenderBody()
     </main>
 </div>
 
-<!-- In _Layout.cshtml -->
-<footer class="border-top footer text-muted">
-<div id="audioContainer" class="container" style="background-color: #666666; display: none;">
-    <img id="footerAlbumArt" src="" alt="Album Art"/>
-    <div>
-        <div id="footerSongName"></div>
-        <div id="footerArtist"></div>
+<footer style="position: fixed; bottom: 0" class="border-top footer text-muted">
+    
+    <div id="audioContainer" class="container" style="background-color: #666666; ">
+        <hr/>
+        <div id="left">
+            <img id="footerAlbumArt" src="" alt="Album Art" 
+                 onerror="this.onerror=null; this.src='/assets/icons/musicPlaceholder.png'"/>
+            <div class="song-info">
+                <div id="footerSongName"></div>
+                <div id="footerArtist"></div>
+            </div>
+        </div>
+        
+        <div id="middle">
+            <div id="middleTop">
+                <audio id="footerAudioPlayer" controls></audio>
+            </div>
+            <div id="middleBottom">
+                <!-- Add icon inside the button -->
+                <button id="prevBtn"><i class="fas fa-step-backward"></i>
+                    <img src="/assets/icons/left.png" width="25" height="25">
+                </button>
+                
+                
+                <button id="playPauseBtn"><i class="fas fa-play"></i>
+                    <img src="/assets/icons/pause.png" width="25" height="25">
+                </button>
+                
+                <button id="nextBtn"><i class="fas fa-step-forward"></i>
+                    <img src="/assets/icons/right.png" width="25" height="25">
+                    </button>
+            </div>
+        </div>
+        
+        <div id="right" class="controls">
+            <label>
+                <input type="radio" name="playMode" value="once" checked> Play Musics
+            </label>
+            <label>
+                <input type="radio" name="playMode" value="loopTrack"> Loop Music
+            </label>
+            <label>
+                <input type="radio" name="playMode" value="loopPlaylist"> Loop Playlist
+            </label>
+        </div>
     </div>
-    <audio id="footerAudioPlayer" controls>
-        <!-- Audio sources will be added dynamically -->
-    </audio>
-
-</div>
 </footer>
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
@@ -117,4 +152,17 @@
     function closeNav() {
         document.getElementById("mySidebar").style.width = "0";
     }
+
+    // Update play/pause button icon
+    document.addEventListener('play', function(e) {
+        if (e.target.id === 'footerAudioPlayer') {
+            document.querySelector('#playPauseBtn i').className = 'fas fa-pause';
+        }
+    }, true);
+
+    document.addEventListener('pause', function(e) {
+        if (e.target.id === 'footerAudioPlayer') {
+            document.querySelector('#playPauseBtn i').className = 'fas fa-play';
+        }
+    }, true);
 </script>
