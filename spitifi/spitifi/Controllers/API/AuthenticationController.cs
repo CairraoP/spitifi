@@ -54,8 +54,8 @@ namespace spitifi.Controllers.API
         /// 
         ///     POST /login
         ///     {
-        ///         "Username": "baaaaaaaaah",
-        ///         "Password": "notSoVerySecurePassword"
+        ///         "Username": "nerd",
+        ///         "Password": "Pedro25#"
         ///     }
         /// 
         /// </remarks>
