@@ -174,18 +174,24 @@ namespace spitifi.Models.ApiModels
                 var album = await _context.Album
                     .Include(a => a.Musicas)
                     .FirstOrDefaultAsync(a => a.Id == albumId);
+                
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (currentUserId == null)
+                {
+                    return Unauthorized();
+                }
+
+                if (!User.IsInRole("Administrador") &&
+                    !(User.IsInRole("Artista") && album.Dono.IdentityUser == currentUserId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        "Não tem permissão para modificar este álbum"); //Forbid();
+                }
 
                 if (album == null)
                 {
                     return StatusCode(StatusCodes.Status404NotFound,
                         "Album não encontrado"); //NotFound("Album não encontrado");
-                }
-
-                // admin ou artista?
-                if (!DonoAlbum(album, currentUser))
-                {
-                    return StatusCode(StatusCodes.Status403Forbidden,
-                        "Não tem permissão para modificar este álbum"); //Forbid();
                 }
 
                 // input com todos os atributos presentes?
@@ -245,7 +251,7 @@ namespace spitifi.Models.ApiModels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         // POST: api/album
         /// <summary>
-        /// Criar um album novo
+        /// Criar um album
         /// </summary>
         /// <remarks>
         /// Requer token de autenticação
@@ -428,23 +434,24 @@ namespace spitifi.Models.ApiModels
                 }
 
                 var album = await _context.Album.Include(a => a.Dono).FirstOrDefaultAsync(a => a.Id == albumId);
+
+                // admins podem alterar qualquer album
+                // artistas somente podem alterar os seus albuns
+                if (!User.IsInRole("Administrador") &&
+                    !(User.IsInRole("Artista") && album.Dono.IdentityUser == currentUserId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        "Não tem permissão para modificar este álbum"); //Forbid(); 
+                }
+
                 if (album == null)
                 {
                     return NotFound();
                 }
 
-                // admins podem alterar qualquer album
-                // artistas somente podem alterar os seus albuns
-                if (User.IsInRole("Administrador") ||
-                    (User.IsInRole("Artista") && album.Dono.IdentityUser == currentUserId))
-                {
-                    _context.Album.Remove(album);
-                    await _context.SaveChangesAsync();
-                    return NoContent();
-                }
-
-                return StatusCode(StatusCodes.Status403Forbidden,
-                    "Não tem permissão para modificar este álbum"); //Forbid(); 
+                _context.Album.Remove(album);
+                await _context.SaveChangesAsync();
+                return NoContent();
             }
             catch (Exception e)
             {
@@ -493,19 +500,17 @@ namespace spitifi.Models.ApiModels
         {
             try
             {
-                // Get current user
+                // valida se utilizador está autenticado
                 var currentUser = await UtilizadorAtual();
-                if (currentUser == null) return Unauthorized("Utilizador não encontrado");
+                if (currentUser == null)
+                {
+                    return Unauthorized("Utilizador não encontrado");
+                }
 
                 var album = await _context.Album
                     .Include(a => a.Musicas)
                     .Include(a => a.Dono)
                     .FirstOrDefaultAsync(a => a.Id == albumId);
-
-                if (album == null)
-                {
-                    return NotFound("Album não encontrado");
-                }
 
                 var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (currentUserId == null)
@@ -518,6 +523,11 @@ namespace spitifi.Models.ApiModels
                 {
                     return StatusCode(StatusCodes.Status403Forbidden,
                         "Não tem permissão para modificar este álbum"); //Forbid();
+                }
+
+                if (album == null)
+                {
+                    return NotFound("Album não encontrado");
                 }
 
                 // validacao
@@ -558,23 +568,129 @@ namespace spitifi.Models.ApiModels
             }
         }
 
-        private bool AlbumExiste(int id)
+        // PATCH: api/ApiAlbum/{albumId}
+        /// <summary>
+        /// Altera informações do album
+        /// </summary>
+        /// <remarks>
+        /// Requer token de autenticação
+        /// Requer autorização de artista ou administrador
+        ///
+        /// Exemplo:
+        /// 
+        ///     PATCH api/album/{albumId}
+        ///     {
+        ///         "Titulo" : "duuuuh",
+        ///         "FotoAlbum" : IFormFile,
+        ///         "ArtistaUsername" : "nerd"
+        ///     }
+        /// 
+        /// </remarks>
+        /// <returns>
+        /// <para>204 No Content: Alterações efetuadas com sucesso</para>
+        /// <para>400 Bad Request: Informação invalída/errada</para>
+        /// <para>401 Unauthorized: Quando o request não contem um token de autenticação</para>
+        /// <para>403 Forbidden: Quando o API Client não possui role de admin</para>
+        /// <para>404 Not Found: ID de album não coincide com registos existentes</para>
+        /// </returns>
+        /// <response code="204">Alterações efetuadas com sucesso</response>    
+        /// <response code="400">Operação não pode ser realizar. Tente novamente</response>
+        /// <response code="401">Utilizador não encontrado</response>
+        /// <response code="403">Não tem permissão para modificar este álbum</response>
+        /// <response code="404">Album não encontrado</response>
+        [HttpPatch("{albumId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Artista,Administrador")]
+        public async Task<IActionResult> UpdateAlbum(int albumId, [FromBody] AlbumUpdateDto updateDto)
         {
-            return _context.Album.Any(e => e.Id == id);
+            var album = await _context.Album
+                .Include(a => a.Musicas)
+                .Include(a => a.Dono)
+                .FirstOrDefaultAsync(a => a.Id == albumId);
+
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (currentUserId == null)
+            {
+                return Unauthorized();
+            }
+
+            if (!User.IsInRole("Administrador") &&
+                !(User.IsInRole("Artista") && album.Dono.IdentityUser == currentUserId))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden,
+                    "Não tem permissão para modificar este álbum"); //Forbid();
+            }
+
+            if (album == null)
+            {
+                return NotFound("Album não encontrado");
+            }
+
+            // atualiza titulo (caso esteja presente)
+            if (!string.IsNullOrEmpty(updateDto.Titulo))
+            {
+                album.Titulo = updateDto.Titulo;
+            }
+
+            // atualiza foto (caso esteja presente)
+            if (!(updateDto.FotoAlbum == null))
+            {
+                string fotoPath = null;
+                album.Foto = updateDto.FotoAlbum.FileName;
+
+                var fotoFileName = $"{Guid.NewGuid()}{Path.GetExtension(updateDto.FotoAlbum.FileName)}";
+                var fotoRelativePath = Path.Combine("imagens", fotoFileName);
+                fotoPath = Path.Combine(_webHostEnvironment.WebRootPath, fotoRelativePath);
+
+                Directory.CreateDirectory(Path.GetDirectoryName(fotoPath));
+                using (var stream = new FileStream(fotoPath, FileMode.Create))
+                {
+                    await updateDto.FotoAlbum.CopyToAsync(stream);
+                }
+
+                album.Foto = fotoRelativePath;
+            }
+
+            // atualiza artista (caso esteja presente)
+            if (!string.IsNullOrEmpty(updateDto.ArtistaUsername))
+            {
+                // get identify userid from the artist name
+                var identityUser = await _userManager.FindByNameAsync(updateDto.ArtistaUsername);
+    
+                if (identityUser == null)
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, "Username especificado não corresponde a um artista existente");
+                }
+
+                // match the identity userid to a user id
+                var newArtist = await _context.Utilizadores
+                    .FirstOrDefaultAsync(u => u.IdentityUser == identityUser.Id);
+
+                if (newArtist == null)
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, "Username especificado não corresponde a um artista existente");
+                } 
+
+                // Update both FK and navigation property
+                album.DonoFK = newArtist.Id;
+                album.Dono = newArtist;
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return StatusCode(400, "Não foi possível concretizar a operação. Tente novamente.");
+            }
         }
 
-        // get current user
         private async Task<Utilizadores> UtilizadorAtual()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return await _context.Utilizadores
                 .FirstOrDefaultAsync(u => u.IdentityUser == userId);
-        }
-
-        // valida se o dono do album é o utilizador passado por parametro
-        private bool DonoAlbum(Album album, Utilizadores currentUser)
-        {
-            return album.DonoFK == currentUser?.Id;
         }
     }
 }
