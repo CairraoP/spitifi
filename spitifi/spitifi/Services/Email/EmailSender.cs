@@ -27,7 +27,7 @@ public class CustomMailer : ICustomMailer
     {
         //variáveis provenientes da classe do EmailSenderConfigModel
         var fromEmail = _mailConfig.FromEmail;
-        var fromPassword = _mailConfig.FromEmail;
+        var fromPassword = _mailConfig.FromPassword;
 
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress("Equipa Spitifi", fromEmail));

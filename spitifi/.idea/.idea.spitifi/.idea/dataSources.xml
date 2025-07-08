@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="spitifi@spitifi.mysql.database.azure.com" uuid="5e1b5049-9bca-45a7-babf-1c18d77ea5dc">
+    <data-source source="LOCAL" name="spitifi@spitifi-server.mysql.database.azure.com" uuid="5e1b5049-9bca-45a7-babf-1c18d77ea5dc">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
