@@ -296,8 +296,8 @@ namespace spitifi.Controllers
             return View(playList);
         }
 
-        // POST: PlayList/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // DELETE: PlayList/Delete/5
+        [HttpDelete]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

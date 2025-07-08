@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -127,6 +128,16 @@ namespace spitifi.Controllers
             var musicaAux = _context.Musica.AsNoTracking().FirstOrDefault(m => m.Id == musica.Id);
             musica.FilePath = musicaAux.FilePath;
             
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // validar dono
+            // pela UI somente artista dono da musica pode alterar musica
+            // api permite que administradores também alterem a musica
+            if (musicaAux.Dono.IdentityUser != currentUserId)
+            {
+                return Forbid(); 
+            }
+            
             var fotoAux = _context.Musica.AsNoTracking().FirstOrDefault(m => m.Id == musica.Id);
             // musica.FotoAlbum = fotoAux.FilePath;
 
@@ -229,8 +240,8 @@ namespace spitifi.Controllers
             return View(musica);
         }
 
-        // POST: Musica/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // DELETE: Musica/Delete/5
+        [HttpDelete]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

@@ -83,8 +83,9 @@ namespace spitifi.Controllers
         }
 
         // POST: Album/Create
-        //
+        [ValidateAntiForgeryToken]
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Titulo")] Album album,
             IFormFile fotoAlbum, List<IFormFile> musicasNovas)
         {
@@ -92,8 +93,8 @@ namespace spitifi.Controllers
 
             var userId = _userManager.GetUserId(User);
 
-            var utilizadorAux = _context.Users.First(au => au.UserName == User.Identity.Name);
-            var utlizador = _context.Utilizadores.Where(u => u.IdentityUser == utilizadorAux.Id);
+            var utilizadorIdentity = _context.Users.First(au => au.UserName == User.Identity.Name);
+            var utlizador = _context.Utilizadores.Where(u => u.IdentityUser == utilizadorIdentity.Id);
 
             bool haImagem = false;
             string nomeImagem = "";
@@ -408,8 +409,8 @@ namespace spitifi.Controllers
             return View(album);
         }
 
-        // POST: Album/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // DELETE: Album/Delete/5
+        [HttpDelete]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

@@ -146,8 +146,8 @@ namespace spitifi.Controllers
             return View(utilizadores);
         }
 
-        // POST: Utilizadores/Delete/5
-        [HttpPost]
+        // DELETE: Utilizadores/Delete/5
+        [HttpDelete]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {

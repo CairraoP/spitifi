@@ -1,0 +1,100 @@
+@model Procura
+
+<!-- Search Bar -->
+
+<div class="d-flex justify-content-center">
+    <form asp-action="Index" method="get">
+        <div class="input-group mb-4">
+            <input type="text" class="form-control" name="searchTerm" 
+                   placeholder="Search for albums, songs, artists..." 
+                   value="@Model.TermoDeProcura"
+                   style="max-width: 800px">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+</div>
+
+<!-- resultadps -->
+@if (!string.IsNullOrEmpty(Model.TermoDeProcura))
+{
+    <!-- albuns encontradas -->
+    @if (Model.Albums.Any())
+    {
+        <h3>Albums</h3>
+        <div class="row">
+            @foreach (var album in Model.Albums)
+            {
+                <div class="col-md-3 mb-4">
+                    <div class="card">
+                        <img src="~/imagens/@album.Foto" class="card-img-top" alt="@album.Titulo">
+                        <div class="card-body">
+                            <h5 class="card-title">@album.Titulo</h5>
+                            <p class="card-text">By: @album.Dono.Username</p>
+                            <a asp-controller="Albums" asp-action="Details" asp-route-id="@album.Id" 
+                               class="btn btn-sm btn-outline-primary">View Album</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- musicas encontradas -->
+    @if (Model.Musicas.Any())
+    {
+        <h3>Músicas</h3>
+        <table class="table table-hover">
+            <tbody>
+            @foreach (var song in Model.Musicas)
+            {
+                <tr>
+                    <td>
+                        <strong>@song.Nome</strong><br>
+                        <small class="text-muted">
+                            @song.Album.Titulo • @song.Dono.Username
+                        </small>
+                    </td>
+                    <td>
+                        <audio controls class="w-100">
+                            <source src="@song.FilePath" type="audio/mpeg">
+                        </audio>
+                    </td>
+                    <td>
+                        <a asp-controller="Musicas" asp-action="Details" 
+                           asp-route-id="@song.Id" class="btn btn-sm btn-outline-info">
+                            Details
+                        </a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+
+    <!-- utilizadores encontrados -->
+    @if (Model.Artistas.Any())
+    {
+        <h3>Artistas</h3>
+        <div class="row">
+            @foreach (var artist in Model.Artistas)
+            {
+                <div class="col-md-2 text-center mb-3">
+                    <img src="~/imagens/@artist.Foto" 
+                         class="img-fluid rounded-circle mb-2" 
+                         alt="@artist.Username" 
+                         style="width: 100px; height: 100px; object-fit: cover;">
+                    <h5>@artist.Username</h5>
+                    <a asp-controller="Utilizadores" asp-action="Details" 
+                       asp-route-id="@artist.Id" class="stretched-link"></a>
+                </div>
+            }
+        </div>
+    }
+
+    @if (!Model.Albums.Any() && !Model.Musicas.Any() && !Model.Artistas.Any())
+    {
+        <div class="alert alert-info">
+            Não foram encontrados resultados para "@Model.TermoDeProcura"
+        </div>
+    }
+}
