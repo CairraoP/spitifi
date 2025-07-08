@@ -57,7 +57,9 @@ html {
 #buttonSideBar {
   display: none;
 }
-
+body {
+  background: linear-gradient(135deg, #333333, #555555); /* Subtle gradient effect */
+}
 /* 
  * CSS Para telemoveis
  */
@@ -177,4 +179,50 @@ input[type="range"] {
   .sidebar-text{
     font-size: 10px;
   }
+  
+  .card-body {
+    padding: 15px;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .card-text {
+    font-size: 0.9rem;
+    margin-top: 5px;
+  }
+  .card {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 15px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    background-color: #555 !important; /* Set the card's background to a dark grey */
+    color: #ccc !important; /* Set the text color to light grey for better contrast */
+    border: none; /* Remove any borders */
+  }
+
+  .card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .card-img-top {
+    object-fit: cover;
+    height: 200px; /* Ensure consistency across cards */
+    border-radius: 15px 15px 0 0;
+  }
+}
+.btn:hover, .btn:focus {
+  background-color: #218838; /* Darker green for hover */
+  cursor: pointer;
+}
+
+.form-control:focus {
+  border-color: #258cfb;
+  box-shadow: 0 0 0 0.2rem rgba(37, 140, 251, 0.25);
 }

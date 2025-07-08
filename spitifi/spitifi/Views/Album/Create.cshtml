@@ -1,47 +1,69 @@
-    @model spitifi.Models.DbModels.Album
+@model spitifi.Models.DbModels.Album
 
-    @{ 
-        ViewData["Title"] = "Create";
-    }
-    <body style="background-color: #666666">
+@{
+    ViewData["Title"] = "Criar Albúm";
+}
 
-    <h1>Criar um Albúm</h1>
+<body style="background: linear-gradient(135deg, #333333, #555555); color: #ddd; font-family: Arial, sans-serif;">
 
-    <h4>Album</h4>
-    <hr />
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="Create" enctype="multipart/form-data">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="Titulo" class="control-label"></label>
-                    <input asp-for="Titulo" class="form-control" />
-                    <span asp-validation-for="Titulo" class="text-danger"></span>
+    <!-- Main Container with Padding and Centering -->
+    <div class="container mt-5">
+        <!-- Center the form horizontally and vertically -->
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <!-- Card for the Form -->
+                <div class="card shadow-lg border-0 rounded-3" style="color: #2c3034">
+                    <div class="card-body">
+
+                        <!-- Title Section -->
+                        <h1 class="text-center mb-4">Criar um Albúm</h1>
+
+                        <!-- Album Form -->
+                        <form asp-action="Create" enctype="multipart/form-data">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                            <!-- Title Field -->
+                            <div class="form-group mb-3">
+                                <label asp-for="Titulo" class="form-label">Título do Albúm</label>
+                                <input asp-for="Titulo" class="form-control" placeholder="Nome do Albúm" />
+                                <span asp-validation-for="Titulo" class="text-danger"></span>
+                            </div>
+
+                            <!-- Owner Field (Readonly) -->
+                            <div class="form-group mb-3">
+                                <label asp-for="DonoFK" class="form-label">Dono do Albúm</label>
+                                <input class="form-control" value="@ViewData["DonoNome"]" readonly />
+                                <span asp-validation-for="DonoFK" class="text-danger"></span>
+                            </div>
+
+                            <!-- Album Photo Upload -->
+                            <div class="form-group mb-3">
+                                <label asp-for="Foto" class="form-label">Foto do Albúm</label>
+                                <input type="file" name="fotoAlbum" class="form-control" />
+                                <span asp-validation-for="Foto" class="text-danger"></span>
+                            </div>
+
+                            <!-- Music Files Upload -->
+                            <div class="form-group mb-3">
+                                <label asp-for="Musicas" class="form-label">Músicas do Albúm</label>
+                                <input type="file" name="musicasNovas" class="form-control" multiple />
+                                <span asp-validation-for="Musicas" class="text-danger"></span>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="form-group text-center mb-3">
+                                <input type="submit" value="Criar" class="btn btn-success btn-lg" />
+                            </div>
+                        </form>
+
+                        <!-- Back Link -->
+                        <div class="text-center mt-3">
+                            <a href="@Url.Action("Index")" class="btn btn-secondary">Voltar</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label asp-for="DonoFK" class="control-label"></label>
-                    <input class="form-control" value="@ViewData["DonoNome"]" readonly/>
-                    <span asp-validation-for="DonoFK" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Foto" class="control-label"></label>
-                    <input type ="file" name="fotoAlbum" class="form-control" />
-                    <span asp-validation-for="Foto" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Musicas" class="control-label"></label>
-                    <input type="file" name="musicasNovas" class="form-control"  multiple/>
-                    <span asp-validation-for="Musicas" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Criar" class="btn btn-primary" />
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 
-    <div>
-        <a asp-action="Index">Voltar</a>
-    </div>
-
-    </body>
+</body>
