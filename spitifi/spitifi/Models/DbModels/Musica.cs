@@ -28,7 +28,7 @@ public class Musica
     public Album Album { get; set; }
     
     /// <summary>
-    /// Coluna/campo onde ficará guardado o caminho para o ficheiro da música
+    /// Caminho no wwwroot onde a imagem será guardada
     /// </summary>
     [Display(Name = "Música")]
     public string FilePath { get; set; }
@@ -41,6 +41,8 @@ public class Musica
     
     /// <summary>
     /// FK para a classe "Utilizadores"
+    /// Artista que criou o album
+    /// Musica tem de pertencer a 1 album
     /// </summary>
     [Display(Name = "Artista")]
     [ForeignKey(nameof(Dono))]
