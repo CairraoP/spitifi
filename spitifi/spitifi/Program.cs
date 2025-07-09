@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +19,13 @@ using spitifi.Services.SignalR;
 //===================================================================================
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Aumenta tamanho maximo do body... por causa do upload das musicas
+builder.Services.Configure<FormOptions>(options => {
+    options.MultipartBodyLengthLimit = 100000000; // ~100MB
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartHeadersLengthLimit = int.MaxValue;
+});
 
 //-----------------------------------------------------------------------------------
 //-------------------- DATABASE CONFIGURATION ---------------------------------------

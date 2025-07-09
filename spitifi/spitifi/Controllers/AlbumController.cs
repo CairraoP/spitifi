@@ -85,6 +85,8 @@ namespace spitifi.Controllers
         // POST: Album/Create
         [ValidateAntiForgeryToken]
         [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 100000000)]//~100Mb
+        [RequestSizeLimit(100000000)] //~100Mb
         public async Task<IActionResult> Create([Bind("Id,Titulo")] Album album,
             IFormFile fotoAlbum, List<IFormFile> musicasNovas)
         {
