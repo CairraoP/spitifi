@@ -9,45 +9,28 @@
 }
 
 <h1>Playlists</h1>
-
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => dumbitem.Foto)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => dumbitem.Nome)
-        </th>
-        <th>
-            Criador
-        </th>
-        <th>
-            Opções
-        </th>
-    </tr>
-    </thead>
-    <tbody>
+<div class="album-cards-container">
     @foreach (var item in Model)
     {
-        //! meter dono na tabela index de playlist e album
-        <tr>
-            <td>
-                <img style="max-height: 100px; max-width: 100px" src="@item.Foto" alt=""/>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Dono.Username)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
-            </td>
-        </tr>
+        <div class="album-card">
+            <div class="album-card-header">
+                <img src="/@item.Foto" alt="Imagem Playlist"/>
+            </div>
+            <div class="album-card-body">
+                <h5 class="album-title">@Html.DisplayFor(modelItem => item.Nome)</h5>
+                <p class="album-artist">@Html.DisplayFor(modelItem => item.Dono.Username)</p>
+            </div>
+            <div class="album-card-footer">
+                <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
+                @if (User.Identity?.Name == item.Dono?.Username)
+                {
+                    <a class="btn btn-secondary" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
+                }
+            </div>
+        </div>
     }
-    </tbody>
-</table>
+</div>
 
 <!-- controlos de paginação -->
 <div class="pagination-squares">
