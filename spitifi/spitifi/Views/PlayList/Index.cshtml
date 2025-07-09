@@ -48,28 +48,72 @@
     }
     </tbody>
 </table>
-<!-- Pagination controls -->
-<div class="pagination">
+
+<!-- controlos de paginação -->
+<div class="pagination-squares">
     @if (Model.HasPreviousPage)
     {
         <a asp-action="Index"
-           asp-route-pageNumber="@(Model.PageIndex - 1)"
-           asp-route-pageSize="@Model.PageSize">
-            <b>Anterior</b>
+           asp-route-pageNumber="1"
+           asp-route-pageSize="@Model.PageSize"
+           title="First Page">
+            &laquo;
         </a>
     }
-    &nbsp
-    <span>Página @Model.PageIndex de @Model.TotalPages </span>
-    &nbsp
+    
+    @for (int i = 1; i <= Model.TotalPages; i++)
+    {
+        <a asp-action="Index"
+           asp-route-pageNumber="@i"
+           asp-route-pageSize="@Model.PageSize"
+           class="@(i == Model.PageIndex ? "active" : "")">
+            @i
+        </a>
+    }
+    
     @if (Model.HasNextPage)
     {
         <a asp-action="Index"
-           asp-route-pageNumber="@(Model.PageIndex + 1)"
-           asp-route-pageSize="@Model.PageSize">
-            <b>Próxima</b>
+           asp-route-pageNumber="@Model.TotalPages"
+           asp-route-pageSize="@Model.PageSize"
+           title="Last Page">
+            &raquo;
         </a>
     }
 </div>
+
+<style>
+    .pagination-squares {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        margin: 15px 0;
+    }
+
+    .pagination-squares a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 35px;
+        height: 35px;
+        background-color: #333;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .pagination-squares a:hover {
+        background-color: #444;
+        transform: translateY(-2px);
+    }
+
+    .pagination-squares a.active {
+        background-color: #1DB954;
+        font-weight: bold;
+        transform: scale(1.1);
+    }
+</style>
 <style>
     select[name="pageSize"] {
         background-color: #333;
@@ -87,12 +131,15 @@
 
     select[name="pageSize"]:focus {
         outline: none;
-        border-color: #007bff;
-        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        border-color: #1db954;
+        box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.25);
+    }
+    select[name="pageSize"] option:hover {
+        background-color: #1DB954 !important;
     }
 </style>
 <form asp-action="Index" method="get">
-    <label>Albúms por páginas: </label>
+    <label>Playlists por página: </label>
     <select name="pageSize" onchange="this.form.submit()">
         <option value="5" selected="@(Model.PageSize == 5)">5</option>
         <option value="10" selected="@(Model.PageSize == 10)">10</option>
