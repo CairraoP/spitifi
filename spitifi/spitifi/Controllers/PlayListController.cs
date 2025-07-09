@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -65,6 +66,7 @@ namespace spitifi.Controllers
         }
 
         // GET: PlayList/Create
+        [Authorize]
         public IActionResult Create()
         {
             // Fetch music data from database
@@ -82,6 +84,7 @@ namespace spitifi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
             PlayList playList,
@@ -104,17 +107,16 @@ namespace spitifi.Controllers
                 return View();
             }
 
-
             if (ModelState.IsValid)
             {
-                // Find matching Utilizadores record
+                // utilizador atual
                 var utilizador = await _context.Utilizadores
                     .FirstOrDefaultAsync(u => u.Username == User.Identity.Name);
 
-                // Set playlist owner
+                // definir criador para playlist
                 playList.DonoFK = utilizador.Id;
 
-                // Processar as músicas escolhidas
+                // processar as músicas escolhidas
                 if (selectedMusicas != null && selectedMusicas.Any())
                 {
                     var selectedMusicasList = await _context.Musica
@@ -180,6 +182,7 @@ namespace spitifi.Controllers
         }
 
         // GET: PlayList/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -205,6 +208,7 @@ namespace spitifi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nome")] PlayList playList, int[]  musicasSelecionadas)
         {
@@ -278,6 +282,7 @@ namespace spitifi.Controllers
         }
 
         // GET: PlayList/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -296,10 +301,11 @@ namespace spitifi.Controllers
             return View(playList);
         }
 
-        // DELETE: PlayList/Delete/5
-        [HttpDelete]
+        // POST: PlayList/Delete/5
+        [HttpPost, ActionName("Delete")] // Respond to view HTTP POST and map to asp-action "Delete"
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmation(int id)
         {
             var playList = await _context.PlayList.FindAsync(id);
             if (playList != null)

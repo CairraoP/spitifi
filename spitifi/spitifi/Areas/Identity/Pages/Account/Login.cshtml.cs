@@ -130,6 +130,7 @@ namespace spitifi.Areas.Identity.Pages.Account
                 }
                 catch
                 {
+                    // caso tenha dado erro a autenticação pelo email, tentamos com o username
                     var userSrcByUsername = await _userManager.FindByNameAsync(Input.Email);
                     if(userSrcByUsername != null)
                     {
@@ -139,10 +140,6 @@ namespace spitifi.Areas.Identity.Pages.Account
                         {
                             _logger.LogInformation("User logged in.");
                             return LocalRedirect(returnUrl);
-                        }
-                        else
-                        {
-                            ModelState.AddModelError(string.Empty, "Tentativa de login inválida. Verifique a sua palavra-passe ou email/nome de utlizador.");
                         }
                     }
                     else

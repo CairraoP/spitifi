@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -68,6 +69,8 @@ namespace spitifi.Controllers
         }
 
         // GET: Musica/Create
+        
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["AlbumFK"] = new SelectList(_context.Album, "Id", "Titulo");
@@ -79,6 +82,7 @@ namespace spitifi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Nome,AlbumFK,DonoFK")] Musica musica,[Bind("Titulo")] Album album, List<IFormFile> musicaNova, IFormFile fotoAlbum)
         {
@@ -94,6 +98,8 @@ namespace spitifi.Controllers
         }
 
         // GET: Musica/Edit/5
+        
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -115,6 +121,7 @@ namespace spitifi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Nome,Album,FilePath,DonoFK")] Musica musica, IFormFile musicaNova, IFormFile FotoAlbum)
         {
@@ -221,6 +228,7 @@ namespace spitifi.Controllers
             return View(musica);
         }
         // GET: Musica/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -240,10 +248,11 @@ namespace spitifi.Controllers
             return View(musica);
         }
 
-        // DELETE: Musica/Delete/5
-        [HttpDelete]
+        // POST: Musica/Delete/5
+        [HttpPost, ActionName("Delete")] // Respond to view HTTP POST and map to asp-action "Delete"
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmation(int id)
         {
             //Como já não se apagou o labum, este include ficou redundante
             var musica = _context.Musica.Include(m => m.Album).FirstOrDefault(m => m.Id == id);

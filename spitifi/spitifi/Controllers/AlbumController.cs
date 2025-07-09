@@ -85,6 +85,7 @@ namespace spitifi.Controllers
         // POST: Album/Create
         [ValidateAntiForgeryToken]
         [HttpPost]
+        [Authorize]
         [RequestFormLimits(MultipartBodyLengthLimit = 100000000)]//~100Mb
         [RequestSizeLimit(100000000)] //~100Mb
         public async Task<IActionResult> Create([Bind("Id,Titulo")] Album album,
@@ -93,15 +94,16 @@ namespace spitifi.Controllers
             //variaveis para validações
 
             var userId = _userManager.GetUserId(User);
-
+            
+            // encontrar username do utilizador que fez o pedido, para poder associar ao utilizador local
             var utilizadorIdentity = _context.Users.First(au => au.UserName == User.Identity.Name);
-            var utlizador = _context.Utilizadores.Where(u => u.IdentityUser == utilizadorIdentity.Id);
+            var utlizadorLocal = _context.Utilizadores.Where(u => u.IdentityUser == utilizadorIdentity.Id);
 
             bool haImagem = false;
             string nomeImagem = "";
             string nomeMusica = "";
 
-            if (!utlizador.Any())
+            if (!utlizadorLocal.Any())
             {
                 ModelState.AddModelError("DonoFK", "Alteração incorreta do Dono");
             }
@@ -133,7 +135,7 @@ namespace spitifi.Controllers
 
                 try
                 {
-                    album.DonoFK = utlizador.First().Id;
+                    album.DonoFK = utlizadorLocal.First().Id;
 
                     foreach (var file in musicasNovas)
                     {
@@ -259,6 +261,8 @@ namespace spitifi.Controllers
             return View(album);
         }
         
+        
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -283,6 +287,7 @@ namespace spitifi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Album")] Album album, IFormFile fotoAlbum)
         {
@@ -393,6 +398,8 @@ namespace spitifi.Controllers
         }
 
         // GET: Album/Delete/5
+        
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -410,10 +417,11 @@ namespace spitifi.Controllers
             return View(album);
         }
 
-        // DELETE: Album/Delete/5
-        [HttpDelete]
+        // POST: Album/Delete/5
+        [HttpPost, ActionName("Delete")] // Respond to view HTTP POST and map to asp-action "Delete"
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmation(int id)
         {
             await _AlbumEraser.AlbumEraserFunction(id);
             await _context.SaveChangesAsync();
