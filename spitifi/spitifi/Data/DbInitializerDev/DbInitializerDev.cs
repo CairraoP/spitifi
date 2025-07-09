@@ -143,7 +143,7 @@ public class DbInitializerDev
                 Id = 60,
                 Titulo = "Seed1",
                 DonoFK = dono.Id,
-                Foto = @"\assets\imagesSeed\texto.PNG"
+                Foto = @"assets\imagesSeed\texto.PNG"
             };
 
             if (!dbContext.Album.Any(a => a.Id == a1.Id))
@@ -158,7 +158,7 @@ public class DbInitializerDev
                 Nome = "Seed11",
                 DonoFK = dono.Id,
                 AlbumFK = 60,
-                FilePath = @"\assets\musicsSeed\3 Doors Down - Here Without You.mp3"
+                FilePath = @"assets\musicsSeed\3 Doors Down - Here Without You.mp3"
             };
             Musica m2 = new Musica
             {
@@ -166,7 +166,7 @@ public class DbInitializerDev
                 Nome = "Seed12",
                 DonoFK = dono.Id,
                 AlbumFK = 60,
-                FilePath = @"\assets\musicsSeed\Bee Gees - More Than A Woman (Lyric Video).mp3"
+                FilePath = @"assets\musicsSeed\Bee Gees - More Than A Woman (Lyric Video).mp3"
             };
 
             a1.Musicas.Add(m1);
@@ -177,7 +177,7 @@ public class DbInitializerDev
                 Id = 70,
                 Titulo = "Seed2",
                 DonoFK = dono.Id,
-                Foto = @"\assets\imagesSeed\Pilha Alcalina.PNG"
+                Foto = @"assets\imagesSeed\Pilha Alcalina.PNG"
             };
 
             if (!dbContext.Album.Any(a => a.Id == a2.Id))
@@ -193,7 +193,7 @@ public class DbInitializerDev
                 DonoFK = dono.Id,
                 AlbumFK = 70,
                 FilePath =
-                    @"\assets\musicsSeed\Come and get Your Love(Guardians of the Galaxy Intro song) - Redbone.mp3"
+                    @"assets\musicsSeed\Come and get Your Love(Guardians of the Galaxy Intro song) - Redbone.mp3"
             };
             Musica m4 = new Musica
             {
@@ -201,7 +201,7 @@ public class DbInitializerDev
                 Nome = "Seed22",
                 DonoFK = dono.Id,
                 AlbumFK = 70,
-                FilePath = @"\assets\musicsSeed\Encore.mp3"
+                FilePath = @"assets\musicsSeed\Encore.mp3"
             };
             Musica m5 = new Musica
             {
@@ -209,7 +209,7 @@ public class DbInitializerDev
                 Nome = "Seed23",
                 DonoFK = dono.Id,
                 AlbumFK = 70,
-                FilePath = @"\assets\musicsSeed\Gravity by John Mayer.mp3"
+                FilePath = @"assets\musicsSeed\Gravity by John Mayer.mp3"
             };
 
             a2.Musicas.Add(m3);
