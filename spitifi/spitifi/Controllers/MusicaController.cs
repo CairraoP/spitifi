@@ -130,8 +130,8 @@ namespace spitifi.Controllers
             
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // validar dono
-            // pela UI somente artista dono da musica pode alterar musica
+            // validar se quem tenta alterar o album é o dono do album
+            // pela UI somente artista que é dono da musica pode alterar a musica
             // api permite que administradores também alterem a musica
             if (musicaAux.Dono.IdentityUser != currentUserId)
             {
