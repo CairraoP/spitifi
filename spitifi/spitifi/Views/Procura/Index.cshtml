@@ -1,15 +1,15 @@
 @model Procura
 
-<!-- Search Bar -->
+<!-- barra de procura -->
 
 <div class="d-flex justify-content-center">
     <form asp-action="Index" method="get">
         <div class="input-group mb-4">
             <input type="text" class="form-control" name="searchTerm" 
-                   placeholder="Search for albums, songs, artists..." 
+                   placeholder="Procurar por albums, musicas ou artistas..." 
                    value="@Model.TermoDeProcura"
                    style="max-width: 800px">
-            <button class="btn btn-primary" type="submit">Search</button>
+            <button class="btn btn-primary" type="submit">Procurar</button>
         </div>
     </form>
 </div>
@@ -30,8 +30,8 @@
                         <div class="card-body">
                             <h5 class="card-title">@album.Titulo</h5>
                             <p class="card-text">By: @album.Dono.Username</p>
-                            <a asp-controller="Albums" asp-action="Details" asp-route-id="@album.Id" 
-                               class="btn btn-sm btn-outline-primary">View Album</a>
+                            <a asp-controller="Album" asp-action="Details" asp-route-id="@album.Id" 
+                               class="btn btn-sm btn-outline-primary">Ver Album</a>
                         </div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                         </audio>
                     </td>
                     <td>
-                        <a asp-controller="Musicas" asp-action="Details" 
+                        <a asp-controller="Musica" asp-action="Details" 
                            asp-route-id="@song.Id" class="btn btn-sm btn-outline-info">
                             Details
                         </a>
