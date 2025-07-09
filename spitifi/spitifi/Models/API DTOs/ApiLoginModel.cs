@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace spitifi.Models.ApiModels;
 
 /// <summary>
-/// DTO de entrada para endpoint de login por JWT
+/// DTO de entrada para endpoints de autenticação por JWT
 /// </summary>
 public class ApiLoginModel
 {
@@ -12,6 +12,7 @@ public class ApiLoginModel
     /// </summary>
     /// <example>nerd</example>
     [Required]
+    [MaxLength(50)]
     public string Username { get; set; }
     
     /// <summary>
@@ -19,5 +20,6 @@ public class ApiLoginModel
     /// </summary>
     /// <example>Pedro25#</example>
     [Required]
+    [MaxLength(255)]
     public string Password { get; set; }
 }

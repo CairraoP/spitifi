@@ -12,5 +12,6 @@ public class UserRoleUpdate
     /// </summary>
     /// <example>buuuuuuuh</example>
     [Required]
+    [MaxLength(50)]
     public string Username { get; set; }
 }

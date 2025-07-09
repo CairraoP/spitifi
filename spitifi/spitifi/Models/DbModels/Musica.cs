@@ -2,6 +2,18 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace spitifi.Models.DbModels;
+
+/// <summary>
+/// Musicas criadas por utilizadores com role de artista.
+///
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// ALTERAÇÕES AOS ATRIBUTOS NESTA CLASSE TÊM DE SER REFLETIDOS NOUTRAS CLASSES, EM PARTICULAR DTOs 
+///     Nomeadamente:
+///        - MusicaDTO
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// </summary>
 public class Musica
 {
     /// <summary>
@@ -28,7 +40,7 @@ public class Musica
     public Album Album { get; set; }
     
     /// <summary>
-    /// Coluna/campo onde ficará guardado o caminho para o ficheiro da música
+    /// Caminho no wwwroot onde a imagem será guardada
     /// </summary>
     [Display(Name = "Música")]
     public string FilePath { get; set; }
@@ -41,6 +53,8 @@ public class Musica
     
     /// <summary>
     /// FK para a classe "Utilizadores"
+    /// Artista que criou o album
+    /// Musica tem de pertencer a 1 album
     /// </summary>
     [Display(Name = "Artista")]
     [ForeignKey(nameof(Dono))]

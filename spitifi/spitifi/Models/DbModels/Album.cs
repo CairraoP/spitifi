@@ -3,10 +3,28 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace spitifi.Models.DbModels;
 
+/// <summary>
+/// Albuns são compostos por musicas.
+/// Utilizadores com role de artista podem criar albuns.
+/// A criação de um album implica o upload de musicas para o servidor
+///
+/// Para contexto: Ao contrario, a classe Playlist, são simples compilações de musicas criadas por artistas
+/// Baseiam-se na musicas que pertencem a albuns
+///
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// ALTERAÇÕES AOS ATRIBUTOS NESTA CLASSE TÊM DE SER REFLETIDOS NOUTRAS CLASSES, EM PARTICULAR DTOs 
+///     Nomeadamente:
+///        - AlbumDTO
+///        - AlbumUpdateDto
+///        - CreateAlbumRequestDto
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// </summary>
 public class Album
 {
     /// <summary>
-    /// identificador do albúm
+    /// identificador unico do albúm
     /// </summary>
     public int Id { get; set; }
     
@@ -17,6 +35,8 @@ public class Album
     /// após a criação do album
     /// </summary>
     [Display(Name = "Albúm")]
+    [Required]
+    [MaxLength(64)]
     public string Titulo { get; set; }
     
     /// <summary>
@@ -32,6 +52,7 @@ public class Album
     
     /// <summary>
     /// FK para referenciar que utilizador criou o albúm
+    /// Proposito: para facilidade de acesso ao ID do utilizador
     /// </summary>
     [Display(Name = "Artista")]
     [ForeignKey(nameof(Dono))]

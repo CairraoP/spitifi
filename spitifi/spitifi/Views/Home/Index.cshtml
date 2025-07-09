@@ -14,7 +14,8 @@
         <h2 class="text-center mb-4" style="color:white">Músicas Com Mais Gostos</h2>
         <div id="top-musicas-grid" class="row row-cols-1 row-cols-md-3 g-4"></div>
     </div>
-
+    
+    
     @section Scripts {
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -33,7 +34,7 @@
                     col.className = 'col';
 
                     col.innerHTML = `
-                        <div class="card h-100 bg-dark text-white">
+                        <div class="card text-white">
                             <img src="${music.AlbumFoto || '/assets/icons/musicPlaceholder.png'}" 
                                  class="card-img-top" 
                                  alt="${music.albumNome}">

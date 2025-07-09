@@ -8,18 +8,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     rows.forEach(row => {
         row.addEventListener('click', function(event) {
-            // ignore clicks on like button and audio elements
+            // ignora clicks em butões dentro da musica
+            // exemplo: botao do like esta dentro do espaço do event listener par alterar musica
+            // chutar like na musica não deve alterar para a musica
             if (event.target.closest('img[id^="heart-"]')) return;
             if (event.target.closest('audio')) return;
 
             const playlist = buildPlaylist();
             const songId = row.dataset.songId;
 
-            // find index of clicked song
+            // encontra indice da musica no array de musicas
             const songIndex = playlist.findIndex(song => song.id === songId);
             if (songIndex === -1) return;
 
-            // initialize or update player
+            // inicializa musicaPlayer. Feito somente 1 vez
             if (!window.musicPlayer) {
                 initPlayer(playlist);
             }
@@ -28,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// initialize the music player
+// funcao para inicializar o musicPlayer. Corre quando a pagina é carregada
 function initPlayer(playlist) {
     window.musicPlayer = {
         playlist: playlist,
@@ -37,23 +39,19 @@ function initPlayer(playlist) {
         playMode: 'once',
 
         playTrack: function(index) {
+            // validação inicial do indice
             if (index < 0 || index >= this.playlist.length) return;
 
             this.currentIndex = index;
             const track = this.playlist[index];
 
-            // update display
+            // troca informações do footer de acordo com a nova musica
             document.getElementById('footerSongName').textContent =
                 track.name.substring(0, track.name.lastIndexOf('.'));
             document.getElementById('footerArtist').textContent = track.artist;
             document.getElementById('footerAlbumArt').src = track.albumArt;
 
-            // set fallback for album art
-            document.getElementById('footerAlbumArt').onerror = function() {
-                this.src = '/assets/icons/musicPlaceholder.png';
-            };
-
-            // update audio source
+            // atualiza path da musica. Cada indice contem o seu proprio path para a musica (no wwwroot)
             this.audioPlayer.innerHTML = '';
             const source = document.createElement('source');
             source.src = track.filePath;
@@ -68,13 +66,13 @@ function initPlayer(playlist) {
             this.audioPlayer.load();
             this.audioPlayer.play();
 
-            // show footer music player
+            // mostra footer. Escondido, por padrão
             const container = document.getElementById('audioContainer');
             container.classList.add('show');
 
         },
-
-
+        
+        // passa para a musica seguinte
         nextTrack: function() {
             let nextIndex = this.currentIndex + 1;
 
@@ -85,6 +83,7 @@ function initPlayer(playlist) {
             this.playTrack(nextIndex);
         },
 
+        // passa para a musica anterior
         prevTrack: function() {
             let prevIndex = this.currentIndex - 1;
 
@@ -101,50 +100,29 @@ function initPlayer(playlist) {
         }
     };
 
-    // default play mode
+    // modo padrão
     window.musicPlayer.setPlayMode('once');
 
-    document.getElementById('prevBtn').addEventListener('click', () => {
+    // adiciona eventListeners nos botões para saltar para musica anterior ou seguinte
+    document.getElementById('musicaAnteriorBt').addEventListener('click', () => {
         window.musicPlayer.prevTrack();
     });
 
-    document.getElementById('nextBtn').addEventListener('click', () => {
+    document.getElementById('musicaSeguinteBt').addEventListener('click', () => {
         window.musicPlayer.nextTrack();
     });
 
-    document.getElementById('playPauseBtn').addEventListener('click', () => {
-        const icon = document.querySelector('#playPauseBtn i');
-        if (window.musicPlayer.audioPlayer.paused) {
-            window.musicPlayer.audioPlayer.play();
-            icon.className = 'fas fa-pause';
-        } else {
-            window.musicPlayer.audioPlayer.pause();
-            icon.className = 'fas fa-play';
-        }
-    });
-
-    // play mode selection
+    // escuta por mudanças na escolha do modo de playback (once, repeat, loop)
     document.querySelectorAll('input[name="playMode"]').forEach(radio => {
         radio.addEventListener('change', (e) => {
             window.musicPlayer.setPlayMode(e.target.value);
         });
     });
 
-    // handle track ending
+    // trata quando musica chega ao fim
     window.musicPlayer.audioPlayer.addEventListener('ended', () => {
-        if (window.musicPlayer.playMode === 'loopPlaylist') {
-            window.musicPlayer.nextTrack();
-        } else if (window.musicPlayer.playMode === 'once') {
+        if (window.musicPlayer.playMode === 'loopPlaylist' || window.musicPlayer.playMode === 'once') {
             window.musicPlayer.nextTrack();
         }
-    });
-
-    // update play/pause button state
-    window.musicPlayer.audioPlayer.addEventListener('play', () => {
-        document.querySelector('#playPauseBtn i').className = 'fas fa-pause';
-    });
-
-    window.musicPlayer.audioPlayer.addEventListener('pause', () => {
-        document.querySelector('#playPauseBtn i').className = 'fas fa-play';
     });
 }

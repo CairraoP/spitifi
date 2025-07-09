@@ -23,12 +23,14 @@ namespace spitifi.Controllers
         }
 
         // GET: Utilizadores
+        [Authorize(Roles="Administrador")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Utilizadores.ToListAsync());
         }
 
         // GET: Utilizadores/Details/5
+        [Authorize(Roles="Administrador")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -48,6 +50,7 @@ namespace spitifi.Controllers
         }
 
         // GET: Utilizadores/Create
+        [Authorize(Roles="Administrador")]
         public IActionResult Create()
         {
             return View();
@@ -57,6 +60,7 @@ namespace spitifi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles="Administrador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Username")] Utilizadores utilizador)
         {
@@ -70,6 +74,7 @@ namespace spitifi.Controllers
         }
 
         // GET: Utilizadores/Edit/5
+        [Authorize(Roles="Administrador")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -90,6 +95,7 @@ namespace spitifi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles="Administrador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Username")] Utilizadores utilizador)
         {
@@ -147,9 +153,10 @@ namespace spitifi.Controllers
         }
 
         // POST: Utilizadores/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")] // Respond to view HTTP POST and map to asp-action "Delete"
+        [Authorize(Roles="Administrador")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteConfirmation(int id)
         {
             var utilizador = await _context.Utilizadores
                 .Include(u => u.Albums)

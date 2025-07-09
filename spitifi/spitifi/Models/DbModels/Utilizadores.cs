@@ -6,6 +6,15 @@ namespace spitifi.Models.DbModels;
 /// Utilizadores da aplicação
 ///
 /// Contém informações não relativas ao Identity
+///
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// ALTERAÇÕES AOS ATRIBUTOS NESTA CLASSE TÊM DE SER REFLETIDOS NOUTRAS CLASSES, EM PARTICULAR DTOs
+///     Nomeadamente:
+///        - UserRoleUpdate
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// 
 /// </summary>
 public class Utilizadores
 {
@@ -45,10 +54,15 @@ public class Utilizadores
     
     /// <summary>
     /// Lista de músicas criadas pelo utilizador
+    /// Pendente possuir role de artista
     /// </summary>
     [Display(Name = "Lista de Músicas da sua Auditoria")]
     public List<Musica> ListaDono { get; set; } = [];
     
+    /// <summary>
+    /// Lista de músicas que este utilizador colaborou
+    /// Contexto: Colab são musicas de auditoria de um outro utilizador, mas que este tambem participou
+    /// </summary>
     [Display(Name = "Lista de Músicas da sua Auditoria")]
     public List<Colabs> ListaColabs { get; set; } = [];
     
@@ -62,5 +76,8 @@ public class Utilizadores
     /// </summary>
     public List<Album> Albums { get; set; } = new List<Album>();
     
+    /// <summary>
+    /// Lista de playlists criadas pelo utilizador
+    /// </summary>
     public List<PlayList> Playlists { get; set; } = new List<PlayList>();
 }

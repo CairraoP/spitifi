@@ -2,6 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace spitifi.Models.ApiModels;
 
+/// <summary>
+/// DTO de entrada para API
+/// Usado para especificar que musicas são para ser removidas de um determinado album
+///
+/// Nota: ID da musicas é especificado nos parametros API
+/// </summary>
 public class RemoverMusicasDTO
 {
     [Required]

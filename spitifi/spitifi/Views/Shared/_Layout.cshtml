@@ -15,6 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - spitifi</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/spitifi.styles.css" asp-append-version="true"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
@@ -30,6 +31,12 @@
                style="display: inline; color: #ffffff;">Spitifi</a>
         </div>
         <hr/>
+        <div>
+            <img src="/assets/icons/search.png" width="25" height="25">
+            <a class="nav-link" asp-area="" asp-controller="Procura" asp-action="Index"
+               style="display: inline;">Procurar</a>
+        </div>
+        <br/>
         <div>
             <img src="/assets/icons/music.png" width="25" height="25">
             <a class="nav-link" asp-area="" asp-controller="Musica" asp-action="Index"
@@ -107,16 +114,11 @@
             </div>
             <div id="middleBottom">
                 <!-- Add icon inside the button -->
-                <button id="prevBtn"><i class="fas fa-step-backward"></i>
+                <button id="musicaAnteriorBt"><i class="fas fa-step-backward"></i>
                     <img src="/assets/icons/left.png" width="25" height="25">
                 </button>
                 
-                
-                <button id="playPauseBtn"><i class="fas fa-play"></i>
-                    <img src="/assets/icons/pause.png" width="25" height="25">
-                </button>
-                
-                <button id="nextBtn"><i class="fas fa-step-forward"></i>
+                <button id="musicaSeguinteBt"><i class="fas fa-step-forward"></i>
                     <img src="/assets/icons/right.png" width="25" height="25">
                     </button>
             </div>

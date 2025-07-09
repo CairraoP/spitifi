@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +69,8 @@ namespace spitifi.Controllers
         }
 
         // GET: Musica/Create
+        
+        [Authorize(Roles = "Artista")]
         public IActionResult Create()
         {
             ViewData["AlbumFK"] = new SelectList(_context.Album, "Id", "Titulo");
@@ -78,6 +82,7 @@ namespace spitifi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Artista")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Nome,AlbumFK,DonoFK")] Musica musica,[Bind("Titulo")] Album album, List<IFormFile> musicaNova, IFormFile fotoAlbum)
         {
@@ -93,6 +98,8 @@ namespace spitifi.Controllers
         }
 
         // GET: Musica/Edit/5
+        
+        [Authorize(Roles = "Artista")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -114,6 +121,7 @@ namespace spitifi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Artista")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Nome,Album,FilePath,DonoFK")] Musica musica, IFormFile musicaNova, IFormFile FotoAlbum)
         {
@@ -126,6 +134,16 @@ namespace spitifi.Controllers
      
             var musicaAux = _context.Musica.AsNoTracking().FirstOrDefault(m => m.Id == musica.Id);
             musica.FilePath = musicaAux.FilePath;
+            
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // validar se quem tenta alterar o album é o dono do album
+            // pela UI somente artista que é dono da musica pode alterar a musica
+            // api permite que administradores também alterem a musica
+            if (musicaAux.Dono.IdentityUser != currentUserId)
+            {
+                return Forbid(); 
+            }
             
             var fotoAux = _context.Musica.AsNoTracking().FirstOrDefault(m => m.Id == musica.Id);
             // musica.FotoAlbum = fotoAux.FilePath;
@@ -210,6 +228,7 @@ namespace spitifi.Controllers
             return View(musica);
         }
         // GET: Musica/Delete/5
+        [Authorize(Roles = "Artista, Administrador")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -230,9 +249,10 @@ namespace spitifi.Controllers
         }
 
         // POST: Musica/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Delete")] // Respond to view HTTP POST and map to asp-action "Delete"
+        [Authorize(Roles = "Artista, Administrador")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmation(int id)
         {
             //Como já não se apagou o labum, este include ficou redundante
             var musica = _context.Musica.Include(m => m.Album).FirstOrDefault(m => m.Id == id);
