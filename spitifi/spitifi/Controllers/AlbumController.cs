@@ -93,9 +93,9 @@ namespace spitifi.Controllers
         {
             //variaveis para validações
 
-            var userId = _userManager.GetUserId(User);
+            var identityUserId = _userManager.GetUserId(User);
             
-            // encontrar username do utilizador que fez o pedido, para poder associar ao utilizador local
+            // encontrar username (Identity) do utilizador que fez o pedido, para poder associar ao utilizador local
             var utilizadorIdentity = _context.Users.First(au => au.UserName == User.Identity.Name);
             var utlizadorLocal = _context.Utilizadores.Where(u => u.IdentityUser == utilizadorIdentity.Id);
 
@@ -111,19 +111,19 @@ namespace spitifi.Controllers
             if (string.IsNullOrEmpty(album.Titulo))
             {
                 ModelState.AddModelError("Titulo", "Não introduziste um título");
-                ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId).Username;
+                ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == identityUserId).Username;
                 return View();
             }
 
             if (fotoAlbum == null){
                 ModelState.AddModelError("Foto", "Não introduziste uma foto");
-                ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId).Username;
+                ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == identityUserId).Username;
                 return View();
             }
 
             if (musicasNovas.Count < 1){
                 ModelState.AddModelError("Musicas", "Não introduziste pelo menos uma musica/ficheiro");
-                ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId).Username;
+                ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == identityUserId).Username;
                 return View();
             }
             
@@ -143,7 +143,7 @@ namespace spitifi.Controllers
                         {
                             ModelState.AddModelError("Musicas",
                                 "Uma ou mais músicas com extensão inválida, use .wav ou .mp3 por favor");
-                            ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId)
+                            ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == identityUserId)
                                 .Username;
                             return View();
                         }
@@ -153,7 +153,7 @@ namespace spitifi.Controllers
                     {
                         ModelState.AddModelError("Foto", "Formato Inválido. Insira uma foto com formato JPEG ou PNG");
                         ViewData["DonoNome"] =
-                            _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == userId).Username;
+                            _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == identityUserId).Username;
                         return View();
                     }
 
