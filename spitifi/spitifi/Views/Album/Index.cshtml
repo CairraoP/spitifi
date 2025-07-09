@@ -6,64 +6,35 @@
     // since the page model isn't the music dbModel but a paginator we can't access the music displayname from anywhere
     //ths dumbItem allows to use the musica dbModel attributes
     var dumbitem = new Album();
+
 }
 
 <h1>Albúms</h1>
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            <!--@Html.DisplayNameFor(model => dumbitem.Foto)-->
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => dumbitem.Titulo)
-        </th>
-        <th>
-            Artista
-        </th>
-        <th>
-            Opções
-        </th>
-    </tr>
-    </thead>
-    <tbody>
+
+<!-- Container for Cards -->
+<div class="album-cards-container">
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                <img style="max-height: 100px; max-width: 100px" src="/@item.Foto" alt=""/>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Titulo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Dono.Username)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
-            
-            @{
-                //Na teoria, este código pode ser interpretado de duas maneiras distintas, logo
-                //ser aplicado de 2 maneiras diferentes.
-                //1) Assumimos que mesmo que o artista não queira mais a sua conta na app isso não implique a remoção
-                // das suas músicas. Logo temos de meter o "?"
-                //2) Assumimos que isso nunca aconteceria e portanto não se tinha de meter o "?"
-                
-                //Objetivo: caso o utilizador que está na sessão seja o dono de um item/album, pode apaga-lo
-                var dono = item.Dono?.Username;
-                @if (User.Identity?.Name == dono)
-                {   <a> | </a>
-                    <a asp-action="Delete" asp-route-id="@item.Id">Apagar Album</a>
-                    <a> | </a>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Editar Album</a>
+        <div class="album-card">
+            <div class="album-card-header">
+                <img src="/@item.Foto" alt="Album Image"/>
+            </div>
+            <div class="album-card-body">
+                <h5 class="album-title">@Html.DisplayFor(modelItem => item.Titulo)</h5>
+                <p class="album-artist">@Html.DisplayFor(modelItem => item.Dono.Username)</p>
+            </div>
+            <div class="album-card-footer">
+                <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
+                @if (User.Identity?.Name == item.Dono?.Username)
+                {
+                    <a class="btn btn-secondary" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
                 }
-            }
-            </td>
-        </tr>
+            </div>
+        </div>
     }
-    
-    </tbody>
-</table>
+</div>
+
 
 
 

@@ -10,47 +10,71 @@
     {
          dono = true;
     }
-}
-<body style="background-color: #666666">
-<h1>Detalhes</h1>
 
-<div>
-    <h4>Músicas do Albúm</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Titulo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Titulo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Foto)
-        </dt>
-        <dd class = "col-sm-10">
-            <img style ="max-height: 100px; max-width: 100px" src="/@Html.DisplayFor(model => model.Foto)"/>
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Musicas)
-        </dt>
-        <dd class="col-sm-10">
-            @foreach(var musica in Model.Musicas)
-            {
-                <li class="flex-column">@musica.Nome</li>
-                <audio controls class="flex-column">
-                    <source src="/@musica.FilePath" type="audio/wav">
-                    <source src="/@musica.FilePath" type="audio/mpeg">
-                </audio>
-                @if(dono)
-                {
-                    <a asp-controller="Musica" asp-action="Delete" asp-route-id="@musica.Id">Apagar</a>
-                    <a asp-controller="Musica" asp-action="Edit" asp-route-id="@musica.Id">Editar Musica</a>
-                }
-            }
-        </dd>
-    </dl>
+    var i = 1;
+}
+<div class="d-flex align-items-center">
+    <img style ="max-height: 100px; max-width: 100px" src="/@Model.Foto" alt=""/>
+    <div style="margin-left: 30px">
+        <h1>@Model.Titulo</h1>
+        <h6>PlayList</h6>
+        <h5>@Html.DisplayFor(model => model.Dono.Username) : @Model.Musicas.Count músicas</h5>
+    </div>
 </div>
+<hr />
 <div>
-    <a asp-action="Index">Voltar</a>
+<table class="table table-borderless">
+    <thead>
+    <tr style="font-size: 16px">
+        <td>#</td>
+        <td>Titulo</td>
+        <td>Reproduzir</td>
+    </tr>
+    </thead>
+    <div class="table-bordered"></div>
+    <tbody class="col-sm-10">
+    @foreach (var musica in Model.Musicas) {
+        <tr>
+            <td style="padding-top: 30px">@i</td>
+            <td class="d-flex align-items-center">
+                <div style="margin-left: 10px; font-size: 14px">
+                    <li class="flex-column" style="margin-bottom: 5px"><strong>@musica.Nome</strong></li>
+                    <li class="flex-column" style="margin-bottom: 5px">@musica.Dono.Username</li>
+                </div>
+            </td>
+            <td>
+                <div style="margin-left: 10px; font-size: 14px">
+                    <audio controls class="flex-column">
+                        <source src="/@musica.FilePath" type="audio/wav">
+                        <source src="/@musica.FilePath" type="audio/mpeg">
+                    </audio>
+                </div>
+            </td>
+            <td>
+                <div>
+                    @if (dono)
+                    {
+                        <a asp-controller="Musica" asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-secondary" style="margin-right: 15px">Editar Música</a>
+                        <a asp-controller="Musica" asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">Apagar Música</a>
+                    }
+                </div>
+            </td>
+        </tr>
+        i++;
+    }
+    </tbody>
+</table>
 </div>
-</body>
+<div style="margin-top: 20px">
+    <a asp-action="Index"><i class="bi bi-arrow-90deg-left" style="color: white; margin-right: 15px"> Voltar </i></a>
+    @if (dono)
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-secondary" style="margin-right: 15px">Editar Albúm</a>
+        <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">Apagar Albúm</a>
+    }
+</div>
+<style>
+        thead {
+            border-bottom: 2px solid #eeeeee; /* Line below the headers */
+        }
+</style>

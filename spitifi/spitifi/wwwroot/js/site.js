@@ -47,7 +47,7 @@ function initPlayer(playlist) {
 
             // troca informações do footer de acordo com a nova musica
             document.getElementById('footerSongName').textContent =
-                track.name.substring(0, track.name.lastIndexOf('.'));
+                track.name;
             document.getElementById('footerArtist').textContent = track.artist;
             document.getElementById('footerAlbumArt').src = track.albumArt;
 
