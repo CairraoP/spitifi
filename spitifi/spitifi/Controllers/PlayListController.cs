@@ -69,16 +69,19 @@ namespace spitifi.Controllers
         [Authorize]
         public IActionResult Create()
         {
-            // Fetch music data from database
+            
             var musicDataForSelectList = _context.Musica
                 .Select(m => new { Id = m.Id, Name = m.Nome })
                 .ToList();
 
-            // Create SelectList for dropdown
+            
             ViewBag.MusicaList = new MultiSelectList(musicDataForSelectList, "Id", "Name");
 
-            return View();
+            ViewBag.ListaMusicas = _context.Musica.OrderBy(m => m.Nome).ToList();
+
+            return View(new PlayList());
         }
+        
 
         // POST: PlayList/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.

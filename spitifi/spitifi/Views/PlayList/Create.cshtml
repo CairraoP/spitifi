@@ -1,43 +1,113 @@
+@using spitifi.Models.DbModels
 @model spitifi.Models.DbModels.PlayList
 
 @{
     ViewData["Title"] = "Create";
+    var selecionado = "";
+    var icon = "bi bi-check-circle";
 }
 
-<h1>Crie a sua Playlist</h1>
+<body style="background: linear-gradient(135deg, #333333, #555555); color: #ddd; font-family: Arial, sans-serif;">
+<div class="container mt-5">
+    <!-- Center the form horizontally and vertically -->
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <!-- Card for the Form -->
+            <div class="card shadow-lg border-0 rounded-3" style="color: #2c3034">
+                <div class="card-body">
+                    <!-- Title Section -->
+                    <h1 class="text-center mb-4">Criar uma PlayList</h1>
 
-<!-- Agora é começar a alterar o código para saber como fazer com a escolha de músicas, aproveitar e 
-reutiliza-se o código do Album, este html precisa de ser alterado-->
-<h4>PlayList</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
+                    <!-- Playlist Form -->
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <!-- Playlist Name -->
+                        <div class="form-group mb-3">
+                            <label asp-for="Nome" class="form-label">Nome da PlayList</label>
+                            <input asp-for="Nome" class="form-control" placeholder="Nome da PlayList" />
+                            <span asp-validation-for="Nome" class="text-danger"></span>
+                        </div>
+
+                        <!-- Playlist Photo -->
+                        <div class="form-group mb-3">
+                            <label asp-for="Foto" class="form-label">Foto da PlayList</label>
+                            <input type="file" name="fotoPlaylist" class="form-control" />
+                            <span asp-validation-for="Foto" class="text-danger"></span>
+                        </div>
+
+                        <!-- Musics for Playlist -->
+                        <div class="form-group mb-3">
+                            <label class="form-label">Músicas da PlayList</label>
+                            <table class="table table-dark">
+                                <thead>
+                                <tr class="control-label">
+                                    <th scope="col">Música</th>
+                                    <th scope="col">Adicionar</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (Musica musica in ViewBag.ListaMusicas)
+                                {
+                                    selecionado = Model.Musicas != null && Model.Musicas.Contains(musica) ? "checked" : "";
+                                    icon = selecionado == "checked" ? "bi bi-check-circle-fill" : "bi bi-check-circle";
+                                        
+                                    <tr>
+                                        <td>@musica.Nome</td>
+                                        <td>
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input visually-hidden"
+                                                       id="checkbox-@musica.Id" value="@musica.Id"
+                                                       name="selectedMusicas" @selecionado/>
+                                                <label for="checkbox-@musica.Id">
+                                                    <i id="icon-@musica.Id" class="@icon" style="margin-right: 5px; color: @((selecionado == "checked") ? "lawngreen" : "")"></i>
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                            <span asp-validation-for="Musicas" class="text-danger"></span>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-group text-center mb-3">
+                            <input type="submit" value="Criar PlayList" class="btn btn-success btn-lg" />
+                        </div>
+                    </form>
+
+                    <!-- Back Link -->
+                    <div class="text-center mt-3">
+                        <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label class="control-label">Selecione Músicas</label>
-                <select name="selectedMusicas" class="form-control" 
-                        multiple asp-items="ViewBag.MusicaList"></select>
-                <span asp-validation-for="Musicas" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Foto" class="control-label"></label>
-                <input type ="file" name="fotoPlaylist" class="form-control" />
-                <span asp-validation-for="Foto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Criar" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Voltar</a>
+    <br />
+    <a asp-action="Index"><i class="bi bi-arrow-90deg-left" style="color: white"> Voltar </i></a>
 </div>
+</body>
 
+<script>
+    // Function to change the icon when checkbox is clicked
+    document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
+        checkbox.addEventListener("change", function () {
+            const icon = document.getElementById('icon-' + this.id.split('-')[1]);
+
+            if (this.checked) {
+                icon.classList.remove('bi-check-circle');
+                icon.classList.add('bi-check-circle-fill');
+                icon.style.color = 'lawngreen';
+            } else {
+                icon.classList.remove('bi-check-circle-fill');
+                icon.classList.add('bi-check-circle');
+                icon.style.color = '';
+            }
+        });
+    });
+</script>
