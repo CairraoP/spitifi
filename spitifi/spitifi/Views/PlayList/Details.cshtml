@@ -32,6 +32,7 @@
             <td>Álbum</td>
         </tr>
         </thead>
+        <div class="table-bordered"></div>
         <tbody class="col-sm-10">
         @foreach (var musica in Model.Musicas)
         {
@@ -64,3 +65,8 @@
         <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">Apagar Playlist</a>
     }
 </div>
+<style>
+        thead {
+            border-bottom: 2px solid #eeeeee; /* Line below the headers */
+        }
+    </style>

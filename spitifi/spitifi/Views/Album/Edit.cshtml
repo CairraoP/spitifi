@@ -23,6 +23,11 @@
                 <input type ="file" name="fotoAlbum" class="form-control" />
                 <span asp-validation-for="Foto" class="text-danger"></span>
             </div>
+            <div class="form-group mb-3">
+                <label asp-for="Musicas" class="form-label">Músicas do Albúm</label>
+                <input type="file" name="musicasNovas" class="form-control" multiple />
+                <span asp-validation-for="Musicas" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Guardar" class="btn btn-primary" />
             </div>

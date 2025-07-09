@@ -14,36 +14,27 @@
                 <!-- Card for the Form -->
                 <div class="card shadow-lg border-0 rounded-3" style="color: #2c3034">
                     <div class="card-body">
-
                         <!-- Title Section -->
                         <h1 class="text-center mb-4">Criar um Albúm</h1>
 
                         <!-- Album Form -->
                         <form asp-action="Create" enctype="multipart/form-data">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                            <!-- Title Field -->
                             <div class="form-group mb-3">
                                 <label asp-for="Titulo" class="form-label">Título do Albúm</label>
                                 <input asp-for="Titulo" class="form-control" placeholder="Nome do Albúm" />
                                 <span asp-validation-for="Titulo" class="text-danger"></span>
                             </div>
-
-                            <!-- Owner Field (Readonly) -->
                             <div class="form-group mb-3">
                                 <label asp-for="DonoFK" class="form-label">Dono do Albúm</label>
                                 <input class="form-control" value="@ViewData["DonoNome"]" readonly />
                                 <span asp-validation-for="DonoFK" class="text-danger"></span>
                             </div>
-
-                            <!-- Album Photo Upload -->
                             <div class="form-group mb-3">
                                 <label asp-for="Foto" class="form-label">Foto do Albúm</label>
                                 <input type="file" name="fotoAlbum" class="form-control" />
                                 <span asp-validation-for="Foto" class="text-danger"></span>
                             </div>
-
-                            <!-- Music Files Upload -->
                             <div class="form-group mb-3">
                                 <label asp-for="Musicas" class="form-label">Músicas do Albúm</label>
                                 <input type="file" name="musicasNovas" class="form-control" multiple />
