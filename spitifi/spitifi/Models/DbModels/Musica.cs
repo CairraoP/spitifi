@@ -2,6 +2,18 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace spitifi.Models.DbModels;
+
+/// <summary>
+/// Musicas criadas por utilizadores com role de artista.
+///
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// ALTERAÇÕES AOS ATRIBUTOS NESTA CLASSE TÊM DE SER REFLETIDOS NOUTRAS CLASSES, EM PARTICULAR DTOs 
+///     Nomeadamente:
+///        - MusicaDTO
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// </summary>
 public class Musica
 {
     /// <summary>

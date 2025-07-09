@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using spitifi.Models.DbModels;
 
 namespace spitifi.Models.ApiModels;
@@ -9,6 +10,8 @@ namespace spitifi.Models.ApiModels;
 ///
 /// Contexto: Não podemos devolver o objeto normal, por causa do atributo Dono e Album
 ///     Atributo Dono e Album causam loops relacionais
+/// 
+/// Os atributos desta classe replicam algumas anotações da classe Musica. Cuidado durante uma alteração
 /// </summary>
 public class MusicaDTO
 {
@@ -20,6 +23,7 @@ public class MusicaDTO
     /// <summary>
     /// Nome da Música
     /// </summary>
+    [StringLength(255)] 
     public string Nome { get; set; }
     
     /// <summary>

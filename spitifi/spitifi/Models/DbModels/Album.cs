@@ -10,6 +10,16 @@ namespace spitifi.Models.DbModels;
 ///
 /// Para contexto: Ao contrario, a classe Playlist, são simples compilações de musicas criadas por artistas
 /// Baseiam-se na musicas que pertencem a albuns
+///
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// ALTERAÇÕES AOS ATRIBUTOS NESTA CLASSE TÊM DE SER REFLETIDOS NOUTRAS CLASSES, EM PARTICULAR DTOs 
+///     Nomeadamente:
+///        - AlbumDTO
+///        - AlbumUpdateDto
+///        - CreateAlbumRequestDto
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 /// </summary>
 public class Album
 {

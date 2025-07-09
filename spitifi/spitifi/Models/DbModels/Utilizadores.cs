@@ -6,6 +6,15 @@ namespace spitifi.Models.DbModels;
 /// Utilizadores da aplicação
 ///
 /// Contém informações não relativas ao Identity
+///
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// ALTERAÇÕES AOS ATRIBUTOS NESTA CLASSE TÊM DE SER REFLETIDOS NOUTRAS CLASSES, EM PARTICULAR DTOs
+///     Nomeadamente:
+///        - UserRoleUpdate
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// 
 /// </summary>
 public class Utilizadores
 {
