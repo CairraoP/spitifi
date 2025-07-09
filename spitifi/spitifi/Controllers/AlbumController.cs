@@ -85,7 +85,6 @@ namespace spitifi.Controllers
         // POST: Album/Create
         [ValidateAntiForgeryToken]
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Titulo")] Album album,
             IFormFile fotoAlbum, List<IFormFile> musicasNovas)
         {

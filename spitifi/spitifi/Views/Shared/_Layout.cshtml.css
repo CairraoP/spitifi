@@ -152,6 +152,7 @@ button.accept-policy {
 }
 
 #audioContainer {
+    max-width: 100% !important;
     transition: opacity 0.3s ease;
     opacity: 0;
     display: none !important;
