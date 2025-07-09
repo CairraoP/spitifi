@@ -16,41 +16,45 @@
 <div>
     <h4>Musica</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Album)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Album.Titulo)
-        </dd>
-        <dt class="col-sm-2">
-            <img src="/@Model.Album.Foto" class="mw-100 mh-100"/>
-        </dt>
-        <dd class="col-sm-10">
-            <audio controls>
-                <source src="/@Model.FilePath" type="audio/wav">
-                <source src="/@Model.FilePath" type="audio/mp3">
-            </audio>
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DonoFK)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Dono.Username)
-        </dd>
-    </dl>
+    <table class="table">
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Nome)</th>
+            <td>@Html.DisplayFor(model => model.Nome)</td>
+        </tr>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Album)</th>
+            <td>@Html.DisplayFor(model => model.Album.Titulo)</td>
+        </tr>
+        <tr>
+            <th>Foto do Álbum</th>
+            <td>
+                <img src="/@Model.Album.Foto" style="max-height: 50px; max-width: 50px"/>
+            </td>
+        </tr>
+        <tr>
+            <th>Audio</th>
+            <td>
+                <audio controls>
+                    <source src="/@Model.FilePath" type="audio/wav">
+                    <source src="/@Model.FilePath" type="audio/mp3">
+                </audio>
+            </td>
+        </tr>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.DonoFK)</th>
+            <td>@Html.DisplayFor(model => model.Dono.Username)</td>
+        </tr>
+    </table>
 </div>
 <div>
-    @if(dono){
-        <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a><a> | </a><a asp-action="Delete" asp-route-id="@Model?.Id">Apagar Musica</a><a> | </a>
+    <br/>
+        <a asp-action="Index"><i class="bi bi-arrow-90deg-left" style="color: white"> Voltar </i></a>
+    @if (dono)
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-secondary" style="margin-right: 15px">Editar Música</a>
+        <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">Apagar Música</a>
     }
-    <a asp-action="Index">Voltar</a>
+
 </div>
 
 <script>

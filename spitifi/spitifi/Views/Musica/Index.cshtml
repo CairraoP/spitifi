@@ -6,25 +6,24 @@
     // since the page model isn't the music dbModel but a paginator, we can't access the music displayname from anywhere
     // this dumbItem allows to use the Musica Model attributes
     var dumbitem = new Musica();
+
+    var j = 1;
 }
 
-<h1>Músicas</h1>
+<h1 style="padding-bottom: 30px">Músicas</h1>
 
-<table class="table" style="color:white">
-    <thead>
-    <tr>
-        <th> Gostos</th>
-        <th> Capa do Albúm</th>
-        <th>
-            @Html.DisplayNameFor(model => dumbitem.Nome)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => dumbitem.Album.Titulo)
-        </th>
-        <th>Opções</th>
+<table class="table table-borderless">
+    <thead style="border-bottom: 2px solid #eeeeee;">
+    <tr style="font-size: 16px">
+        <td>#</td>
+        <td>Titulo</td>
+        <td>Álbum</td>
+        <td>Reproduzir</td>
+        <td>Gostos</td>
     </tr>
     </thead>
-    <tbody>
+    <div class="table-bordered"></div>
+    <tbody class="col-sm-10">
     @foreach (var item in Model)
     {
         <tr data-song-id="@item.Id"
@@ -32,6 +31,25 @@
             data-album-art="@item.Album.Foto"
             data-artist="@item.Dono.Username"
             data-file-path="@item.FilePath">
+            
+            <td style="padding-top: 30px">@j</td>
+            
+            <td class="d-flex align-items-center">
+                <img style="max-height: 70px; max-width: 70px" src="/@item.Album.Foto" alt=""
+                     onerror="this.onerror=null; this.src='/assets/icons/musicPlaceholder.png'"/>
+
+                <div style="margin-left: 10px; font-size: 14px">
+                    <li class="flex-column" style="margin-bottom: 5px"><strong>@item.Nome</strong></li>
+                </div>
+            </td>
+            
+            <td>@item.Album.Titulo</td>
+            <td>
+                <audio controls class="flex-column">
+                    <source src="/@item.FilePath" type="audio/wav">
+                    <source src="/@item.FilePath" type="audio/mpeg">
+                </audio>
+            </td>
 
             <td>
                 @if (User.Identity.IsAuthenticated)
@@ -46,24 +64,11 @@
                 <p id=@("foto" + item.Id)>@item.ListaGostos.Count()</p>
 
             </td>
-
-            <td>
-                <img style="max-height: 100px; max-width: 100px"
-                     src="@item.Album.Foto"
-                     onerror="this.onerror=null; this.src='/assets/icons/musicPlaceholder.png'"/>
-            </td>
-            <td>
-                @System.IO.Path.GetFileNameWithoutExtension(item.Nome)
-                <br/>
-                @Html.DisplayFor(modelItem => item.Dono.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Album.Titulo)
-            </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
             </td>
         </tr>
+        j++;
     }
     </tbody>
 </table>
