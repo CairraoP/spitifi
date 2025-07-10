@@ -68,9 +68,9 @@ namespace spitifi.Controllers
             return View(musica);
         }
 
-        // GET: Musica/Create
         
-        [Authorize(Roles = "Artista")]
+        // GET: Musica/Create
+        [Authorize(Roles = "Artista, Administrador")]
         public IActionResult Create()
         {
             ViewData["AlbumFK"] = new SelectList(_context.Album, "Id", "Titulo");
@@ -82,7 +82,7 @@ namespace spitifi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Authorize(Roles = "Artista")]
+        [Authorize(Roles = "Artista, Administrador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Nome,AlbumFK,DonoFK")] Musica musica,[Bind("Titulo")] Album album, List<IFormFile> musicaNova, IFormFile fotoAlbum)
         {
@@ -97,9 +97,9 @@ namespace spitifi.Controllers
             return View(musica);
         }
 
-        // GET: Musica/Edit/5
         
-        [Authorize(Roles = "Artista")]
+        // GET: Musica/Edit/5
+        [Authorize(Roles = "Artista, Administrador")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -118,10 +118,8 @@ namespace spitifi.Controllers
         }
         
         // POST: Musica/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Authorize(Roles = "Artista")]
+        [Authorize(Roles = "Artista, Administrador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Nome,Album,FilePath,DonoFK")] Musica musica, IFormFile musicaNova, IFormFile FotoAlbum)
         {
@@ -129,18 +127,30 @@ namespace spitifi.Controllers
             
             if (id != musica.Id)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
      
             var musicaAux = _context.Musica.AsNoTracking().FirstOrDefault(m => m.Id == musica.Id);
             musica.FilePath = musicaAux.FilePath;
             
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            var musicaValidacaoAuthorization = await _context.Musica.Include(a => a.Dono).FirstAsync(a => a.Id == id);
 
-            // validar se quem tenta alterar o album é o dono do album
-            // pela UI somente artista que é dono da musica pode alterar a musica
-            // api permite que administradores também alterem a musica
-            if (musicaAux.Dono.IdentityUser != currentUserId)
+            if (musicaValidacaoAuthorization?.Dono?.IdentityUser == null)
+            {
+                // utilizador não pôde ser verificado
+                return RedirectToAction(nameof(Index));
+            }
+            
+            // validar se quem tenta alterar a playlist é o dono or admin
+            if (musicaValidacaoAuthorization.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
+            {
+                return Forbid(); 
+            }
+            
+            // validar se quem tenta alterar a musica é o dono do album or tem role de admin
+            if (musicaAux.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
             {
                 return Forbid(); 
             }
@@ -227,6 +237,8 @@ namespace spitifi.Controllers
             ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "Nome", musica.DonoFK);
             return View(musica);
         }
+        
+        
         // GET: Musica/Delete/5
         [Authorize(Roles = "Artista, Administrador")]
         public async Task<IActionResult> Delete(int? id)
@@ -254,7 +266,22 @@ namespace spitifi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmation(int id)
         {
-            //Como já não se apagou o labum, este include ficou redundante
+          
+            var musicaValidacaoAuthorization = await _context.Musica.Include(a => a.Dono).FirstAsync(a => a.Id == id);
+
+            if (musicaValidacaoAuthorization?.Dono?.IdentityUser == null)
+            {
+                // utilizador não pôde ser verificado
+                return RedirectToAction(nameof(Index));
+            }
+            
+            // validar se quem tenta alterar a playlist é o dono or admin
+            if (musicaValidacaoAuthorization.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
+            {
+                return Forbid(); 
+            }
+            
+            //Como já não se apagou o album, este include ficou redundante
             var musica = _context.Musica.Include(m => m.Album).FirstOrDefault(m => m.Id == id);
             var album = musica.Album;
 

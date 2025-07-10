@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -72,7 +73,7 @@ namespace spitifi.Controllers
         }
 
         // GET: Album/Create
-        [Authorize(Roles = "Artista")]
+        [Authorize(Roles = "Artista, Administrador")]
         public IActionResult Create()
         {
             var userId = _userManager.GetUserId(User);
@@ -83,7 +84,7 @@ namespace spitifi.Controllers
         // POST: Album/Create
         [ValidateAntiForgeryToken]
         [HttpPost]
-        [Authorize(Roles = "Artista")]
+        [Authorize(Roles = "Artista, Administrador")]
         [RequestFormLimits(MultipartBodyLengthLimit = 100000000)]//~100Mb
         [RequestSizeLimit(100000000)] //~100Mb
         public async Task<IActionResult> Create([Bind("Id,Titulo")] Album album,
@@ -259,7 +260,8 @@ namespace spitifi.Controllers
             return View(album);
         }
         
-        [Authorize(Roles = "Artista")]
+        
+        [Authorize(Roles = "Artista, Administrador")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -286,10 +288,31 @@ namespace spitifi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Authorize(Roles = "Artista")]
+        [Authorize(Roles = "Artista, Administrador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Album")] Album album, IFormFile fotoAlbum,  List<IFormFile> musicasNovas)
         {
+            
+            var albumForAuthorizeValdiation = await _context.Album.Include(a => a.Dono).FirstAsync(a => a.Id == id);;
+
+            if (albumForAuthorizeValdiation?.Dono?.IdentityUser == null)
+            {
+                // utilizador não pôde ser verificado
+                return RedirectToAction(nameof(Index));
+            }
+            
+            // validar se quem tenta alterar a playlist é o dono or admin
+            if (albumForAuthorizeValdiation.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
+            {
+                return Forbid(); 
+            }
+            
+            // validar se quem tenta alterar o album é o dono do album or admin
+            if (album.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            
             ModelState.Remove("Titulo");
             
             if (id != album.Id)
@@ -507,6 +530,21 @@ namespace spitifi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmation(int id)
         {
+            
+            var album = await _context.Album.Include(a => a.Dono).FirstAsync(a => a.Id == id);
+
+            if (album?.Dono?.IdentityUser == null)
+            {
+                // utilizador não pôde ser verificado
+                return RedirectToAction(nameof(Index));
+            }
+            
+            // validar se quem tenta apagar o album é o dono do album or admin
+            if (album.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
+            {
+                return Forbid(); 
+            }
+            
             await _AlbumEraser.AlbumEraserFunction(id);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

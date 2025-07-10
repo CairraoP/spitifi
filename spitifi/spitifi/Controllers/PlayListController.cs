@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -66,7 +67,7 @@ namespace spitifi.Controllers
         }
 
         // GET: PlayList/Create
-        [Authorize]
+        [Authorize(Roles = "Artista, Administrador")]
         public IActionResult Create()
         {
             
@@ -87,7 +88,7 @@ namespace spitifi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Artista, Administrador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
             PlayList playList,
@@ -185,7 +186,7 @@ namespace spitifi.Controllers
         }
 
         // GET: PlayList/Edit/5
-        [Authorize]
+        [Authorize(Roles = "Artista, Administrador")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -211,13 +212,27 @@ namespace spitifi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Artista, Administrador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nome")] PlayList playList, int[]  musicasSelecionadas)
         {
             if (id != playList.Id)
             {
                 return NotFound();
+            }
+            
+            var playlistValidacaoAuthorization = await _context.PlayList.Include(a => a.Dono).FirstAsync(a => a.Id == id);
+
+            if (playlistValidacaoAuthorization?.Dono?.IdentityUser == null)
+            {
+                // utilizador não pôde ser verificado
+                return RedirectToAction(nameof(Index));
+            }
+            
+            // validar se quem tenta alterar a playlist é o dono or admin
+            if (playlistValidacaoAuthorization.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
+            {
+                return Forbid(); 
             }
             
             var playlist = await _context.PlayList.Where(pl => pl.Id == id)
@@ -285,7 +300,7 @@ namespace spitifi.Controllers
         }
 
         // GET: PlayList/Delete/5
-        [Authorize]
+        [Authorize(Roles = "Artista, Administrador")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -306,11 +321,24 @@ namespace spitifi.Controllers
 
         // POST: PlayList/Delete/5
         [HttpPost, ActionName("Delete")] // Respond to view HTTP POST and map to asp-action "Delete"
-        [Authorize]
+        [Authorize(Roles = "Artista, Administrador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmation(int id)
         {
-            var playList = await _context.PlayList.FindAsync(id);
+            var playList = await _context.PlayList.Include(a => a.Dono).FirstAsync(a => a.Id == id);
+            
+            if (playList?.Dono?.IdentityUser == null)
+            {
+                // utilizador não pôde ser verificado
+                return RedirectToAction(nameof(Index));
+            }
+            
+            // validar se quem tenta alterar a playlist é o dono or admin
+            if (playList.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
+            {
+                return Forbid(); 
+            }
+            
             if (playList != null)
             {
                 _context.PlayList.Remove(playList);

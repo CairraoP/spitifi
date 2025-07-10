@@ -25,7 +25,7 @@
             </div>
             <div class="album-card-footer">
                 <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
-                @if (User.Identity?.Name == item.Dono?.Username)
+                @if (User.Identity?.Name == item.Dono?.Username || User.IsInRole("Administrador"))
                 {
                     <a class="btn btn-secondary" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
                     <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Apagar</a>

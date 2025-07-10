@@ -62,7 +62,7 @@
 </div>
 <div style="margin-top: 20px">
     <a asp-action="Index"><i class="bi bi-arrow-90deg-left" style="color: white; margin-right: 15px"> Voltar </i></a>
-    @if (dono)
+    @if (dono || User.IsInRole("Administrador"))
     {
         <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-secondary" style="margin-right: 15px">Editar</a>
         <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">Apagar Playlist</a>

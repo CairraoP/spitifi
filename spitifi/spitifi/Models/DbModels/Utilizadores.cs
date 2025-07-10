@@ -36,7 +36,7 @@ public class Utilizadores
     public string Foto { get; set; }
     
     /// <summary>
-    /// Utilizador criado pelo Dotnet Identity
+    /// uid gerado do utilizador criado pelo Dotnet Identity
     /// </summary>
     [StringLength(50)]
     public string? IdentityUser { get; set; }
