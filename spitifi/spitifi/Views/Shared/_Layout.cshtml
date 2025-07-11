@@ -62,7 +62,7 @@
         </div>
         <hr/>
 
-        @if (isLoggedIn)
+        @if (isLoggedIn && !isAdmin)
         {
             <div>
                 <img src="/assets/icons/add-to-playlist.png" width="25" height="25">

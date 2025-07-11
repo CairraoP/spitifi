@@ -144,12 +144,12 @@ namespace spitifi.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Tentativa de login inválida.");
+                        ModelState.AddModelError(string.Empty, "O utilizador não existe.");
                         return Page();
                     }
                 }
             }
-
+            ModelState.AddModelError(string.Empty, "Tentativa de login inválida. Retifique a sua palavra-passe e/ou Email/Username");
             // If we got this far, something failed, redisplay form
             return Page();
         }
