@@ -160,7 +160,6 @@ body {
 
   /* Fallback styling for missing images using the ::after pseudo-element */
   .album-card-header img:empty::after {
-    content: 'Image not available';
     color: white;
     text-align: center;
     line-height: 150px; /* Match the height of the image container */
@@ -419,4 +418,40 @@ input[type="range"] {
 
 .album-card-footer .btn:hover {
   background-color: #1DB954;
+}
+.card-body {
+  padding: 15px;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+.card {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 15px;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  background-color: #555 !important; /* Set the card's background to a dark grey */
+  color: #ccc !important; /* Set the text color to light grey for better contrast */
+  border: none; /* Remove any borders */
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top {
+  object-fit: cover;
+  height: 200px; /* Ensure consistency across cards */
+  border-radius: 15px 15px 0 0;
 }

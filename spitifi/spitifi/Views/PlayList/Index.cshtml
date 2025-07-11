@@ -14,7 +14,7 @@
     {
         <div class="album-card">
             <div class="album-card-header">
-                <img src="/@item.Foto" alt="Imagem Playlist"/>
+                <img src="/@item.Foto" onerror="this.onerror=null; this.src='/assets/icons/music.png';" alt="Imagem Playlist"/>
             </div>
             <div class="album-card-body">
                 <h5 class="album-title">@Html.DisplayFor(modelItem => item.Nome)</h5>

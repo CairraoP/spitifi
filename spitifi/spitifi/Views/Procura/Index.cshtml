@@ -30,7 +30,7 @@
                              onerror="this.onerror=null; this.src='/assets/icons/addMusic.png';">
                         <div class="card-body">
                             <h5 class="card-title">@album.Titulo</h5>
-                            <p class="card-text">By: @album.Dono.Username</p>
+                            <p class="card-text">Por: @album.Dono.Username</p>
                             <a asp-controller="Album" asp-action="Details" asp-route-id="@album.Id" 
                                class="btn btn-sm btn-outline-primary">Ver Album</a>
                         </div>
@@ -63,7 +63,7 @@
                     <td>
                         <a asp-controller="Musica" asp-action="Details" 
                            asp-route-id="@song.Id" class="btn btn-sm btn-outline-info">
-                            Details
+                            Detalhes
                         </a>
                     </td>
                 </tr>

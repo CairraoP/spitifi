@@ -1,33 +1,61 @@
 @using Microsoft.AspNetCore.Identity
+@using spitifi.Models.DbModels
 @model spitifi.Models.DbModels.Utilizadores
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<h1>Detalhes</h1>
-
-<div>
-    <h4>Utilizadores</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Username)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Username)
-        </dd>
-        <dt class = "col-sm-2">
-            Quantidade de Albúms
-        </dt>
-        <dd class = "col-sm-10">
-           @Model.Albums.Count.ToString()
-        </dd>
-        <dt class = "col-sm-2">
-            Quantidade de Músicas
-        </dt>
-        <dd class = "col-sm-10">
-            @Model.Albums.Sum(a => a.Musicas.Count)
-        </dd>
-    </dl>
+<div class="d-flex align-items-center">
+    <img style="max-height: 100px; max-width: 100px" src="/@Model.Foto" onerror="this.onerror=null; this.src='/assets/icons/user.png';" alt=""/>
+    <div style="margin-left: 30px">
+        <h1>@Model.Username</h1>
+        <h6>Detalhes Artista</h6>
+    </div>
 </div>
 <div>
-    <a asp-action="Index">Voltar à lista</a>
+    <hr />
+    <table class="table table-borderless">
+        <tbody>
+        <tr>
+            <th scope="row">Username</th>
+            <td>@Html.DisplayFor(model => model.Username)</td>
+        </tr>
+        <tr>
+            <th scope="row">Quantidade de Albúms</th>
+            <td>@Model.Albums.Count.ToString()</td>
+        </tr>
+        <tr>
+            <th scope="row">Quantidade de Músicas</th>
+            <td>@Model.Albums.Sum(a => a.Musicas.Count)</td>
+        </tr>
+        <tr>
+            <th>Albúms</th>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+@if (!Model.Albums.Any())
+{
+    <p><strong>Este artista não tem nenhum Albúm nem Músicas</strong></p>
+}
+
+<div class="album-cards-container">
+@foreach (var album in Model.Albums)
+{
+        <div class="album-card"> <!-- Changed to album-card class -->
+            <a asp-controller="Album" asp-action="Details" asp-route-id="@album.Id">
+                <div class="album-card-header">
+                    <img src="/@album.Foto" alt="@album.Titulo" 
+                         onerror="this.onerror=null; this.src='/assets/icons/addMusic.png';">
+                </div>
+                <div class="album-card-body">
+                    <h5 class="album-title">@album.Titulo</h5>
+                    <a asp-controller="Album" asp-action="Details" asp-route-id="@album.Id"
+                       class="btn btn-sm btn-outline-primary">Ver Album</a>
+                </div>
+            </a>
+        </div>
+}
+</div>
+<div>
+    <a asp-action="Index"><i class="bi bi-arrow-90deg-left" style="color: white; margin-right: 15px"> Voltar à lista</i></a>
 </div>

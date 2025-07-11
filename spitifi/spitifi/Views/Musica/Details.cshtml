@@ -42,7 +42,7 @@
         </tr>
         <tr>
             <th>@Html.DisplayNameFor(model => model.DonoFK)</th>
-            <td>@Html.DisplayFor(model => model.Dono.Username)</td>
+            <td><a asp-controller="Utilizadores" asp-action="Details" asp-route-id="@Model.Dono.Id">@Html.DisplayFor(model => model.Dono.Username)</a></td>
         </tr>
     </table>
 </div>
