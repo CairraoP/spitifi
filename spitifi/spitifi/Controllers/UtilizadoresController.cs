@@ -21,7 +21,9 @@ namespace spitifi.Controllers
             _userManager = userManager;
         }
 
+        
         // GET: Utilizadores
+        [Authorize(Roles="Administrador")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Utilizadores.ToListAsync());
@@ -44,6 +46,17 @@ namespace spitifi.Controllers
             }
 
             return View(utilizadores);
+        }
+
+        //Nova IAction para mostrar só os artistas aos ouvintes da webapp
+        //Os admins terão acesso a todos os utilizadores
+        public async Task<IActionResult> Artists()
+        {
+            return View(await _context.Utilizadores
+                        .Where(a=> a.IsArtista == true)
+                        .Include(a => a.Albums)
+                            .ThenInclude(m => m.Musicas)
+                        .ToListAsync());
         }
 
         // GET: Utilizadores/Create

@@ -39,8 +39,8 @@
 }
 
 <div class="album-cards-container">
-@foreach (var album in Model.Albums)
-{
+    @foreach (var album in Model.Albums)
+    {
         <div class="album-card"> <!-- Changed to album-card class -->
             <a asp-controller="Album" asp-action="Details" asp-route-id="@album.Id">
                 <div class="album-card-header">
@@ -54,8 +54,9 @@
                 </div>
             </a>
         </div>
-}
+    }
 </div>
+<br/>
 <div>
     <a asp-action="Index"><i class="bi bi-arrow-90deg-left" style="color: white; margin-right: 15px"> Voltar à lista</i></a>
 </div>
