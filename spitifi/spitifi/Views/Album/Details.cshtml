@@ -34,32 +34,37 @@
         <div class="table-bordered"></div>
         <tbody class="col-sm-10">
         @foreach (var musica in Model.Musicas) {
-            <tr>
-                <td style="padding-top: 30px">@i</td>
-                <td class="d-flex align-items-center">
-                    <div style="margin-left: 10px; font-size: 14px">
-                        <li class="flex-column" style="margin-bottom: 5px"><strong>@musica.Nome</strong></li>
-                        <li class="flex-column" style="margin-bottom: 5px">@musica.Dono.Username</li>
-                    </div>
-                </td>
-                <td>
-                    <div style="margin-left: 10px; font-size: 14px">
-                        <audio controls class="flex-column">
-                            <source src="/@musica.FilePath" type="audio/wav">
-                            <source src="/@musica.FilePath" type="audio/mpeg">
-                        </audio>
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        @if (dono || User.IsInRole("Administrador"))
-                        {
-                            <a asp-controller="Musica" asp-action="Edit" asp-route-id="@musica.Id" class="btn btn-secondary" style="margin-right: 15px">Editar Música</a>
-                            <a asp-controller="Musica" asp-action="Delete" asp-route-id="@musica.Id" class="btn btn-danger">Apagar Música</a>
-                        }
-                    </div>
-                </td>
-            </tr>
+            <tr data-song-id="@musica.Id"
+                data-song-name="@musica.Nome"
+                data-album-art="/@musica.Album.Foto"
+                data-artist="@musica.Dono.Username"
+                data-file-path="/@musica.FilePath">
+        
+        <td style="padding-top: 30px">@i</td>
+        <td class="d-flex align-items-center">
+            <div style="margin-left: 10px; font-size: 14px">
+                <li class="flex-column" style="margin-bottom: 5px"><strong>@musica.Nome</strong></li>
+                <li class="flex-column" style="margin-bottom: 5px">@musica.Dono.Username</li>
+            </div>
+        </td>
+        <td>
+            <div style="margin-left: 10px; font-size: 14px">
+                <audio controls class="flex-column">
+                    <source src="/@musica.FilePath" type="audio/wav">
+                    <source src="/@musica.FilePath" type="audio/mpeg">
+                </audio>
+            </div>
+        </td>
+        <td>
+            <div>
+                @if (dono || User.IsInRole("Administrador"))
+                {
+                    <a asp-controller="Musica" asp-action="Edit" asp-route-id="@musica.Id" class="btn btn-secondary" style="margin-right: 15px">Editar Música</a>
+                    <a asp-controller="Musica" asp-action="Delete" asp-route-id="@musica.Id" class="btn btn-danger">Apagar Música</a>
+                }
+            </div>
+        </td>
+    </tr>
             i++;
         }
         </tbody>
@@ -78,3 +83,115 @@
             border-bottom: 2px solid #eeeeee; /* Line below the headers */
         }
 </style>
+
+<script>
+    function buildPlaylist() {
+        const playlist = [];
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            playlist.push({
+                id: row.dataset.songId,
+                name: row.dataset.songName,
+                albumArt: row.dataset.albumArt,
+                artist: row.dataset.artist,
+                filePath: row.dataset.filePath
+            });
+        });
+        return playlist;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            row.addEventListener('click', function (event) {
+                // ignore clicks on interactive elements
+                if (event.target.closest('audio, a, button, img[id^="heart-"]')) return;
+                
+                const playlist = buildPlaylist();
+                const songId = row.dataset.songId;
+                const songIndex = playlist.findIndex(song => song.id === songId);
+                if (songIndex === -1) return;
+
+                // initialize or update player
+                if (!window.musicPlayer) {
+                    initPlayer(playlist);
+                } else {
+                    window.musicPlayer.playlist = playlist;
+                }
+                window.musicPlayer.playTrack(songIndex);
+            });
+        });
+    });
+
+    function initPlayer(playlist) {
+        window.musicPlayer = {
+            playlist: playlist,
+            currentIndex: 0,
+            audioPlayer: document.getElementById('footerAudioPlayer'),
+            playMode: 'once',
+
+            playTrack: function (index) {
+                if (index < 0 || index >= this.playlist.length) return;
+                this.currentIndex = index;
+                const track = this.playlist[index];
+
+                // update footer UI
+                document.getElementById('footerSongName').textContent = track.name;
+                document.getElementById('footerArtist').textContent = track.artist;
+                document.getElementById('footerAlbumArt').src = track.albumArt;
+
+                // update audio source
+                this.audioPlayer.innerHTML = '';
+                const source = document.createElement('source');
+                source.src = track.filePath;
+                source.type = track.filePath.endsWith('.wav') ? 'audio/wav' : 'audio/mpeg';
+                this.audioPlayer.appendChild(source);
+                this.audioPlayer.load();
+                this.audioPlayer.play();
+
+                // mostra footer. Escondido, por padrão
+                const container = document.getElementById('audioContainer');
+                container.classList.add('show');
+            },
+
+            nextTrack: function () {
+                let nextIndex = this.currentIndex + 1;
+                if (nextIndex >= this.playlist.length && this.playMode === 'loopPlaylist') {
+                    nextIndex = 0;
+                }
+                this.playTrack(nextIndex);
+            },
+
+            prevTrack: function () {
+                let prevIndex = this.currentIndex - 1;
+                if (prevIndex < 0 && this.playMode === 'loopPlaylist') {
+                    prevIndex = this.playlist.length - 1;
+                }
+                this.playTrack(prevIndex);
+            },
+
+            setPlayMode: function (mode) {
+                this.playMode = mode;
+                this.audioPlayer.loop = (mode === 'loopTrack');
+            }
+        };
+
+        // setup event listeners
+        document.getElementById('musicaAnteriorBt').addEventListener('click', () => {
+            window.musicPlayer.prevTrack();
+        });
+        document.getElementById('musicaSeguinteBt').addEventListener('click', () => {
+            window.musicPlayer.nextTrack();
+        });
+        document.querySelectorAll('input[name="playMode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                window.musicPlayer.setPlayMode(e.target.value);
+            });
+        });
+        window.musicPlayer.audioPlayer.addEventListener('ended', () => {
+            if (window.musicPlayer.playMode !== 'once') {
+                window.musicPlayer.nextTrack();
+            }
+        });
+    }
+</script>
