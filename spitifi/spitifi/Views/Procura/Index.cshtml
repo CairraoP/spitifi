@@ -26,7 +26,8 @@
             {
                 <div class="col-md-3 mb-4">
                     <div class="card">
-                        <img src="~/imagens/@album.Foto" class="card-img-top" alt="@album.Titulo">
+                        <img src="/@album.Foto" class="card-img-top" alt="@album.Titulo" 
+                             onerror="this.onerror=null; this.src='/assets/icons/addMusic.png';">
                         <div class="card-body">
                             <h5 class="card-title">@album.Titulo</h5>
                             <p class="card-text">By: @album.Dono.Username</p>
@@ -72,27 +73,6 @@
     }
 
     <!-- utilizadores encontrados -->
-    /*@if (Model.Artistas.Any())
-    {
-        <h3>Artistas</h3>
-        <div class="row">
-            @foreach (var artist in Model.Artistas)
-            {<div>
-                <a asp-controller="Utilizadores" asp-action="Details"
-                   asp-route-id="@artist.Id">
-                    <div class="col-md-2 text-center mb-3">
-                    <img src="~/imagens/@artist.Foto"
-                         class="img-fluid rounded-circle mb-2"
-                         alt="@artist.Username"
-                         style="width: 100px; height: 100px; object-fit: cover;">
-                    <h5>@artist.Username</h5>
-                    </div>
-                    </a>
-                </div>
-            }
-        </div>
-    }*/
-    <!-- Artistas -->
     @if (Model.Artistas.Any())
     {
         <h3>Artistas</h3>
@@ -104,11 +84,12 @@
                     <!-- Artist image and info -->
                     <a asp-controller="Utilizadores" asp-action="Details" asp-route-id="@artist.Id">
                         <div class="album-card-header">
-                            <img src="~/imagens/@artist.Foto" 
+                            <img src="/@artist.Foto"
+                                 onerror="this.onerror=null; this.src='/assets/icons/user.png';"
                                  class="img-fluid rounded-circle mb-2" 
                                  alt="@artist.Username"
                                  style="object-fit: cover; width: 100%; height: 100%; border-radius: 50%;"/>
-                        </div>
+                            </div>
                         <div class="album-card-body">
                             <h5 class="album-title">@artist.Username</h5>
                             <p class="album-artist">Artista</p>

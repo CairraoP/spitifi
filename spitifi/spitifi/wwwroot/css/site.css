@@ -65,7 +65,7 @@ body {
  */
 @media screen and (max-width: 992px) {
   .sidebar {
-    width: 0; 
+    width: 0;
     padding-top: 60px;
   }
   .sidebar-text {
@@ -82,12 +82,13 @@ body {
     right: 25px;
     font-size: 36px;
   }
-  
+
   .main-content {
     margin-left: 0px;
     padding: 20px;
     flex: 1;
   }
+
   .main-css {
     margin-left: 0px; /* same as sidebar width */
     padding: 20px;
@@ -96,9 +97,9 @@ body {
   footer {
     width: 100%;
     margin-left: 0px; /* same as sidebar width */
-    position: relative; 
+    position: relative;
   }
-  
+
   #buttonSideBar {
     display: inline-block;
     font-size: 20px;
@@ -108,6 +109,123 @@ body {
     padding: 10px 15px;
     border: none;
     margin-bottom: 15px;
+  }
+
+  /* Container for album cards */
+  .album-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Adjusted for smaller screens */
+    gap: 15px; /* Reduced gap */
+    margin-top: 20px;
+  }
+
+  /* Individual card styling */
+  .album-card {
+    background-color: #333;
+    color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column; /* Ensures content is stacked */
+    margin: 0 auto; /* Center the card on small screens */
+    width: 100%; /* Make sure cards occupy the full width */
+  }
+
+  /* Ensure the image container has a fixed height */
+  .album-card-header {
+    width: 100%;
+    height: 150px; /* Reduced height for smaller screens */
+    overflow: hidden; /* Prevents overflow of images */
+  }
+
+  /* Ensure the image container has a fixed height */
+  .album-card-header {
+    width: 100%;
+    height: 150px; /* Reduced height for smaller screens */
+    overflow: hidden; /* Prevents overflow of images */
+    background-color: #444; /* Fallback color for missing images */
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* Images should fill the space while preserving aspect ratio */
+  .album-card-header img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures images cover the container area */
+    display: block; /* Prevents the image from creating space below */
+  }
+
+  /* Fallback styling for missing images using the ::after pseudo-element */
+  .album-card-header img:empty::after {
+    content: 'Image not available';
+    color: white;
+    text-align: center;
+    line-height: 150px; /* Match the height of the image container */
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+
+  /* Card body (album title and artist) */
+  .album-card-body {
+    padding: 10px; /* Reduced padding */
+    text-align: center;
+    flex-grow: 1; /* Ensures this part of the card takes up remaining space */
+  }
+
+  .album-title {
+    font-size: 1rem; /* Reduced font size */
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .album-artist {
+    font-size: 0.9rem; /* Reduced font size */
+    color: #bbb;
+  }
+
+  /* Card footer (buttons) */
+  .album-card-footer {
+    display: flex;
+    justify-content: center;
+    gap: 8px; /* Reduced space between buttons */
+    padding: 8px;
+    background-color: #444;
+  }
+
+  .album-card-footer .btn {
+    text-decoration: none;
+    padding: 4px 8px; /* Reduced button padding */
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+
+  .album-card-footer .btn:hover {
+    background-color: #1DB954;
+  }
+
+  /* Adjust the pagination layout for smaller screens */
+  .pagination-squares {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 10px 0;
+  }
+
+  .pagination-squares a {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  select[name="pageSize"] {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
   }
 }
 
