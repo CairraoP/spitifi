@@ -220,7 +220,27 @@ namespace spitifi.Controllers
             {
                 return NotFound();
             }
-            
+
+            if (string.IsNullOrEmpty(playList.Nome))
+            {
+                ModelState.AddModelError("Nome", "Nome inválido.");
+    
+                // Repopular a playlist
+                var existingPlaylist = await _context.PlayList
+                    .Include(pl => pl.Musicas)
+                    .FirstOrDefaultAsync(pl => pl.Id == id);
+
+                if (existingPlaylist != null)
+                {
+                    playList.Musicas = existingPlaylist.Musicas;
+                }
+
+                // Repopulate the list of available musics for selection
+                ViewBag.ListaMusicas = await _context.Musica.OrderBy(m => m.Nome).ToListAsync();
+
+                return View(playList);
+            }
+
             var playlistValidacaoAuthorization = await _context.PlayList.Include(a => a.Dono).FirstAsync(a => a.Id == id);
 
             if (playlistValidacaoAuthorization?.Dono?.IdentityUser == null)
