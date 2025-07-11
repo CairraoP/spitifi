@@ -17,7 +17,7 @@
     <img style ="max-height: 100px; max-width: 100px" src="/@Model.Foto" onerror="this.onerror=null; this.src='/assets/icons/music.png';" alt=""/>
     <div style="margin-left: 30px">
         <h1>@Model.Titulo</h1>
-        <h6>PlayList</h6>
+        <h6>Álbum</h6>
         <h5>@Html.DisplayFor(model => model.Dono.Username) : @Model.Musicas.Count músicas</h5>
     </div>
 </div>
@@ -69,8 +69,8 @@
     <a asp-action="Index"><i class="bi bi-arrow-90deg-left" style="color: white; margin-right: 15px"> Voltar </i></a>
     @if (dono || User.IsInRole("Administrador"))
     {
-        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-secondary" style="margin-right: 15px">Editar Albúm</a>
-        <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">Apagar Albúm</a>
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-secondary" style="margin-right: 15px">Editar Álbum</a>
+        <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">Apagar Álbum</a>
     }
 </div>
 <style>

@@ -19,7 +19,7 @@
             <td>@Html.DisplayFor(model => model.Username)</td>
         </tr>
         <tr>
-            <th scope="row">Quantidade de Albúms</th>
+            <th scope="row">Quantidade de Álbuns</th>
             <td>@Model.Albums.Count.ToString()</td>
         </tr>
         <tr>
@@ -35,7 +35,7 @@
 
 @if (!Model.Albums.Any())
 {
-    <p><strong>Este artista não tem nenhum Albúm nem Músicas</strong></p>
+    <p><strong>Este artista não tem nenhum Álbum nem Músicas</strong></p>
 }
 
 <div class="album-cards-container">
@@ -50,7 +50,7 @@
                 <div class="album-card-body">
                     <h5 class="album-title">@album.Titulo</h5>
                     <a asp-controller="Album" asp-action="Details" asp-route-id="@album.Id"
-                       class="btn btn-sm btn-outline-primary">Ver Album</a>
+                       class="btn btn-sm btn-outline-primary">Ver Álbum</a>
                 </div>
             </a>
         </div>
