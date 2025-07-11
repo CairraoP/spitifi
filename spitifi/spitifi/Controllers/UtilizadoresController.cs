@@ -8,7 +8,6 @@ using spitifi.Services.AlbumEraser;
 
 namespace spitifi.Controllers
 {
-    [Authorize(Roles = "Administrador")]
     public class UtilizadoresController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,14 +22,12 @@ namespace spitifi.Controllers
         }
 
         // GET: Utilizadores
-        [Authorize(Roles="Administrador")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Utilizadores.ToListAsync());
         }
 
         // GET: Utilizadores/Details/5
-        [Authorize(Roles="Administrador")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

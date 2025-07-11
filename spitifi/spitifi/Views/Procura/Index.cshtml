@@ -72,24 +72,53 @@
     }
 
     <!-- utilizadores encontrados -->
-    @if (Model.Artistas.Any())
+    /*@if (Model.Artistas.Any())
     {
         <h3>Artistas</h3>
         <div class="row">
             @foreach (var artist in Model.Artistas)
-            {
-                <div class="col-md-2 text-center mb-3">
-                    <img src="~/imagens/@artist.Foto" 
-                         class="img-fluid rounded-circle mb-2" 
-                         alt="@artist.Username" 
+            {<div>
+                <a asp-controller="Utilizadores" asp-action="Details"
+                   asp-route-id="@artist.Id">
+                    <div class="col-md-2 text-center mb-3">
+                    <img src="~/imagens/@artist.Foto"
+                         class="img-fluid rounded-circle mb-2"
+                         alt="@artist.Username"
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <h5>@artist.Username</h5>
-                    <a asp-controller="Utilizadores" asp-action="Details" 
-                       asp-route-id="@artist.Id" class="stretched-link"></a>
+                    </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }*/
+    <!-- Artistas -->
+    @if (Model.Artistas.Any())
+    {
+        <h3>Artistas</h3>
+        <!-- Container for artist cards -->
+        <div class="album-cards-container">
+            @foreach (var artist in Model.Artistas)
+            {
+                <div class="album-card">
+                    <!-- Artist image and info -->
+                    <a asp-controller="Utilizadores" asp-action="Details" asp-route-id="@artist.Id">
+                        <div class="album-card-header">
+                            <img src="~/imagens/@artist.Foto" 
+                                 class="img-fluid rounded-circle mb-2" 
+                                 alt="@artist.Username"
+                                 style="object-fit: cover; width: 100%; height: 100%; border-radius: 50%;"/>
+                        </div>
+                        <div class="album-card-body">
+                            <h5 class="album-title">@artist.Username</h5>
+                            <p class="album-artist">Artista</p>
+                        </div>
+                    </a>
                 </div>
             }
         </div>
     }
+
 
     @if (!Model.Albums.Any() && !Model.Musicas.Any() && !Model.Artistas.Any())
     {
