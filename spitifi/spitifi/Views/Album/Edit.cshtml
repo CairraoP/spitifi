@@ -19,6 +19,7 @@
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="DonoFK" />
             <div class="form-group mb-3">
                 <label asp-for="Titulo" class="form-label"></label>
                 <input asp-for="Titulo" class="form-control" placeholder="Nome do Albúm" />
@@ -30,7 +31,7 @@
                 <span asp-validation-for="Foto" class="text-danger"></span>
             </div>
             <div class="form-group mb-3">
-                <label asp-for="Musicas" class="form-label">Músicas do Albúm</label>
+                <label asp-for="Musicas" class="form-label">Adicionar músicas ao Albúm</label>
                 <input type="file" name="musicasNovas" class="form-control" multiple />
                 <span asp-validation-for="Musicas" class="text-danger"></span>
             </div>
@@ -43,7 +44,7 @@
 
 <!-- Back Link -->
 <div class="text-center mt-3">
-    <a href="@Url.Action("Index")" class="btn btn-secondary">Voltar</a>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
 </div>
 </div>
 </div>

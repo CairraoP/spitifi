@@ -23,47 +23,47 @@
 </div>
 <hr />
 <div>
-<table class="table table-borderless">
-    <thead>
-    <tr style="font-size: 16px">
-        <td>#</td>
-        <td>Titulo</td>
-        <td>Reproduzir</td>
-    </tr>
-    </thead>
-    <div class="table-bordered"></div>
-    <tbody class="col-sm-10">
-    @foreach (var musica in Model.Musicas) {
-        <tr>
-            <td style="padding-top: 30px">@i</td>
-            <td class="d-flex align-items-center">
-                <div style="margin-left: 10px; font-size: 14px">
-                    <li class="flex-column" style="margin-bottom: 5px"><strong>@musica.Nome</strong></li>
-                    <li class="flex-column" style="margin-bottom: 5px">@musica.Dono.Username</li>
-                </div>
-            </td>
-            <td>
-                <div style="margin-left: 10px; font-size: 14px">
-                    <audio controls class="flex-column">
-                        <source src="/@musica.FilePath" type="audio/wav">
-                        <source src="/@musica.FilePath" type="audio/mpeg">
-                    </audio>
-                </div>
-            </td>
-            <td>
-                <div>
-                    @if (dono || User.IsInRole("Administrador"))
-                    {
-                        <a asp-controller="Musica" asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-secondary" style="margin-right: 15px">Editar Música</a>
-                        <a asp-controller="Musica" asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">Apagar Música</a>
-                    }
-                </div>
-            </td>
+    <table class="table table-borderless">
+        <thead>
+        <tr style="font-size: 16px">
+            <td>#</td>
+            <td>Titulo</td>
+            <td>Reproduzir</td>
         </tr>
-        i++;
-    }
-    </tbody>
-</table>
+        </thead>
+        <div class="table-bordered"></div>
+        <tbody class="col-sm-10">
+        @foreach (var musica in Model.Musicas) {
+            <tr>
+                <td style="padding-top: 30px">@i</td>
+                <td class="d-flex align-items-center">
+                    <div style="margin-left: 10px; font-size: 14px">
+                        <li class="flex-column" style="margin-bottom: 5px"><strong>@musica.Nome</strong></li>
+                        <li class="flex-column" style="margin-bottom: 5px">@musica.Dono.Username</li>
+                    </div>
+                </td>
+                <td>
+                    <div style="margin-left: 10px; font-size: 14px">
+                        <audio controls class="flex-column">
+                            <source src="/@musica.FilePath" type="audio/wav">
+                            <source src="/@musica.FilePath" type="audio/mpeg">
+                        </audio>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        @if (dono || User.IsInRole("Administrador"))
+                        {
+                            <a asp-controller="Musica" asp-action="Edit" asp-route-id="@musica.Id" class="btn btn-secondary" style="margin-right: 15px">Editar Música</a>
+                            <a asp-controller="Musica" asp-action="Delete" asp-route-id="@musica.Id" class="btn btn-danger">Apagar Música</a>
+                        }
+                    </div>
+                </td>
+            </tr>
+            i++;
+        }
+        </tbody>
+    </table>
 </div>
 <div style="margin-top: 20px">
     <a asp-action="Index"><i class="bi bi-arrow-90deg-left" style="color: white; margin-right: 15px"> Voltar </i></a>

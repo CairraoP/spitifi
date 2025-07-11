@@ -290,31 +290,22 @@ namespace spitifi.Controllers
         [HttpPost]
         [Authorize(Roles = "Artista, Administrador")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Album")] Album album, IFormFile fotoAlbum,  List<IFormFile> musicasNovas)
+        public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id, Titulo, DonoFK")] Album album, IFormFile fotoAlbum,  List<IFormFile> musicasNovas)
         {
-            
-            var albumForAuthorizeValdiation = await _context.Album.Include(a => a.Dono).FirstAsync(a => a.Id == id);;
 
-            if (albumForAuthorizeValdiation?.Dono?.IdentityUser == null)
+            var dono = await _context.Utilizadores.FindAsync(album.DonoFK);
+            
+            if (dono.IdentityUser == null)
             {
                 // utilizador não pôde ser verificado
                 return RedirectToAction(nameof(Index));
             }
             
             // validar se quem tenta alterar a playlist é o dono or admin
-            if (albumForAuthorizeValdiation.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
+            if (dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
             {
                 return Forbid(); 
             }
-            
-            // validar se quem tenta alterar o album é o dono do album or admin
-            if (album.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            
-            ModelState.Remove("Titulo");
-            
             if (id != album.Id)
             {
                 return NotFound();
@@ -328,25 +319,22 @@ namespace spitifi.Controllers
                 return View(album);
             }
             
-            var identityUserId = _userManager.GetUserId(User);
-            
             // encontrar username (Identity) do utilizador que fez o pedido, para poder associar ao utilizador local
-            var utilizadorIdentity = _context.Users.First(au => au.UserName == User.Identity.Name);
-            var utilizadorLocal = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == utilizadorIdentity.Id);
             
-            album.DonoFK = utilizadorLocal.Id;
+            var albumAux = await _context.Album.AsNoTracking().FirstOrDefaultAsync(a => a.Id == album.Id);
             
             bool haImagem = false;
             string nomeImagem = "";
             string nomeMusica = "";
-            var antigaFotoAlbum = album.Foto;
+            var antigaFotoAlbum = albumAux.Foto;
+            var musicasAntigas = albumAux.Musicas;
             
             //Caso não seja metido nada no titulo
             var tituloNoForm = Request.Form["Titulo"];
             if (string.IsNullOrEmpty(tituloNoForm))
             {
                 album.Titulo = album.Titulo;
-                ModelState.SetModelValue("Titulo", album.Titulo, album.Titulo); // Explicitly set the value in ModelState
+                ModelState.SetModelValue("Titulo", album.Titulo, album.Titulo);
             }
             else
             {
@@ -360,34 +348,14 @@ namespace spitifi.Controllers
                 
                 try
                 {
-                    if (fotoAlbum == null)
-                    {
-
-                    }
-                    else
-                    {
-                        foreach (var file in musicasNovas)
-                        {
-                            if (!file.ContentType.StartsWith("audio"))
-                            {
-                                ModelState.AddModelError("Musicas",
-                                    "Uma ou mais músicas com extensão inválida, use .wav ou .mp3 por favor");
-                                ViewData["DonoNome"] = _context.Utilizadores
-                                    .FirstOrDefault(u => u.IdentityUser == identityUserId)
-                                    .Username;
-                                return View();
-                            }
-                        }
-
+                    if(fotoAlbum != null){
                         if (!(fotoAlbum.ContentType == "image/png" || fotoAlbum.ContentType == "image/jpeg"))
                         {
                             ModelState.AddModelError("Foto",
                                 "Formato Inválido. Insira uma foto com formato JPEG ou PNG");
-                            ViewData["DonoNome"] =
-                                _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == identityUserId).Username;
+                            ViewData["DonoNome"] = dono.Username;
                             return View();
                         }
-
                         {
                             haImagem = true;
                             // gerar nome imagem
@@ -419,6 +387,25 @@ namespace spitifi.Controllers
                             using (var fileStream = new FileStream(filePath, FileMode.Create))
                             {
                                 await fotoAlbum.CopyToAsync(fileStream);
+                            }
+                        }
+                    }
+                        else
+                        {
+                            album.Foto = antigaFotoAlbum;
+                        }
+
+                        if (musicasNovas.Count > 0)
+                        {
+                            foreach (var file in musicasNovas)
+                            {
+                                if (!file.ContentType.StartsWith("audio"))
+                                {
+                                    ModelState.AddModelError("Musicas",
+                                        "Uma ou mais músicas com extensão inválida, use .wav ou .mp3 por favor");
+                                    ViewData["DonoNome"] = dono.Username;
+                                    return View();
+                                }
                             }
 
                             //Criação das músicas
@@ -463,7 +450,6 @@ namespace spitifi.Controllers
                                 }
                             }
                         }
-                    }
 
                     _context.Update(album);
                     await _context.SaveChangesAsync();

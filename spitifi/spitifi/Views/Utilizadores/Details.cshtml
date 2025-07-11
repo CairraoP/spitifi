@@ -58,5 +58,9 @@
 </div>
 <br/>
 <div>
-    <a asp-action="Index"><i class="bi bi-arrow-90deg-left" style="color: white; margin-right: 15px"> Voltar à lista</i></a>
+    @if(User.IsInRole("Administrador")){
+    <a asp-action="Index"><i class="bi bi-arrow-90deg-left" style="color: white; margin-right: 15px"> Voltar à lista de Utilizadores</i></a>
+    }else {
+        <a asp-action="Artists"><i class="bi bi-arrow-90deg-left" style="color: white; margin-right: 15px"> Voltar à lista de Artistas</i></a>
+    }
 </div>

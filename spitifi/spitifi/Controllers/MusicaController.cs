@@ -113,7 +113,12 @@ namespace spitifi.Controllers
             {
                 return NotFound();
             }
-            ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Username", musica.DonoFK);
+            
+            var dono = _context.Utilizadores.FirstOrDefault(u => u.Id == musica.DonoFK);
+            var album = _context.Album.FirstOrDefault(a => a.Id == musica.AlbumFK);
+
+            ViewData["DonoNome"] = dono?.Username; 
+            ViewData["AlbumNome"] = album?.Titulo;
             return View(musica);
         }
         
@@ -121,7 +126,7 @@ namespace spitifi.Controllers
         [HttpPost]
         [Authorize(Roles = "Artista, Administrador")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Nome,Album,FilePath,DonoFK")] Musica musica, IFormFile musicaNova, IFormFile FotoAlbum)
+        public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Nome,AlbumFK,DonoFK")] Musica musica, IFormFile musicaNova)
         {
             string nomeAudio = "";
             
@@ -129,35 +134,24 @@ namespace spitifi.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-     
-            var musicaAux = _context.Musica.AsNoTracking().FirstOrDefault(m => m.Id == musica.Id);
-            musica.FilePath = musicaAux.FilePath;
-            
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
-            var musicaValidacaoAuthorization = await _context.Musica.Include(a => a.Dono).FirstAsync(a => a.Id == id);
 
-            if (musicaValidacaoAuthorization?.Dono?.IdentityUser == null)
+            var dono = await _context.Utilizadores.FindAsync(musica.DonoFK);
+            
+            if (dono.IdentityUser == null)
             {
                 // utilizador não pôde ser verificado
                 return RedirectToAction(nameof(Index));
             }
             
             // validar se quem tenta alterar a playlist é o dono or admin
-            if (musicaValidacaoAuthorization.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
+            if (dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
             {
                 return Forbid(); 
             }
-            
-            // validar se quem tenta alterar a musica é o dono do album or tem role de admin
-            if (musicaAux.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
-            {
-                return Forbid(); 
-            }
-            
-            var fotoAux = _context.Musica.AsNoTracking().FirstOrDefault(m => m.Id == musica.Id);
-            // musica.FotoAlbum = fotoAux.FilePath;
 
+            var musicaAux = await _context.Musica.AsNoTracking().FirstOrDefaultAsync(m => m.Id == musica.Id);
+            var antigoFicheiro = musicaAux.FilePath;
+            
             if (id != musica.Id)
             {
                 return NotFound();
@@ -167,13 +161,10 @@ namespace spitifi.Controllers
             {
                 try
                 {
-                    _context.Update(musica);
-                    await _context.SaveChangesAsync();
                     // se a imagem for diferente da default, vamos apagá-la do disco ao apagar a entrada da BD
-
+                    
                     if (musicaNova == null)
-                    {
-                    }
+                        musica.FilePath = antigoFicheiro;
                     else
                     {
                         if (!musica.FilePath.Contains("smb_coin.wav"))
@@ -222,7 +213,8 @@ namespace spitifi.Controllers
                             await musicaNova.CopyToAsync(fileStream);
                         }
                     }
-
+                    
+                    musica.Nome= Request.Form["Nome"];
                     _context.Update(musica);
                     await _context.SaveChangesAsync();
                 }
@@ -232,9 +224,10 @@ namespace spitifi.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-
-  
-            ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "Nome", musica.DonoFK);
+            
+            ViewData["DonoNome"] = musica.Dono.Username;
+            ViewData["AlbumNome"] = musica.Album.Titulo;
+            
             return View(musica);
         }
         
