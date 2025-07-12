@@ -54,8 +54,11 @@ namespace spitifi.Controllers
             }
 
             var playList = await _context.PlayList
-                .Include(p => p.Dono)
-                .Include(p => p.Musicas).ThenInclude(m => m.Album)
+                .Include(p => p.Dono) 
+                .Include(p => p.Musicas)
+                .ThenInclude(m => m.Album) 
+                .Include(p => p.Musicas) 
+                .ThenInclude(m => m.Dono) 
                 .FirstOrDefaultAsync(m => m.Id == id);
             
             if (playList == null)
