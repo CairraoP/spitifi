@@ -1,0 +1,12 @@
+.music-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.music-card:hover {
+    transform: scale(1.03);
+}
+
+.music-card.playing {
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+}

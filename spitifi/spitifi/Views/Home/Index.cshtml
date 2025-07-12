@@ -4,50 +4,96 @@
 }
 
 <body style="background-color: #666666">
-    <div class="text-center">
-        <h1 class="display-4" style="color:white">Bem-vindo ao Spitifi!</h1>
-        <h3 style="color:white">Um lugar para todas as músicas. Todas as músicas num só lugar.</h3>
-    </div>
+<div class="text-center">
+    <h1 class="display-4" style="color:white">Bem-vindo ao Spitifi!</h1>
+    <h3 style="color:white">Um lugar para todas as músicas. Todas as músicas num só lugar.</h3>
+</div>
 
-    <!-- Top 6 Musics Grid -->
-    <div class="container mt-5">
-        <h2 class="text-center mb-4" style="color:white">Músicas Com Mais Gostos</h2>
-        <div id="top-musicas-grid" class="row row-cols-1 row-cols-md-3 g-4"></div>
-    </div>
-    
-    
-    @section Scripts {
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                fetch('/api/music/top6')
-                    .then(response => response.json())
-                    .then(data => renderGrid(data))
-                    .catch(error => console.error('Error:', error));
-            });
+<!-- Top 6 Musics Grid -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4" style="color:white">Músicas Com Mais Gostos</h2>
+    <div id="top-musicas-grid" class="row row-cols-1 row-cols-md-3 g-4"></div>
+</div>
+<!-- Add this hidden audio element inside your body -->
+<audio id="musicPlayer" hidden></audio>
 
-            function renderGrid(musics) {
-                const grid = document.getElementById('top-musicas-grid');
-                grid.innerHTML = '';
+@section Scripts {
+    <script>
+        // Initialize audio element
+        const musicPlayer = document.getElementById('musicPlayer');
+        let currentPlayingCard = null;
+        let currentMusicId = null;
 
-                musics.forEach(music => {
-                    const col = document.createElement('div');
-                    col.className = 'col';
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/api/music/top6')
+                .then(response => response.json())
+                .then(data => renderGrid(data))
+                .catch(error => console.error('Error:', error));
+        });
 
-                    col.innerHTML = `
-                        <div class="card text-white">
-                            <img src="${music.AlbumFoto || '/assets/icons/musicPlaceholder.png'}" 
-                                 class="card-img-top" 
-                                 alt="${music.albumNome}">
-                            <div class="card-body">
-                                <h5 class="card-title">${music.nome}</h5>
-                                <p class="card-text">${music.artistaNome}</p>
-                                <p class="card-text"><i class="fas fa-heart"></i> ${music.likes == 1 ? music.likes + " gosto" : music.likes + " gostos" } </p>
-                            </div>
+        function renderGrid(musics) {
+            const grid = document.getElementById('top-musicas-grid');
+            grid.innerHTML = '';
+
+            musics.forEach(music => {
+                const col = document.createElement('div');
+                col.className = 'col';
+
+                col.innerHTML = `
+                    <div class="card text-white music-card" data-music-id="${music.id}">
+                        <img src="${music.AlbumFoto || '/assets/icons/musicPlaceholder.png'}" 
+                             class="card-img-top" 
+                             alt="${music.albumNome}">
+                        <div class="card-body">
+                            <h5 class="card-title">${music.nome}</h5>
+                            <p class="card-text">${music.artistaNome}</p>
+                            <p class="card-text"><i class="fas fa-heart"></i> ${music.likes == 1 ? music.likes + " gosto" : music.likes + " gostos"} </p>
                         </div>
-                    `;
-                    grid.appendChild(col);
+                    </div>
+                `;
+
+                // Add click handler to the card
+                const card = col.querySelector('.music-card');
+                card.addEventListener('click', function () {
+                    handleMusicClick(music, this);
                 });
+
+                grid.appendChild(col);
+            });
+        }
+
+        function handleMusicClick(music, cardElement) {
+            // If clicking the same music that's currently playing
+            if (currentMusicId === music.id) {
+                if (musicPlayer.paused) {
+                    musicPlayer.play();
+                    cardElement.classList.add('playing');
+                } else {
+                    musicPlayer.pause();
+                    cardElement.classList.remove('playing');
+                }
+                return;
             }
-        </script>
-    }
+
+            // Stop current playback and reset
+            if (currentPlayingCard) {
+                currentPlayingCard.classList.remove('playing');
+            }
+
+            // Load and play new track
+            musicPlayer.src = music.path;
+            musicPlayer.load();
+            musicPlayer.play()
+                .then(() => {
+                    currentMusicId = music.id;
+                    currentPlayingCard = cardElement;
+                    cardElement.classList.add('playing');
+                })
+                .catch(error => {
+                    console.error('Playback failed:', error);
+                    // Optional: Show subtle error indication
+                });
+        }
+    </script>
+}
 </body>

@@ -39,7 +39,8 @@ namespace spitifi.Models.ApiModels
                     AlbumNome = m.Album.Titulo,
                     ArtistaNome = m.Dono.Username,
                     AlbumFoto = m.Album.Foto, 
-                    Likes = m.ListaGostos.Count
+                    Likes = m.ListaGostos.Count,
+                    Path = m.FilePath
                 })
                 .OrderByDescending(m => m.Likes)
                 .Take(6)

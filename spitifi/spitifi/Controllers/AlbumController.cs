@@ -17,7 +17,9 @@ namespace spitifi.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private AlbumEraser _AlbumEraser;
-        public AlbumController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IWebHostEnvironment webHostEnvironment,  AlbumEraser albumEraser)
+
+        public AlbumController(ApplicationDbContext context, UserManager<IdentityUser> userManager,
+            IWebHostEnvironment webHostEnvironment, AlbumEraser albumEraser)
         {
             _context = context;
             _userManager = userManager;
@@ -27,29 +29,28 @@ namespace spitifi.Controllers
 
         // GET: Album
         public async Task<IActionResult> Index(
-            int? pageNumber,   
-            int pageSize )
+            int? pageNumber,
+            int pageSize)
         {
-            
             if (pageSize == 0)
             {
                 pageSize = 5;
             }
+
             var applicationDbContext = _context.Album
                 .Include(m => m.Dono).ToList();
-            
+
             // Create base query with includes
             var query = _context.Album.AsQueryable();
-    
+
             // Apply pagination using Page.CreateAsync
             var paginatedResult = await Page<Album>.CreateAsync(
                 source: query,
-                pageIndex: pageNumber ?? 1,  //página 1 caso pageNumber 0
+                pageIndex: pageNumber ?? 1, //página 1 caso pageNumber 0
                 pageSize: pageSize
             );
-            
+
             return View(paginatedResult);
-            
         }
 
         // GET: Album/Details/5
@@ -85,7 +86,7 @@ namespace spitifi.Controllers
         [ValidateAntiForgeryToken]
         [HttpPost]
         [Authorize(Roles = "Artista, Administrador")]
-        [RequestFormLimits(MultipartBodyLengthLimit = 100000000)]//~100Mb
+        [RequestFormLimits(MultipartBodyLengthLimit = 100000000)] //~100Mb
         [RequestSizeLimit(100000000)] //~100Mb
         public async Task<IActionResult> Create([Bind("Id,Titulo")] Album album,
             IFormFile fotoAlbum, List<IFormFile> musicasNovas)
@@ -93,7 +94,7 @@ namespace spitifi.Controllers
             //variaveis para validações
 
             var identityUserId = _userManager.GetUserId(User);
-            
+
             // encontrar username (Identity) do utilizador que fez o pedido, para poder associar ao utilizador local
             var utilizadorIdentity = _context.Users.First(au => au.UserName == User.Identity.Name);
             var utilizadorLocal = _context.Utilizadores.Where(u => u.IdentityUser == utilizadorIdentity.Id);
@@ -110,22 +111,27 @@ namespace spitifi.Controllers
             if (string.IsNullOrEmpty(album.Titulo))
             {
                 ModelState.AddModelError("Titulo", "Não introduziste um título");
-                ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == identityUserId).Username;
+                ViewData["DonoNome"] =
+                    _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == identityUserId).Username;
                 return View();
             }
 
-            if (fotoAlbum == null){
+            if (fotoAlbum == null)
+            {
                 ModelState.AddModelError("Foto", "Não introduziste uma foto");
-                ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == identityUserId).Username;
+                ViewData["DonoNome"] =
+                    _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == identityUserId).Username;
                 return View();
             }
 
-            if (musicasNovas.Count < 1){
+            if (musicasNovas.Count < 1)
+            {
                 ModelState.AddModelError("Musicas", "Não introduziste pelo menos uma musica/ficheiro");
-                ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == identityUserId).Username;
+                ViewData["DonoNome"] =
+                    _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == identityUserId).Username;
                 return View();
             }
-            
+
             //primeiro criaremos o album e a sua foto e depois as musicas
             if (ModelState.IsValid)
             {
@@ -142,7 +148,8 @@ namespace spitifi.Controllers
                         {
                             ModelState.AddModelError("Musicas",
                                 "Uma ou mais músicas com extensão inválida, use .wav ou .mp3 por favor");
-                            ViewData["DonoNome"] = _context.Utilizadores.FirstOrDefault(u => u.IdentityUser == identityUserId)
+                            ViewData["DonoNome"] = _context.Utilizadores
+                                .FirstOrDefault(u => u.IdentityUser == identityUserId)
                                 .Username;
                             return View();
                         }
@@ -259,8 +266,8 @@ namespace spitifi.Controllers
             ViewData["DonoFK"] = new SelectList(_context.Utilizadores, "Id", "Username", album.DonoFK);
             return View(album);
         }
-        
-        
+
+
         [Authorize(Roles = "Artista, Administrador")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -268,19 +275,21 @@ namespace spitifi.Controllers
             {
                 return NotFound();
             }
+
             var album = await _context.Album
                 .Include(a => a.Musicas)
                 .Include(a => a.Dono)
                 .FirstOrDefaultAsync(a => a.Id == id);
-            
+
             // guardamos em sessão o id da categoria que o utilizador quer editar
             // se ele fizer um post para um Id diferente, ele está a tentar alterar algo que não devia
             HttpContext.Session.SetInt32("albumId", album.Id);
-            
+
             if (album == null)
             {
                 return NotFound();
             }
+
             return View(album);
         }
 
@@ -290,106 +299,112 @@ namespace spitifi.Controllers
         [HttpPost]
         [Authorize(Roles = "Artista, Administrador")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id, Titulo, DonoFK")] Album album, IFormFile fotoAlbum,  List<IFormFile> musicasNovas)
+        public async Task<IActionResult> Edit([FromRoute] int id, [Bind("Id, Titulo, DonoFK")] Album album,
+            IFormFile fotoAlbum, List<IFormFile> musicasNovas)
         {
+            try
+            {
+                var dono = await _context.Utilizadores.FindAsync(album.DonoFK);
 
-            var dono = await _context.Utilizadores.FindAsync(album.DonoFK);
-            
-            if (dono.IdentityUser == null)
-            {
-                // utilizador não pôde ser verificado
-                return RedirectToAction(nameof(Index));
-            }
-            
-            // validar se quem tenta alterar a playlist é o dono or admin
-            if (dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
-            {
-                return Forbid(); 
-            }
-            if (id != album.Id)
-            {
-                return NotFound();
-            }
-
-            var albumDaSessao = HttpContext.Session.GetInt32("albumId");
-
-            if (albumDaSessao != id)
-            {
-                ModelState.AddModelError("Id", "Valores alterados incorretamente");
-                return View(album);
-            }
-            
-            // encontrar username (Identity) do utilizador que fez o pedido, para poder associar ao utilizador local
-            
-            var albumAux = await _context.Album.AsNoTracking().FirstOrDefaultAsync(a => a.Id == album.Id);
-            
-            bool haImagem = false;
-            string nomeImagem = "";
-            string nomeMusica = "";
-            var antigaFotoAlbum = albumAux.Foto;
-            var musicasAntigas = albumAux.Musicas;
-            
-            //Caso não seja metido nada no titulo
-            var tituloNoForm = Request.Form["Titulo"];
-            if (string.IsNullOrEmpty(tituloNoForm))
-            {
-                album.Titulo = album.Titulo;
-                ModelState.SetModelValue("Titulo", album.Titulo, album.Titulo);
-            }
-            else
-            {
-                album.Titulo = Request.Form["Titulo"];
-            }
-
-            if (ModelState.IsValid)
-            {
-                List<string> arrayPathMusicas = new List<string>();
-                var fotoDeleteAlbum = "";
-                
-                try
+                if (dono.IdentityUser == null)
                 {
-                    if(fotoAlbum != null){
-                        if (!(fotoAlbum.ContentType == "image/png" || fotoAlbum.ContentType == "image/jpeg"))
+                    // utilizador não pôde ser verificado
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // validar se quem tenta alterar a playlist é o dono or admin
+                if (dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) &&
+                    !User.IsInRole("Administrador"))
+                {
+                    return Forbid();
+                }
+
+                if (id != album.Id)
+                {
+                    return NotFound();
+                }
+
+                var albumDaSessao = HttpContext.Session.GetInt32("albumId");
+
+                if (albumDaSessao != id)
+                {
+                    ModelState.AddModelError("Id", "Valores alterados incorretamente");
+                    return View(album);
+                }
+
+                // encontrar username (Identity) do utilizador que fez o pedido, para poder associar ao utilizador local
+
+                var albumAux = await _context.Album.AsNoTracking().FirstOrDefaultAsync(a => a.Id == album.Id);
+
+                bool haImagem = false;
+                string nomeImagem = "";
+                string nomeMusica = "";
+                var antigaFotoAlbum = albumAux.Foto;
+                var musicasAntigas = albumAux.Musicas;
+
+                //Caso não seja metido nada no titulo
+                var tituloNoForm = Request.Form["Titulo"];
+                if (string.IsNullOrEmpty(tituloNoForm))
+                {
+                    album.Titulo = album.Titulo;
+                    ModelState.SetModelValue("Titulo", album.Titulo, album.Titulo);
+                }
+                else
+                {
+                    album.Titulo = Request.Form["Titulo"];
+                }
+
+                if (ModelState.IsValid)
+                {
+                    List<string> arrayPathMusicas = new List<string>();
+                    var fotoDeleteAlbum = "";
+
+                    try
+                    {
+                        if (fotoAlbum != null)
                         {
-                            ModelState.AddModelError("Foto",
-                                "Formato Inválido. Insira uma foto com formato JPEG ou PNG");
-                            ViewData["DonoNome"] = dono.Username;
-                            return View();
-                        }
-                        {
-                            haImagem = true;
-                            // gerar nome imagem
-                            Guid g = Guid.NewGuid();
-                            // atrás do nome adicionamos a pasta onde a escrevemos
-                            nomeImagem = g.ToString();
-                            string extensaoImagem = Path.GetExtension(fotoAlbum.FileName).ToLowerInvariant();
-                            nomeImagem += extensaoImagem;
-                            // guardar o nome do ficheiro na BD
-                            album.Foto = "imagens/" + nomeImagem;
-                        }
-
-                        // se existe uma imagem para escrever no disco
-                        if (haImagem)
-                        {
-                            // vai construir o path para o diretório onde são guardadas as imagens
-                            var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/imagens");
-
-                            // antes de escrevermos o ficheiro, vemos se o diretório existe
-                            if (!Directory.Exists(filePath))
-                                Directory.CreateDirectory(filePath);
-
-                            // atualizamos o Path para incluir o nome da imagem
-                            filePath = Path.Combine(filePath, nomeImagem);
-                            //guardar o caminho da imagem para caso algo corra mal, possamos eliminar a foto da bd no nosso bloco de catch
-                            fotoDeleteAlbum = filePath;
-
-                            // escreve a imagem
-                            using (var fileStream = new FileStream(filePath, FileMode.Create))
+                            if (!(fotoAlbum.ContentType == "image/png" || fotoAlbum.ContentType == "image/jpeg"))
                             {
-                                await fotoAlbum.CopyToAsync(fileStream);
+                                ModelState.AddModelError("Foto",
+                                    "Formato Inválido. Insira uma foto com formato JPEG ou PNG");
+                                ViewData["DonoNome"] = dono.Username;
+                                return View();
+                            }
+
+                            {
+                                haImagem = true;
+                                // gerar nome imagem
+                                Guid g = Guid.NewGuid();
+                                // atrás do nome adicionamos a pasta onde a escrevemos
+                                nomeImagem = g.ToString();
+                                string extensaoImagem = Path.GetExtension(fotoAlbum.FileName).ToLowerInvariant();
+                                nomeImagem += extensaoImagem;
+                                // guardar o nome do ficheiro na BD
+                                album.Foto = "imagens/" + nomeImagem;
+                            }
+
+                            // se existe uma imagem para escrever no disco
+                            if (haImagem)
+                            {
+                                // vai construir o path para o diretório onde são guardadas as imagens
+                                var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/imagens");
+
+                                // antes de escrevermos o ficheiro, vemos se o diretório existe
+                                if (!Directory.Exists(filePath))
+                                    Directory.CreateDirectory(filePath);
+
+                                // atualizamos o Path para incluir o nome da imagem
+                                filePath = Path.Combine(filePath, nomeImagem);
+                                //guardar o caminho da imagem para caso algo corra mal, possamos eliminar a foto da bd no nosso bloco de catch
+                                fotoDeleteAlbum = filePath;
+
+                                // escreve a imagem
+                                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                                {
+                                    await fotoAlbum.CopyToAsync(fileStream);
+                                }
                             }
                         }
-                    }
                         else
                         {
                             album.Foto = antigaFotoAlbum;
@@ -451,47 +466,51 @@ namespace spitifi.Controllers
                             }
                         }
 
-                    _context.Update(album);
-                    await _context.SaveChangesAsync();
-                    HttpContext.Session.SetInt32("albumId", 0);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AlbumExists(album.Id))
-                    {
-                        return NotFound();
+                        _context.Update(album);
+                        await _context.SaveChangesAsync();
+                        HttpContext.Session.SetInt32("albumId", 0);
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        if (System.IO.File.Exists(fotoDeleteAlbum))
+                        if (!AlbumExists(album.Id))
                         {
-                            System.IO.File.Delete(fotoDeleteAlbum);
+                            return NotFound();
                         }
-
-                        ModelState.AddModelError("", "Algo correu mal, por favor tente novamente");
-                        foreach (var musicaDelete in arrayPathMusicas)
+                        else
                         {
-                            if (System.IO.File.Exists(musicaDelete))
+                            if (System.IO.File.Exists(fotoDeleteAlbum))
                             {
-                                System.IO.File.Delete(musicaDelete);
+                                System.IO.File.Delete(fotoDeleteAlbum);
                             }
+
+                            ModelState.AddModelError("", "Algo correu mal, por favor tente novamente");
+                            foreach (var musicaDelete in arrayPathMusicas)
+                            {
+                                if (System.IO.File.Exists(musicaDelete))
+                                {
+                                    System.IO.File.Delete(musicaDelete);
+                                }
+                            }
+
+                            //repor a foto anterior
+                            album.Foto = antigaFotoAlbum;
+
+                            throw;
                         }
-
-                        //repor a foto anterior
-                        album.Foto = antigaFotoAlbum;
-
-                        throw;
                     }
+
+                    return RedirectToAction(nameof(Index));
                 }
 
-                return RedirectToAction(nameof(Index));
-
+                return View(album);
             }
-
-            return View(album);
+            catch (Exception e)
+            {
+                return View();
             }
+        }
 
-            // GET: Album/Delete/5
+        // GET: Album/Delete/5
         [Authorize(Roles = "Artista, Administrador")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -516,7 +535,6 @@ namespace spitifi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmation(int id)
         {
-            
             var album = await _context.Album.Include(a => a.Dono).FirstAsync(a => a.Id == id);
 
             if (album?.Dono?.IdentityUser == null)
@@ -524,13 +542,14 @@ namespace spitifi.Controllers
                 // utilizador não pôde ser verificado
                 return RedirectToAction(nameof(Index));
             }
-            
+
             // validar se quem tenta apagar o album é o dono do album or admin
-            if (album.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Administrador") )
+            if (album.Dono.IdentityUser != User.FindFirstValue(ClaimTypes.NameIdentifier) &&
+                !User.IsInRole("Administrador"))
             {
-                return Forbid(); 
+                return Forbid();
             }
-            
+
             await _AlbumEraser.AlbumEraserFunction(id);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
