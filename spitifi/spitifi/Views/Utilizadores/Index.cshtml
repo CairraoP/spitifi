@@ -17,15 +17,20 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr style="color: white">
-            <td style="color: white">
-                @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
-            </td>
-        </tr>
+    <tr style="color: white">
+        <td style="color: white">
+            @Html.DisplayFor(modelItem => item.Username)
+        </td>
+        <td>
+            <a class="btn btn-secondary" asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
+            @if (User.IsInRole("Administrador"))
+            {
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
+            }
+        </td>
+    </tr>
 }
+
     </tbody>
 </table>
+<a  asp-controller="Home" asp-action="Index"><i class="bi bi-arrow-90deg-left" style="color: white; margin-right: 15px"> Voltar </i></a>

@@ -1,15 +1,15 @@
 @model Procura
 
-<!-- Search Bar -->
+<!-- barra de procura -->
 
 <div class="d-flex justify-content-center">
     <form asp-action="Index" method="get">
         <div class="input-group mb-4">
             <input type="text" class="form-control" name="searchTerm" 
-                   placeholder="Search for albums, songs, artists..." 
+                   placeholder="Procurar por albums, musicas ou artistas..." 
                    value="@Model.TermoDeProcura"
                    style="max-width: 800px">
-            <button class="btn btn-primary" type="submit">Search</button>
+            <button class="btn btn-primary" type="submit">Procurar</button>
         </div>
     </form>
 </div>
@@ -20,18 +20,19 @@
     <!-- albuns encontradas -->
     @if (Model.Albums.Any())
     {
-        <h3>Albums</h3>
+        <h3>Álbuns</h3>
         <div class="row">
             @foreach (var album in Model.Albums)
             {
                 <div class="col-md-3 mb-4">
                     <div class="card">
-                        <img src="~/imagens/@album.Foto" class="card-img-top" alt="@album.Titulo">
+                        <img src="/@album.Foto" class="card-img-top" alt="@album.Titulo" 
+                             onerror="this.onerror=null; this.src='/assets/icons/addMusic.png';">
                         <div class="card-body">
                             <h5 class="card-title">@album.Titulo</h5>
-                            <p class="card-text">By: @album.Dono.Username</p>
-                            <a asp-controller="Albums" asp-action="Details" asp-route-id="@album.Id" 
-                               class="btn btn-sm btn-outline-primary">View Album</a>
+                            <p class="card-text">Por: @album.Dono.Username</p>
+                            <a asp-controller="Album" asp-action="Details" asp-route-id="@album.Id" 
+                               class="btn btn-sm btn-outline-primary">Ver Album</a>
                         </div>
                     </div>
                 </div>
@@ -60,9 +61,9 @@
                         </audio>
                     </td>
                     <td>
-                        <a asp-controller="Musicas" asp-action="Details" 
+                        <a asp-controller="Musica" asp-action="Details" 
                            asp-route-id="@song.Id" class="btn btn-sm btn-outline-info">
-                            Details
+                            Detalhes
                         </a>
                     </td>
                 </tr>
@@ -75,21 +76,30 @@
     @if (Model.Artistas.Any())
     {
         <h3>Artistas</h3>
-        <div class="row">
+        <!-- Container for artist cards -->
+        <div class="album-cards-container">
             @foreach (var artist in Model.Artistas)
             {
-                <div class="col-md-2 text-center mb-3">
-                    <img src="~/imagens/@artist.Foto" 
-                         class="img-fluid rounded-circle mb-2" 
-                         alt="@artist.Username" 
-                         style="width: 100px; height: 100px; object-fit: cover;">
-                    <h5>@artist.Username</h5>
-                    <a asp-controller="Utilizadores" asp-action="Details" 
-                       asp-route-id="@artist.Id" class="stretched-link"></a>
+                <div class="album-card">
+                    <!-- Artist image and info -->
+                    <a asp-controller="Utilizadores" asp-action="Details" asp-route-id="@artist.Id">
+                        <div class="album-card-header">
+                            <img src="/@artist.Foto"
+                                 onerror="this.onerror=null; this.src='/assets/icons/user.png';"
+                                 class="img-fluid rounded-circle mb-2" 
+                                 alt="@artist.Username"
+                                 style="object-fit: cover; width: 100%; height: 100%; border-radius: 50%;"/>
+                            </div>
+                        <div class="album-card-body">
+                            <h5 class="album-title">@artist.Username</h5>
+                            <p class="album-artist">Artista</p>
+                        </div>
+                    </a>
                 </div>
             }
         </div>
     }
+
 
     @if (!Model.Albums.Any() && !Model.Musicas.Any() && !Model.Artistas.Any())
     {

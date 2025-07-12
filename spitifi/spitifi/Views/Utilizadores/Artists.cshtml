@@ -1,0 +1,30 @@
+@model IEnumerable<spitifi.Models.DbModels.Utilizadores>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Artistas</h1>
+<hr/>
+<div class="album-cards-container">
+    @foreach (var utilizador in Model)
+    {
+        <div class="album-card">
+            <div class="album-card-header">
+                <img src="/@utilizador.Foto" onerror="this.onerror=null; this.src='/assets/icons/user.png';" alt="Imagem Album"/>
+            </div>
+            <div class="album-card-body">
+                <h5 class="album-title">@Html.DisplayFor(modelItem => utilizador.Username)</h5>
+            </div>
+            <div class="album-card-footer">
+                <a class="btn btn-primary" asp-action="Details" asp-route-id="@utilizador.Id">Perfil do Artista</a>
+                @if (User.Identity?.Name == utilizador.Username || User.IsInRole("Administrador"))
+                {
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@utilizador.Id">Apagar</a>
+                }
+            </div>
+        </div>
+    }
+</div>
+<br/>
+<a  asp-controller="Home" asp-action="Index"><i class="bi bi-arrow-90deg-left" style="color: white; margin-right: 15px"> Voltar </i></a>

@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
 @using spitifi.Data
+@using SQLitePCL
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 <!-- Import do contexto da BD feito aqui-->
@@ -15,6 +17,7 @@
         {
             foto = "assets/icons/user.png";
         }
+        
         <li class="nav-item">
             <div class="d-flex align-items-center">
                 <img src="/@foto" width="25" height="25" class="mr-2"/>
@@ -23,7 +26,18 @@
                 </a>
             </div>
         </li>
-        
+        if (User.IsInRole("Artista"))
+        {
+            var utilizadorContext = await Context.Utilizadores.FirstOrDefaultAsync(u => u.Username == User.Identity.Name);
+            
+            <li class="nav-item">
+                <div class="d-flex align-items-center">
+                    <img src="/assets/icons/user.png" width="25" height="25">
+                    <a class="nav-link " asp-area="" asp-controller="Utilizadores" asp-action="Details" asp-route-id="@utilizadorContext.Id"
+                       style="display: inline; font-size: 20px">Página Pública</a>
+                </div>
+            </li>
+        }
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                 <div>

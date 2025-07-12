@@ -14,7 +14,7 @@
 }
 
 <div class="d-flex align-items-center">
-    <img style ="max-height: 100px; max-width: 100px" src="/@Model.Foto" alt=""/>
+    <img style ="max-height: 100px; max-width: 100px" src="/@Model.Foto" onerror="this.onerror=null; this.src='/assets/icons/music.png';" alt=""/>
     <div style="margin-left: 30px">
         <h1>@Model.Nome</h1>
         <h6>PlayList</h6>
@@ -37,13 +37,19 @@
         <tbody class="col-sm-10">
         @foreach (var musica in Model.Musicas)
         {
-            <tr>
+            <tr data-song-id="@musica.Id"
+                data-song-name="@musica.Nome"
+                data-album-art="/@musica.Album.Foto"
+                data-artist="@musica.Dono.Username"
+                data-file-path="/@musica.FilePath">
+                
                 <td style="padding-top: 30px">@i</td>
+                
                 <td class="d-flex align-items-center">
                     <img style="max-height: 70px; max-width: 70px" src="/@musica.Album.Foto" alt=""/>
 
                     <div style="margin-left: 10px; font-size: 14px">
-                    <li class="flex-column" style="margin-bottom: 5px"><strong>@musica.Nome</strong></li>
+                        <li class="flex-column" style="margin-bottom: 5px"><strong>@musica.Nome</strong></li>
                     </div>
                 </td>
                 <td>@musica.Album.Titulo</td>
@@ -62,7 +68,7 @@
 </div>
 <div style="margin-top: 20px">
     <a asp-action="Index"><i class="bi bi-arrow-90deg-left" style="color: white; margin-right: 15px"> Voltar </i></a>
-    @if (dono)
+    @if (dono || User.IsInRole("Administrador"))
     {
         <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-secondary" style="margin-right: 15px">Editar</a>
         <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">Apagar Playlist</a>
@@ -73,3 +79,117 @@
             border-bottom: 2px solid #eeeeee; /* Line below the headers */
         }
     </style>
+    
+    <script>
+    function buildPlaylist() {
+        const playlist = [];
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            playlist.push({
+                id: row.dataset.songId,
+                name: row.dataset.songName,
+                albumArt: row.dataset.albumArt,
+                artist: row.dataset.artist,
+                filePath: row.dataset.filePath
+            });
+        });
+        return playlist;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            row.addEventListener('click', function (event) {
+                // Ignore clicks on interactive elements
+                if (event.target.closest('audio, a, button, img[id^="heart-"]')) return;
+                
+                const playlist = buildPlaylist();
+                const songId = row.dataset.songId;
+                const songIndex = playlist.findIndex(song => song.id === songId);
+                if (songIndex === -1) return;
+
+                // Initialize or update player
+                if (!window.musicPlayer) {
+                    initPlayer(playlist);
+                } else {
+                    window.musicPlayer.playlist = playlist;
+                }
+                window.musicPlayer.playTrack(songIndex);
+            });
+        });
+    });
+
+    function initPlayer(playlist) {
+        window.musicPlayer = {
+            playlist: playlist,
+            currentIndex: 0,
+            audioPlayer: document.getElementById('footerAudioPlayer'),
+            playMode: 'once',
+
+            playTrack: function (index) {
+                if (index < 0 || index >= this.playlist.length) return;
+                
+                this.currentIndex = index;
+                const track = this.playlist[index];
+
+                // Update footer UI
+                document.getElementById('footerSongName').textContent = track.name;
+                document.getElementById('footerArtist').textContent = track.artist;
+                document.getElementById('footerAlbumArt').src = track.albumArt;
+
+                // Update audio source
+                this.audioPlayer.innerHTML = '';
+                const source = document.createElement('source');
+                source.src = track.filePath;
+                source.type = track.filePath.endsWith('.wav') ? 'audio/wav' : 'audio/mpeg';
+                
+                this.audioPlayer.appendChild(source);
+                this.audioPlayer.load();
+                this.audioPlayer.play();
+
+                // mostra footer. Escondido, por padrão
+                const container = document.getElementById('audioContainer');
+                container.classList.add('show');
+            },
+
+            nextTrack: function () {
+                let nextIndex = this.currentIndex + 1;
+                if (nextIndex >= this.playlist.length && this.playMode === 'loopPlaylist') {
+                    nextIndex = 0;
+                }
+                this.playTrack(nextIndex);
+            },
+
+            prevTrack: function () {
+                let prevIndex = this.currentIndex - 1;
+                if (prevIndex < 0 && this.playMode === 'loopPlaylist') {
+                    prevIndex = this.playlist.length - 1;
+                }
+                this.playTrack(prevIndex);
+            },
+
+            setPlayMode: function (mode) {
+                this.playMode = mode;
+                this.audioPlayer.loop = (mode === 'loopTrack');
+            }
+        };
+
+        // Setup event listeners
+        document.getElementById('musicaAnteriorBt').addEventListener('click', () => {
+            window.musicPlayer.prevTrack();
+        });
+        document.getElementById('musicaSeguinteBt').addEventListener('click', () => {
+            window.musicPlayer.nextTrack();
+        });
+        document.querySelectorAll('input[name="playMode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                window.musicPlayer.setPlayMode(e.target.value);
+            });
+        });
+        window.musicPlayer.audioPlayer.addEventListener('ended', () => {
+            if (window.musicPlayer.playMode !== 'once') {
+                window.musicPlayer.nextTrack();
+            }
+        });
+    }
+</script>

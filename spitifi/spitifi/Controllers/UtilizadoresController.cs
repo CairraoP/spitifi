@@ -8,7 +8,6 @@ using spitifi.Services.AlbumEraser;
 
 namespace spitifi.Controllers
 {
-    [Authorize(Roles = "Administrador")]
     public class UtilizadoresController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,6 +21,7 @@ namespace spitifi.Controllers
             _userManager = userManager;
         }
 
+        
         // GET: Utilizadores
         [Authorize(Roles="Administrador")]
         public async Task<IActionResult> Index()
@@ -30,7 +30,6 @@ namespace spitifi.Controllers
         }
 
         // GET: Utilizadores/Details/5
-        [Authorize(Roles="Administrador")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -47,6 +46,17 @@ namespace spitifi.Controllers
             }
 
             return View(utilizadores);
+        }
+
+        //Nova IAction para mostrar só os artistas aos ouvintes da webapp
+        //Os admins terão acesso a todos os utilizadores
+        public async Task<IActionResult> Artists()
+        {
+            return View(await _context.Utilizadores
+                        .Where(a=> a.IsArtista == true)
+                        .Include(a => a.Albums)
+                            .ThenInclude(m => m.Musicas)
+                        .ToListAsync());
         }
 
         // GET: Utilizadores/Create
