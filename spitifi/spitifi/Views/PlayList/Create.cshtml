@@ -21,7 +21,7 @@
                     <!-- Playlist Form -->
                     <form asp-action="Create" method="post" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
+                        
                         <!-- Playlist Name -->
                         <div class="form-group mb-3">
                             <label asp-for="Nome" class="form-label">Nome da PlayList</label>
@@ -49,18 +49,20 @@
                                 <tbody>
                                 @foreach (Musica musica in ViewBag.ListaMusicas)
                                 {
-                                    selecionado = Model.Musicas != null && Model.Musicas.Contains(musica) ? "checked" : "";
-                                    icon = selecionado == "checked" ? "bi bi-check-circle-fill" : "bi bi-check-circle";
-                                        
+                                    // Check if this musica's ID is in selectedMusicas
+                                    bool isSelected = ViewBag.selectedMusicas != null && ViewBag.selectedMusicas.Contains(musica.Id);
+                                    var selecionado = isSelected ? "checked" : "";
+                                    var icon = isSelected ? "bi bi-check-circle-fill" : "bi bi-check-circle";
+    
                                     <tr>
                                         <td>@musica.Nome</td>
                                         <td>
                                             <div class="form-check">
                                                 <input type="checkbox" class="form-check-input visually-hidden"
                                                        id="checkbox-@musica.Id" value="@musica.Id"
-                                                       name="selectedMusicas" @selecionado/>
+                                                       name="selectedMusicas" @selecionado />
                                                 <label for="checkbox-@musica.Id">
-                                                    <i id="icon-@musica.Id" class="@icon" style="margin-right: 5px; color: @((selecionado == "checked") ? "lawngreen" : "")"></i>
+                                                    <i id="icon-@musica.Id" class="@icon" style="margin-right: 5px; color: @(isSelected ? "lawngreen" : "")"></i>
                                                 </label>
                                             </div>
                                         </td>
